@@ -2,9 +2,199 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid 3102d4aa-3e52-4c94-9248-6f9890a5b267)
+	(uuid "3102d4aa-3e52-4c94-9248-6f9890a5b267")
 	(paper "A4")
+	(title_block
+		(title "BekantX")
+		(date "2026-04-17")
+		(rev "A")
+		(company "Perillion Labs")
+	)
 	(lib_symbols)
+	(sheet
+		(at 41.91 41.91)
+		(size 58.42 33.02)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "360302cb-d038-4423-8b50-3e795358de17")
+		(property "Sheetname" "Microcontroller"
+			(at 41.91 41.1984 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "microcontroller.kicad_sch"
+			(at 41.91 75.5146 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "BekantX"
+				(path "/3102d4aa-3e52-4c94-9248-6f9890a5b267"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 149.86 92.71)
+		(size 60.96 35.56)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "76e9c782-ad01-4991-b1a3-8231d5d436cf")
+		(property "Sheetname" "Connectors"
+			(at 149.86 91.9984 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Connector.kicad_sch"
+			(at 149.86 128.8546 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "BekantX"
+				(path "/3102d4aa-3e52-4c94-9248-6f9890a5b267"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 148.59 40.64)
+		(size 62.23 35.56)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "7a2fded6-9a89-4fce-9fed-e2734fce16b6")
+		(property "Sheetname" "WiFi"
+			(at 148.59 39.9284 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "wifi.kicad_sch"
+			(at 148.59 76.7846 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "BekantX"
+				(path "/3102d4aa-3e52-4c94-9248-6f9890a5b267"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 44.45 92.71)
+		(size 55.88 36.83)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "944b1a17-60e9-427d-ab8f-9c661d03b0f3")
+		(property "Sheetname" "Power Supply"
+			(at 44.45 91.9984 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "powerSupply.kicad_sch"
+			(at 44.45 130.1246 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "BekantX"
+				(path "/3102d4aa-3e52-4c94-9248-6f9890a5b267"
+					(page "6")
+				)
+			)
+		)
+	)
 	(sheet_instances
 		(path "/"
 			(page "1")
