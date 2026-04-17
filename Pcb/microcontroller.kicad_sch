@@ -1038,6 +1038,150 @@
 			(embedded_fonts no)
 		)
 	)
+	(global_label "U0TXD"
+		(shape input)
+		(at 64.77 149.86 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "188525c7-877a-4722-8039-b6015bcfcbbe")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 55.7977 149.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "FSPI_DO"
+		(shape input)
+		(at 64.77 130.81 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "8477d7a8-4043-4e6a-a585-62e57d79c81b")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 54.0438 130.81 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "FSPI_CLK"
+		(shape input)
+		(at 189.23 146.05 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "98c448a1-7335-4054-a88a-24fceec51a17")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 200.9238 146.05 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
+	(global_label "FSPI_DI"
+		(shape input)
+		(at 179.07 151.13 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9d570812-0f53-486f-b13c-89f54eeca104")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 189.0705 151.13 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
+	(global_label "FSPI_NCS"
+		(shape input)
+		(at 53.34 140.97 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "a1f48222-5586-4f78-ae4c-83812ea62808")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 41.4043 140.97 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "U0RXD"
+		(shape input)
+		(at 53.34 154.94 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "f05827ca-01a9-4d5d-99a9-5d73ec0e1cde")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 44.0653 154.94 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
 	(symbol
 		(lib_id "MCU_ST_STM32G0:STM32G0B1KBUx")
 		(at 142.24 88.9 0)
