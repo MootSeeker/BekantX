@@ -58,7 +58,53 @@
 		)
 	)
 	(sheet
-		(at 149.86 92.71)
+		(at 123.19 93.98)
+		(size 57.15 34.29)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "761ad652-ffdd-4cec-b18b-1cde2c1388e6")
+		(property "Sheetname" "HMI"
+			(at 123.19 93.2684 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "hmi.kicad_sch"
+			(at 123.19 128.8546 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "BekantX"
+				(path "/3102d4aa-3e52-4c94-9248-6f9890a5b267"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 214.63 93.98)
 		(size 60.96 35.56)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -74,7 +120,7 @@
 		)
 		(uuid "76e9c782-ad01-4991-b1a3-8231d5d436cf")
 		(property "Sheetname" "Connectors"
-			(at 149.86 91.9984 0)
+			(at 214.63 93.2684 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -85,7 +131,7 @@
 			)
 		)
 		(property "Sheetfile" "Connector.kicad_sch"
-			(at 149.86 128.8546 0)
+			(at 214.63 130.1246 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects

@@ -416,13 +416,17 @@
         "uuid": "3102d4aa-3e52-4c94-9248-6f9890a5b267"
       }
     ],
-    "used_designators": "L3-4,#PWR16-42,D1-4,J1-2,R9-13,U4-6,C15-24",
+    "used_designators": "R31-32,J2,#PWR75-76",
     "variants": []
   },
   "sheets": [
     [
       "3102d4aa-3e52-4c94-9248-6f9890a5b267",
       "MasterSheet"
+    ],
+    [
+      "761ad652-ffdd-4cec-b18b-1cde2c1388e6",
+      "HMI"
     ],
     [
       "360302cb-d038-4423-8b50-3e795358de17",
