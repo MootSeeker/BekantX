@@ -12,7 +12,7 @@
 	)
 	(lib_symbols)
 	(sheet
-		(at 41.91 41.91)
+		(at 44.45 41.91)
 		(size 58.42 33.02)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -28,7 +28,7 @@
 		)
 		(uuid "360302cb-d038-4423-8b50-3e795358de17")
 		(property "Sheetname" "Microcontroller"
-			(at 41.91 41.1984 0)
+			(at 44.45 41.1984 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -39,7 +39,7 @@
 			)
 		)
 		(property "Sheetfile" "microcontroller.kicad_sch"
-			(at 41.91 75.5146 0)
+			(at 44.45 75.5146 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -59,7 +59,7 @@
 	)
 	(sheet
 		(at 123.19 93.98)
-		(size 57.15 34.29)
+		(size 62.23 34.29)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -104,7 +104,7 @@
 		)
 	)
 	(sheet
-		(at 214.63 93.98)
+		(at 199.39 93.98)
 		(size 60.96 35.56)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -120,7 +120,7 @@
 		)
 		(uuid "76e9c782-ad01-4991-b1a3-8231d5d436cf")
 		(property "Sheetname" "Connectors"
-			(at 214.63 93.2684 0)
+			(at 199.39 93.2684 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -131,7 +131,7 @@
 			)
 		)
 		(property "Sheetfile" "Connector.kicad_sch"
-			(at 214.63 130.1246 0)
+			(at 199.39 130.1246 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -150,7 +150,7 @@
 		)
 	)
 	(sheet
-		(at 148.59 40.64)
+		(at 123.19 40.64)
 		(size 62.23 35.56)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -166,7 +166,7 @@
 		)
 		(uuid "7a2fded6-9a89-4fce-9fed-e2734fce16b6")
 		(property "Sheetname" "WiFi"
-			(at 148.59 39.9284 0)
+			(at 123.19 39.9284 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -177,7 +177,7 @@
 			)
 		)
 		(property "Sheetfile" "wifi.kicad_sch"
-			(at 148.59 76.7846 0)
+			(at 123.19 76.7846 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects

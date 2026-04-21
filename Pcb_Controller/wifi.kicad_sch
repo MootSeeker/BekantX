@@ -3001,6 +3001,55 @@
 			(embedded_fonts no)
 		)
 	)
+	(text "RGB LED -> Test indicator"
+		(exclude_from_sim no)
+		(at 57.15 164.338 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.254)
+				(bold yes)
+			)
+		)
+		(uuid "307b669e-fd42-48db-aec0-3bac989dc56c")
+	)
+	(text "To MCU"
+		(exclude_from_sim no)
+		(at 48.768 93.98 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.254)
+				(bold yes)
+			)
+		)
+		(uuid "3bcf1496-24a3-4863-a071-efcfc986ad4a")
+	)
+	(text "Z=(35+j10)E --> Z=50E"
+		(exclude_from_sim no)
+		(at 213.36 68.834 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.254)
+				(bold yes)
+				(color 255 0 0 1)
+			)
+		)
+		(uuid "50040007-d421-4ecb-860a-b4c7e3ac715a")
+	)
+	(text "To MCU"
+		(exclude_from_sim no)
+		(at 45.466 76.454 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.254)
+				(bold yes)
+			)
+		)
+		(uuid "7b934aa4-4e23-4b51-8505-b0f9406368f4")
+	)
 	(text "R\n"
 		(exclude_from_sim no)
 		(at 40.64 171.45 0)
@@ -3021,6 +3070,18 @@
 		)
 		(uuid "a0981007-6a57-4d16-9749-90c65ab709c7")
 	)
+	(text "To Conn"
+		(exclude_from_sim no)
+		(at 43.688 86.106 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.254)
+				(bold yes)
+			)
+		)
+		(uuid "d1567ca4-416b-4799-adbf-491db9237c88")
+	)
 	(text "B"
 		(exclude_from_sim no)
 		(at 40.64 181.61 0)
@@ -3030,6 +3091,18 @@
 			)
 		)
 		(uuid "d7314914-6d18-490b-9800-0d4806f5fcf6")
+	)
+	(text "To MCU"
+		(exclude_from_sim no)
+		(at 216.408 90.424 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.254)
+				(bold yes)
+			)
+		)
+		(uuid "fd7c57ae-3a1b-4448-bc7e-c8ae1f09dcfc")
 	)
 	(junction
 		(at 82.55 134.62)
@@ -3086,6 +3159,12 @@
 		(uuid "49377567-839b-4ea4-b833-5f1ac3dd38ee")
 	)
 	(junction
+		(at 135.89 50.8)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "4c94efcb-47b8-4a60-9882-8ac8e5677771")
+	)
+	(junction
 		(at 254 143.51)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3096,12 +3175,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "58cfb2ee-1792-48a6-a20f-4f217b5ac8d6")
-	)
-	(junction
-		(at 152.4 38.1)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "604cb9d8-807e-4444-be17-d685480baef2")
 	)
 	(junction
 		(at 125.73 38.1)
@@ -3128,12 +3201,6 @@
 		(uuid "7a66f1b1-31c6-472f-8068-914996354e00")
 	)
 	(junction
-		(at 135.89 59.69)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "8956ffba-6e59-4ced-943b-8c25f84752af")
-	)
-	(junction
 		(at 190.5 38.1)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3144,6 +3211,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "9b0a0f34-a0b1-49a9-b8ee-63a4c1f5a310")
+	)
+	(junction
+		(at 152.4 38.1)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "9c1314ea-384e-4480-a743-85072bd8387b")
 	)
 	(junction
 		(at 203.2 116.84)
@@ -3204,12 +3277,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "dd623269-53a3-4560-b884-0c4808849bb7")
-	)
-	(junction
-		(at 130.81 59.69)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "eee41825-3419-4780-8498-42a650cb142a")
 	)
 	(junction
 		(at 184.15 116.84)
@@ -3309,7 +3376,7 @@
 	)
 	(wire
 		(pts
-			(xy 130.81 38.1) (xy 152.4 38.1)
+			(xy 135.89 38.1) (xy 152.4 38.1)
 		)
 		(stroke
 			(width 0)
@@ -3319,7 +3386,7 @@
 	)
 	(wire
 		(pts
-			(xy 135.89 59.69) (xy 130.81 59.69)
+			(xy 135.89 50.8) (xy 130.81 50.8)
 		)
 		(stroke
 			(width 0)
@@ -3449,7 +3516,7 @@
 	)
 	(wire
 		(pts
-			(xy 146.05 59.69) (xy 135.89 59.69)
+			(xy 146.05 50.8) (xy 135.89 50.8)
 		)
 		(stroke
 			(width 0)
@@ -3566,16 +3633,6 @@
 			(type default)
 		)
 		(uuid "2ed6f701-61b2-4235-b8c9-cc47f85c2150")
-	)
-	(wire
-		(pts
-			(xy 130.81 66.04) (xy 130.81 59.69)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "30136d6e-98df-426d-8d8b-71a80cbfa123")
 	)
 	(wire
 		(pts
@@ -3789,16 +3846,6 @@
 	)
 	(wire
 		(pts
-			(xy 135.89 66.04) (xy 135.89 59.69)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "57f5afa5-9eaa-4781-970d-d0f5bb0cdffb")
-	)
-	(wire
-		(pts
 			(xy 86.36 120.65) (xy 95.25 120.65)
 		)
 		(stroke
@@ -3809,7 +3856,7 @@
 	)
 	(wire
 		(pts
-			(xy 146.05 66.04) (xy 146.05 59.69)
+			(xy 146.05 66.04) (xy 146.05 50.8)
 		)
 		(stroke
 			(width 0)
@@ -3929,6 +3976,16 @@
 	)
 	(wire
 		(pts
+			(xy 130.81 50.8) (xy 130.81 66.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "774501ff-2039-4556-a246-22057f3ce60f")
+	)
+	(wire
+		(pts
 			(xy 96.52 67.31) (xy 96.52 76.2)
 		)
 		(stroke
@@ -3989,7 +4046,7 @@
 	)
 	(wire
 		(pts
-			(xy 130.81 59.69) (xy 130.81 38.1)
+			(xy 135.89 38.1) (xy 135.89 50.8)
 		)
 		(stroke
 			(width 0)
@@ -4379,7 +4436,7 @@
 	)
 	(wire
 		(pts
-			(xy 140.97 50.8) (xy 140.97 66.04)
+			(xy 140.97 63.5) (xy 140.97 66.04)
 		)
 		(stroke
 			(width 0)
@@ -4556,6 +4613,16 @@
 			(type default)
 		)
 		(uuid "e5d7e066-86a4-4dd8-8278-af2132844e00")
+	)
+	(wire
+		(pts
+			(xy 135.89 50.8) (xy 135.89 66.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e6c4bdf5-fc24-498f-aa74-18afc62cdbc2")
 	)
 	(wire
 		(pts
@@ -5366,7 +5433,7 @@
 		(dnp no)
 		(uuid "24fc0074-393c-4ba0-8867-8aff14231bb9")
 		(property "Reference" "R1"
-			(at 101.6 111.252 90)
+			(at 101.6 108.966 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5376,7 +5443,7 @@
 			)
 		)
 		(property "Value" "22E"
-			(at 101.6 109.22 90)
+			(at 101.6 106.68 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8929,7 +8996,7 @@
 	)
 	(symbol
 		(lib_id "power:+3.3V")
-		(at 140.97 50.8 0)
+		(at 140.97 63.5 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -8940,7 +9007,7 @@
 		(fields_autoplaced yes)
 		(uuid "f331e9b4-5772-49d8-9f7f-af1fab2e917c")
 		(property "Reference" "#PWR011"
-			(at 140.97 54.61 0)
+			(at 140.97 67.31 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8951,7 +9018,7 @@
 			)
 		)
 		(property "Value" "VCC_SPI"
-			(at 140.97 45.72 0)
+			(at 140.97 58.42 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8961,7 +9028,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 140.97 50.8 0)
+			(at 140.97 63.5 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8972,7 +9039,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 140.97 50.8 0)
+			(at 140.97 63.5 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8983,7 +9050,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+3.3V\""
-			(at 140.97 50.8 0)
+			(at 140.97 63.5 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
