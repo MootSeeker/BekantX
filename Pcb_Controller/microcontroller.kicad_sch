@@ -308,6 +308,129 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Connector:TestPoint"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0.762)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "TP"
+				(at 0 6.858 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "TestPoint"
+				(at 0 5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 5.08 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 5.08 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "test point"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "test point tp"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "Pin* Test*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "TestPoint_0_1"
+				(circle
+					(center 0 3.302)
+					(radius 0.762)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "TestPoint_1_1"
+				(pin passive line
+					(at 0 0 90)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Device:C"
 			(pin_numbers
 				(hide yes)
@@ -3182,6 +3305,12 @@
 		(uuid "1ac8e50f-56a3-4324-9558-05e341b41a3d")
 	)
 	(junction
+		(at 99.06 93.98)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "321a4511-e1b4-4ef0-8a5f-c99081c6f780")
+	)
+	(junction
 		(at 152.4 25.4)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3192,6 +3321,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "6c91e1c9-4679-45c7-a066-ae61c104122b")
+	)
+	(junction
+		(at 86.36 96.52)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a4fe7cea-4444-421b-b4c0-2369929d0048")
 	)
 	(junction
 		(at 260.35 139.7)
@@ -3283,6 +3418,16 @@
 	)
 	(wire
 		(pts
+			(xy 73.66 68.58) (xy 101.6 68.58)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "27e410b0-568c-4e34-bcba-702f01b9b6ff")
+	)
+	(wire
+		(pts
 			(xy 33.02 34.29) (xy 33.02 43.18)
 		)
 		(stroke
@@ -3310,6 +3455,16 @@
 			(type default)
 		)
 		(uuid "29d89cbc-4e61-4f34-84bf-9d14c3eb0a81")
+	)
+	(wire
+		(pts
+			(xy 185.42 83.82) (xy 152.4 83.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2ef77929-2cac-4cbb-90fc-9da4f8669800")
 	)
 	(wire
 		(pts
@@ -3400,6 +3555,16 @@
 			(type default)
 		)
 		(uuid "3b935b0d-6251-4f8f-afd9-4a8e4d606cf7")
+	)
+	(wire
+		(pts
+			(xy 185.42 58.42) (xy 152.4 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "471fa954-8dad-4f67-b430-01fac77649b1")
 	)
 	(wire
 		(pts
@@ -3593,6 +3758,16 @@
 	)
 	(wire
 		(pts
+			(xy 185.42 88.9) (xy 152.4 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8383c70e-13b9-4475-90c2-dfc17ee3e01e")
+	)
+	(wire
+		(pts
 			(xy 152.4 66.04) (xy 163.83 66.04)
 		)
 		(stroke
@@ -3623,6 +3798,16 @@
 	)
 	(wire
 		(pts
+			(xy 99.06 93.98) (xy 99.06 104.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "956c35e8-4564-4d4d-aa93-14de03923520")
+	)
+	(wire
+		(pts
 			(xy 234.95 127) (xy 234.95 129.54)
 		)
 		(stroke
@@ -3643,7 +3828,7 @@
 	)
 	(wire
 		(pts
-			(xy 85.09 96.52) (xy 101.6 96.52)
+			(xy 85.09 96.52) (xy 86.36 96.52)
 		)
 		(stroke
 			(width 0)
@@ -3690,6 +3875,16 @@
 			(type default)
 		)
 		(uuid "ae3df85d-49d8-4d77-a68c-95f10c67659a")
+	)
+	(wire
+		(pts
+			(xy 185.42 78.74) (xy 152.4 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "af888c68-e2ea-405a-93c2-82b31319c3e3")
 	)
 	(wire
 		(pts
@@ -3813,6 +4008,16 @@
 	)
 	(wire
 		(pts
+			(xy 198.12 60.96) (xy 152.4 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d5309fd1-9a33-4f08-a03a-47da701397db")
+	)
+	(wire
+		(pts
 			(xy 228.6 43.18) (xy 228.6 60.96)
 		)
 		(stroke
@@ -3853,6 +4058,16 @@
 	)
 	(wire
 		(pts
+			(xy 81.28 66.04) (xy 101.6 66.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e53b03e8-2ea7-425d-a212-b9d238a91ffe")
+	)
+	(wire
+		(pts
 			(xy 81.28 83.82) (xy 101.6 83.82)
 		)
 		(stroke
@@ -3863,7 +4078,7 @@
 	)
 	(wire
 		(pts
-			(xy 85.09 93.98) (xy 101.6 93.98)
+			(xy 85.09 93.98) (xy 99.06 93.98)
 		)
 		(stroke
 			(width 0)
@@ -3913,6 +4128,26 @@
 	)
 	(wire
 		(pts
+			(xy 86.36 96.52) (xy 101.6 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f5bbe114-588c-40fc-a8ef-48dff2939c70")
+	)
+	(wire
+		(pts
+			(xy 86.36 104.14) (xy 86.36 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f7ed337a-412f-4447-a57a-3d9f31dd6012")
+	)
+	(wire
+		(pts
 			(xy 81.28 78.74) (xy 101.6 78.74)
 		)
 		(stroke
@@ -3920,6 +4155,16 @@
 			(type default)
 		)
 		(uuid "fd6d56d3-6695-44ac-a1bc-64ef0df884ef")
+	)
+	(wire
+		(pts
+			(xy 99.06 93.98) (xy 101.6 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "fe887800-2704-4577-88f5-cad8ca76497c")
 	)
 	(image
 		(at 46.99 162.56)
@@ -7148,6 +7393,85 @@
 		)
 	)
 	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 185.42 88.9 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "2f8c8f94-95f0-4a41-b7ff-5b0aba5a5c74")
+		(property "Reference" "TP1"
+			(at 190.5 87.6299 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 190.5 90.1699 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 185.42 93.98 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 185.42 93.98 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 185.42 88.9 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "fd527fd6-3360-45d4-bd47-f7d2a51fa1c1")
+		)
+		(instances
+			(project "BekantX"
+				(path "/3102d4aa-3e52-4c94-9248-6f9890a5b267/360302cb-d038-4423-8b50-3e795358de17"
+					(reference "TP1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 127 104.14 0)
 		(unit 1)
@@ -7220,6 +7544,162 @@
 			(project "BekantX"
 				(path "/3102d4aa-3e52-4c94-9248-6f9890a5b267/360302cb-d038-4423-8b50-3e795358de17"
 					(reference "#PWR053")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 185.42 58.42 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "4c4386eb-0c93-4dee-8506-bf0987823910")
+		(property "Reference" "TP4"
+			(at 190.5 57.1499 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 190.5 59.6899 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 185.42 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 185.42 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 185.42 58.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "0fde9df9-e74d-471b-97bd-e8d3e621caf9")
+		)
+		(instances
+			(project "BekantX"
+				(path "/3102d4aa-3e52-4c94-9248-6f9890a5b267/360302cb-d038-4423-8b50-3e795358de17"
+					(reference "TP4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 73.66 68.58 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "535c8fd2-2780-48d4-b920-0f30b82bcc80")
+		(property "Reference" "TP6"
+			(at 70.358 63.5 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 70.358 66.04 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 73.66 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 73.66 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 73.66 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "4b6b59e7-be75-4e6d-98b4-9181be5d267f")
+		)
+		(instances
+			(project "BekantX"
+				(path "/3102d4aa-3e52-4c94-9248-6f9890a5b267/360302cb-d038-4423-8b50-3e795358de17"
+					(reference "TP6")
 					(unit 1)
 				)
 			)
@@ -7713,6 +8193,85 @@
 			(project "BekantX"
 				(path "/3102d4aa-3e52-4c94-9248-6f9890a5b267/360302cb-d038-4423-8b50-3e795358de17"
 					(reference "#PWR075")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 198.12 60.96 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "6e6de631-3881-490c-9232-c5372591c744")
+		(property "Reference" "TP5"
+			(at 203.2 59.6899 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 203.2 62.2299 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 198.12 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 198.12 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 198.12 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "0b75520e-2fca-409c-a295-9fe0f8e5f640")
+		)
+		(instances
+			(project "BekantX"
+				(path "/3102d4aa-3e52-4c94-9248-6f9890a5b267/360302cb-d038-4423-8b50-3e795358de17"
+					(reference "TP5")
 					(unit 1)
 				)
 			)
@@ -8298,6 +8857,83 @@
 		)
 	)
 	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 81.28 66.04 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ab59e902-8295-48a7-abd8-a1f6c8b82f82")
+		(property "Reference" "TP7"
+			(at 77.978 60.96 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 77.978 63.5 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 81.28 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 81.28 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 81.28 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "7e770587-43a7-423a-88c8-55ec432048ba")
+		)
+		(instances
+			(project "BekantX"
+				(path "/3102d4aa-3e52-4c94-9248-6f9890a5b267/360302cb-d038-4423-8b50-3e795358de17"
+					(reference "TP7")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:+3V3")
 		(at 45.72 34.29 0)
 		(unit 1)
@@ -8782,6 +9418,243 @@
 		)
 	)
 	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 185.42 78.74 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d550cf1a-5259-4f45-a86e-4050b69ec8aa")
+		(property "Reference" "TP3"
+			(at 190.5 77.4699 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 190.5 80.0099 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 185.42 83.82 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 185.42 83.82 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 185.42 78.74 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "b2e78556-4421-4cbc-a4e4-7dfd28265046")
+		)
+		(instances
+			(project "BekantX"
+				(path "/3102d4aa-3e52-4c94-9248-6f9890a5b267/360302cb-d038-4423-8b50-3e795358de17"
+					(reference "TP3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 99.06 104.14 180)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d695c7e6-c15d-4ba3-8688-9a553dca50c0")
+		(property "Reference" "TP17"
+			(at 101.6 106.1719 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 101.6 108.7119 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 93.98 104.14 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 93.98 104.14 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 99.06 104.14 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "a164246f-ea6e-46e9-a898-106fe87a683a")
+		)
+		(instances
+			(project "BekantX"
+				(path "/3102d4aa-3e52-4c94-9248-6f9890a5b267/360302cb-d038-4423-8b50-3e795358de17"
+					(reference "TP17")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 86.36 104.14 180)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "e59d622d-dd62-4427-8e48-1075c828b550")
+		(property "Reference" "TP18"
+			(at 88.9 106.1719 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 88.9 108.7119 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 81.28 104.14 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 81.28 104.14 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 86.36 104.14 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "5b037194-48d1-420c-b918-566e35b3bf40")
+		)
+		(instances
+			(project "BekantX"
+				(path "/3102d4aa-3e52-4c94-9248-6f9890a5b267/360302cb-d038-4423-8b50-3e795358de17"
+					(reference "TP18")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R")
 		(at 139.7 176.53 90)
 		(mirror x)
@@ -9098,6 +9971,85 @@
 			(project "BekantX"
 				(path "/3102d4aa-3e52-4c94-9248-6f9890a5b267/360302cb-d038-4423-8b50-3e795358de17"
 					(reference "#PWR055")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 185.42 83.82 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "fea46175-c49c-4489-806a-9099e4a62d0b")
+		(property "Reference" "TP2"
+			(at 190.5 82.5499 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 190.5 85.0899 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 185.42 88.9 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 185.42 88.9 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 185.42 83.82 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "74316806-e0c5-4e10-b1c3-68b7439467ea")
+		)
+		(instances
+			(project "BekantX"
+				(path "/3102d4aa-3e52-4c94-9248-6f9890a5b267/360302cb-d038-4423-8b50-3e795358de17"
+					(reference "TP2")
 					(unit 1)
 				)
 			)
