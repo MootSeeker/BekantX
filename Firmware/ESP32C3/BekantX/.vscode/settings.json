@@ -14,5 +14,6 @@
     "--query-driver=**",
     "--compile-commands-dir=c:\\Entwicklung\\Projekte\\BekantX\\Firmware\\ESP32C3\\BekantX\\build"
   ],
-  "idf.portWin": "COM3"
+  "idf.portWin": "COM3",
+  "idf.flashType": "UART"
 }

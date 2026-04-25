@@ -22,7 +22,7 @@
 #include "esp_wifi.h"
 #include "esp_console.h"
 #include "esp_mac.h"
-#include "ftm_app.h"
+#include "core/legacy_ftm_console.h"
 
 typedef struct {
     struct arg_str *ssid;
@@ -763,7 +763,7 @@ void register_wifi(void)
     ESP_ERROR_CHECK( esp_console_cmd_register(&ftm_cmd) );
 }
 
-void ftm_app_start(void)
+void LegacyConsoleStart(void)
 {
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {

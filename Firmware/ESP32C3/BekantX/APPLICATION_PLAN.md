@@ -91,6 +91,20 @@ Planned behavior:
 - diagnostics/
   - HealthMonitor, counters, watchdog integration
 
+Current scaffold in repository:
+- main/
+  - Thin C ESP-IDF entry point only (`app_main` bridge)
+- components/bekantx_application/
+  - C++ application orchestration and bootstrap entry
+- components/bekantx_core/
+  - C-based ESP-IDF core/runtime integration and current legacy FTM console flow
+- components/bekantx_drivers/
+  - C driver layer for hardware-facing modules
+- components/bekantx_libs/
+  - Shared wrappers and future third-party/external library integration
+- components/bekantx_utils/
+  - C/C++ wrapper boundary and runtime bridging helpers
+
 ## 3.2 Runtime Model
 - Event-driven architecture with FreeRTOS tasks:
   - TaskWifi

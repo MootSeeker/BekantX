@@ -1,6 +1,6 @@
-#include "ftm_app.h"
+#include "utils/CppWrapper.h"
 
 void app_main(void)
 {
-    ftm_app_start();
+    CppWrapperStart();
 }
