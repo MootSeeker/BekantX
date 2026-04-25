@@ -11,5 +11,6 @@ _autosave-*
 *.lck
 fp-info-cache
 .history/
-Firmware/ESP32C3/BekantX/.vscode/c_cpp_properties.json
-Firmware/ESP32C3/BekantX/.vscode/settings.json
+
+
+*.vscode/
