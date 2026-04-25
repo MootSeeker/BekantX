@@ -11,3 +11,6 @@ _autosave-*
 *.lck
 fp-info-cache
 .history/
+
+
+*.vscode/
