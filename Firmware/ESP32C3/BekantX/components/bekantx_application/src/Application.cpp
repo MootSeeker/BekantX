@@ -25,10 +25,14 @@ constexpr uint32_t LED_TICK_INTERVAL   = 16;         /* ~60 Hz */
 
 namespace application {
 
+/**
+ * @brief Runs the main application loop for BekantX.§
+ */
 void BekantXApplication::Run()
 {
     ESP_LOGI(TAG, "Starting BekantX application layer");
 
+    // Initialize libraries and drivers before starting the core runtime
     LibraryInit();
     DriverInit();
 
