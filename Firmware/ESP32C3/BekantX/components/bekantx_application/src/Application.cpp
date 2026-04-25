@@ -4,7 +4,6 @@
 #include "drivers/LedAnimator.hpp"
 
 extern "C" {
-#include "core/core_runtime.h"
 #include "drivers/driver_registry.h"
 #include "libs/library_registry.h"
 #include "esp_timer.h"
@@ -52,8 +51,6 @@ void BekantXApplication::Run()
     static StatusIndicator status(led, animator);
 
     status.SetStatus(DeviceStatus::kBooting);
-
-    CoreStart();
 
     /* LED animation loop — runs in the main task context */
     while (true) {
