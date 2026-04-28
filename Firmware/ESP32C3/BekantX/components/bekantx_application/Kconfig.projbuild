@@ -1,0 +1,47 @@
+menu "BekantX WiFi Manager"
+
+    config WIFI_MGR_MAX_CONNECT_ATTEMPTS
+        int "Maximum STA connect attempts before fallback to portal"
+        range 1 20
+        default 5
+        help
+            Number of failed connection attempts before the device switches
+            to provisioning portal mode.
+
+    config WIFI_MGR_CONNECT_TIMEOUT_MS
+        int "Per-attempt connect timeout in milliseconds"
+        range 5000 60000
+        default 15000
+        help
+            Maximum time to wait for an IP address on each connection attempt.
+
+    config WIFI_MGR_AP_SSID_PREFIX
+        string "SoftAP SSID prefix for provisioning mode"
+        default "BekantX-Setup-"
+        help
+            The SSID visible to the user during provisioning is this prefix
+            followed by the last two bytes of the MAC address.
+
+    config WIFI_MGR_AP_CHANNEL
+        int "SoftAP Wi-Fi channel"
+        range 1 13
+        default 1
+
+    config WIFI_MGR_AP_MAX_CONN
+        int "SoftAP maximum simultaneous client connections"
+        range 1 4
+        default 2
+
+    config WIFI_MGR_PORTAL_PORT
+        int "HTTP provisioning portal port"
+        range 1 65535
+        default 80
+
+    config WIFI_MGR_NVS_NAMESPACE
+        string "NVS namespace for Wi-Fi credentials"
+        default "wifi_mgr"
+        help
+            Dedicated NVS namespace used to store the SSID and password.
+            Credentials are never logged to serial output.
+
+endmenu
