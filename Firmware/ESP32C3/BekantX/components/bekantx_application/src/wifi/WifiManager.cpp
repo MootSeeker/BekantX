@@ -1,5 +1,6 @@
 #include "application/wifi/WifiManager.hpp"
 #include "application/StatusIndicator.hpp"
+#include "mqtt/MqttCredentialStore.hpp"
 
 #include <cstring>
 #include <cstdio>
@@ -8,6 +9,7 @@ extern "C" {
 #include "esp_log.h"
 #include "esp_wifi.h"
 #include "esp_event.h"
+#include "esp_sleep.h"
 #include "nvs_flash.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -56,9 +58,11 @@ void WifiManager::_ip_event_handler(void *arg, esp_event_base_t /*base*/,
 /*  Init                                                                */
 /* ------------------------------------------------------------------ */
 
-void WifiManager::Init(StatusIndicator& status)
+void WifiManager::Init(StatusIndicator& status,
+                       mqtt::MqttCredentialStore* mqtt_store)
 {
-    status_ = &status;
+    status_     = &status;
+    mqtt_store_ = mqtt_store;
     event_queue_ = xQueueCreate(16, sizeof(wifi_mgr_event_t));
 
     /* NVS — erase on corruption (first boot or partition mismatch) */
@@ -122,8 +126,10 @@ void WifiManager::_run_task()
     WifiCredentials creds = {};
 
     if (!force_portal_ && store_.Load(creds)) {
+        creds_loaded_ = true;
         _enter_connecting(creds);
     } else {
+        creds_loaded_ = false;
         force_portal_ = false;
         _enter_portal();
     }
@@ -188,11 +194,21 @@ void WifiManager::_dispatch_event(const wifi_mgr_event_t& evt)
     case State::kPortal:
         if (evt.type == WIFI_MGR_EVT_SAVE_CREDS) {
             WifiCredentials new_creds = {};
-            /* strlcpy guarantees null-termination */
             snprintf(new_creds.ssid,     sizeof(new_creds.ssid),     "%s", evt.ssid);
             snprintf(new_creds.password, sizeof(new_creds.password), "%s", evt.password);
 
             store_.Save(new_creds);
+
+            /* Save MQTT credentials if provided */
+            if (mqtt_store_ && evt.mqtt_uri[0] != '\0') {
+                mqtt_credentials_t mqtt_creds = {};
+                snprintf(mqtt_creds.broker_uri, sizeof(mqtt_creds.broker_uri), "%s", evt.mqtt_uri);
+                snprintf(mqtt_creds.username,   sizeof(mqtt_creds.username),   "%s", evt.mqtt_user);
+                snprintf(mqtt_creds.password,   sizeof(mqtt_creds.password),   "%s", evt.mqtt_pass);
+                mqtt_store_->Save(mqtt_creds);
+            }
+
+            creds_loaded_ = true;
             _stop_portal();
             _enter_connecting(new_creds);
         }
@@ -285,12 +301,20 @@ void WifiManager::_on_connect_failure()
              connect_attempts_, CONFIG_WIFI_MGR_MAX_CONNECT_ATTEMPTS);
 
     if (connect_attempts_ >= CONFIG_WIFI_MGR_MAX_CONNECT_ATTEMPTS) {
-        ESP_LOGE(TAG, "Max attempts reached, switching to provisioning portal");
         if (wifi_started_) {
             esp_wifi_stop();
             wifi_started_ = false;
         }
         connect_attempts_ = 0;
+
+#if CONFIG_BEKANTX_SLEEP_ENABLED
+        if (creds_loaded_) {
+            ESP_LOGE(TAG, "Max attempts reached with stored credentials, entering deep sleep");
+            _enter_deep_sleep();
+            /* Does not return */
+        }
+#endif
+        ESP_LOGE(TAG, "Max attempts reached, switching to provisioning portal");
         _enter_portal();
     } else {
         /* Exponential backoff: 1 s, 2 s, 4 s, 8 s, 16 s */
@@ -321,6 +345,35 @@ void WifiManager::_configure_softap()
 
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &ap_cfg));
     ESP_LOGI(TAG, "SoftAP SSID: '%s'", ap_cfg.ap.ssid);
+}
+
+void WifiManager::_enter_deep_sleep()
+{
+#if CONFIG_BEKANTX_SLEEP_ENABLED
+    if (status_) { status_->SetStatus(DeviceStatus::kSleep); }
+    /* Brief delay so LED state change is visible before power-down */
+    vTaskDelay(pdMS_TO_TICKS(500));
+
+    const int wake_gpio  = CONFIG_BEKANTX_SLEEP_WAKE_GPIO;
+    const int wake_level = CONFIG_BEKANTX_SLEEP_WAKE_LEVEL;
+
+    ESP_LOGI(TAG, "Configuring GPIO %d (level %d) as deep-sleep wake source",
+             wake_gpio, wake_level);
+
+#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32C6 || CONFIG_IDF_TARGET_ESP32H2
+    /* C3/C6/H2: GPIO wakeup */
+    const uint64_t pin_mask = (1ULL << wake_gpio);
+    esp_deep_sleep_enable_gpio_wakeup(pin_mask,
+        wake_level ? ESP_GPIO_WAKEUP_GPIO_HIGH : ESP_GPIO_WAKEUP_GPIO_LOW);
+#else
+    /* ESP32/S2/S3: EXT0 wakeup */
+    esp_sleep_enable_ext0_wakeup((gpio_num_t)wake_gpio, wake_level);
+#endif
+
+    ESP_LOGI(TAG, "Entering deep sleep — press button to wake");
+    esp_deep_sleep_start();
+    /* Does not return.  On wake the ESP reboots through app_main. */
+#endif
 }
 
 }  // namespace application

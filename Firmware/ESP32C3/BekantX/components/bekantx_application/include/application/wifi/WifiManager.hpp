@@ -12,6 +12,8 @@
 #include "application/wifi/WifiCredentialStore.hpp"
 #include "libs/provisioning/wifi_mgr_event.h"
 
+namespace mqtt { class MqttCredentialStore; }
+
 namespace application {
 
 class StatusIndicator;
@@ -45,9 +47,13 @@ public:
     /**
      * @brief Initialise subsystems: NVS, netif, event loop, Wi-Fi driver.
      * @note  Must be called before Start().
-     * @param status  Reference to the application StatusIndicator for LED updates.
+     * @param status      Reference to the application StatusIndicator for LED updates.
+     * @param mqtt_store  Optional reference to MqttCredentialStore.
+     *                    When non-null, MQTT credentials from the portal are
+     *                    saved here alongside Wi-Fi credentials.
      */
-    void Init(StatusIndicator& status);
+    void Init(StatusIndicator& status,
+              mqtt::MqttCredentialStore* mqtt_store = nullptr);
 
     /** @brief Spawn the wifi_mgr_task and begin the state machine. */
     void Start();
@@ -78,6 +84,7 @@ private:
     void _enter_portal();
     void _stop_portal();
     void _on_connect_failure();
+    void _enter_deep_sleep();
 
     /* Event dispatcher */
     void _dispatch_event(const wifi_mgr_event_t& evt);
@@ -93,6 +100,7 @@ private:
 
     /* ---- members ---- */
     StatusIndicator *status_       = nullptr;
+    mqtt::MqttCredentialStore *mqtt_store_ = nullptr;
     QueueHandle_t    event_queue_  = nullptr;
     TaskHandle_t     task_handle_  = nullptr;
 
@@ -106,6 +114,7 @@ private:
     State            state_             = State::kConnecting;
     int              connect_attempts_  = 0;
     bool             force_portal_      = false;
+    bool             creds_loaded_      = false; /**< true when NVS had credentials at boot */
 
     WifiCredentialStore store_;
     WifiCredentials     current_creds_  = {};

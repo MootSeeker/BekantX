@@ -1,0 +1,88 @@
+menu "BekantX MQTT Service"
+
+    config MQTT_BROKER_URI_DEFAULT
+        string "Default MQTT broker URI (fallback when NVS is empty)"
+        default "mqtt://homeassistant.local"
+        help
+            Default broker URI used when no credentials have been configured
+            through the captive portal.  Format: mqtt://host or mqtts://host.
+
+    config MQTT_TOPIC_PREFIX
+        string "MQTT topic prefix"
+        default "bekantx"
+        help
+            All topics are published/subscribed under {prefix}/{device_id}/...
+
+    config MQTT_DEVICE_ID
+        string "MQTT device identifier"
+        default "desk001"
+        help
+            Unique device ID used in topic paths and HA discovery.
+
+    config MQTT_KEEPALIVE_SEC
+        int "MQTT keep-alive interval in seconds"
+        range 10 600
+        default 60
+
+    config MQTT_CMD_QUEUE_DEPTH
+        int "Command queue depth"
+        range 2 32
+        default 8
+        help
+            Maximum number of desk commands buffered before the SPI bridge
+            consumes them.
+
+    config MQTT_QOS
+        int "Default MQTT QoS level"
+        range 0 2
+        default 1
+
+    config MQTT_HA_DISCOVERY_ENABLED
+        bool "Enable Home Assistant MQTT auto-discovery"
+        default y
+        help
+            Publish a retained discovery config so the desk appears
+            automatically in Home Assistant as a Cover entity.
+
+    config MQTT_HA_DISCOVERY_PREFIX
+        string "Home Assistant discovery topic prefix"
+        default "homeassistant"
+        depends on MQTT_HA_DISCOVERY_ENABLED
+
+    config MQTT_NVS_NAMESPACE
+        string "NVS namespace for MQTT credentials"
+        default "mqtt_cfg"
+        help
+            Dedicated NVS namespace for broker URI, username and password.
+
+endmenu
+
+menu "BekantX Deep Sleep"
+
+    config BEKANTX_SLEEP_ENABLED
+        bool "Enable deep sleep on connection failure"
+        default y
+        help
+            When enabled the device enters deep sleep after all Wi-Fi
+            connection attempts are exhausted (only when stored credentials
+            exist).  A GPIO button press wakes the device.
+
+    config BEKANTX_SLEEP_WAKE_GPIO
+        int "GPIO pin for deep-sleep wake button"
+        range 0 21
+        default 9
+        depends on BEKANTX_SLEEP_ENABLED
+        help
+            GPIO connected to a button that wakes the ESP32-C3 from
+            deep sleep.
+
+    config BEKANTX_SLEEP_WAKE_LEVEL
+        int "Wake GPIO active level (0 = LOW, 1 = HIGH)"
+        range 0 1
+        default 0
+        depends on BEKANTX_SLEEP_ENABLED
+        help
+            GPIO level that triggers wake-up.  0 means the button pulls
+            the pin LOW when pressed.
+
+endmenu

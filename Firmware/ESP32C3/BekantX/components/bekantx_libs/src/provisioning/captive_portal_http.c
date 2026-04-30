@@ -187,8 +187,8 @@ static esp_err_t handler_scan(httpd_req_t *req)
 
 static esp_err_t handler_save(httpd_req_t *req)
 {
-    /* Read body — SSID (32) + '&' + pass key/value (64) + overhead */
-    char body[200] = { 0 };
+    /* Read body — WiFi + MQTT fields need more space */
+    char body[512] = { 0 };
     int received = httpd_req_recv(req, body, sizeof(body) - 1);
     if (received <= 0) {
         httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "Empty body");
@@ -210,11 +210,22 @@ static esp_err_t handler_save(httpd_req_t *req)
         return ESP_FAIL;
     }
 
+    /* Parse optional MQTT fields */
+    char mqtt_uri[128]  = { 0 };
+    char mqtt_user[65]  = { 0 };
+    char mqtt_pass[65]  = { 0 };
+    _parse_form_field(body, "mqtt_uri",  mqtt_uri,  sizeof(mqtt_uri));
+    _parse_form_field(body, "mqtt_user", mqtt_user, sizeof(mqtt_user));
+    _parse_form_field(body, "mqtt_pass", mqtt_pass, sizeof(mqtt_pass));
+
     /* Post event to WifiManager task — NVS write happens there, not here */
     if (s_event_queue) {
         wifi_mgr_event_t evt = { .type = WIFI_MGR_EVT_SAVE_CREDS };
-        strncpy(evt.ssid,     ssid, sizeof(evt.ssid) - 1);
-        strncpy(evt.password, pass, sizeof(evt.password) - 1);
+        strncpy(evt.ssid,      ssid,      sizeof(evt.ssid) - 1);
+        strncpy(evt.password,  pass,      sizeof(evt.password) - 1);
+        strncpy(evt.mqtt_uri,  mqtt_uri,  sizeof(evt.mqtt_uri) - 1);
+        strncpy(evt.mqtt_user, mqtt_user, sizeof(evt.mqtt_user) - 1);
+        strncpy(evt.mqtt_pass, mqtt_pass, sizeof(evt.mqtt_pass) - 1);
         /* Non-blocking: if the queue is full the request is still acknowledged */
         if (xQueueSend(s_event_queue, &evt, 0) != pdTRUE) {
             ESP_LOGW(TAG, "Event queue full, credentials dropped");

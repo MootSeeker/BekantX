@@ -24,7 +24,7 @@
   h1 { font-size: 1.35rem; margin: 0 0 4px; }
   p.sub { color: #666; font-size: .9rem; margin: 0 0 20px; }
   label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: 4px; color: #333; }
-  select, input[type="password"] {
+  select, input[type="password"], input[type="text"] {
     width: 100%;
     padding: 9px 12px;
     border: 1px solid #ccc;
@@ -76,6 +76,19 @@
   <label for="pass">Passwort</label>
   <input type="password" id="pass" placeholder="WLAN Passwort eingeben" autocomplete="current-password">
 
+  <hr style="border:none;border-top:1px solid #e5e5ea;margin:20px 0 16px">
+  <h2 style="font-size:1.1rem;margin:0 0 4px">MQTT Einstellungen</h2>
+  <p class="sub">Verbindung zum Smart-Home Broker (optional).</p>
+
+  <label for="mqtt_uri">Broker URI</label>
+  <input type="text" id="mqtt_uri" placeholder="mqtt://192.168.1.100" autocomplete="url">
+
+  <label for="mqtt_user">Benutzername</label>
+  <input type="text" id="mqtt_user" placeholder="MQTT Benutzername" autocomplete="username">
+
+  <label for="mqtt_pass">Passwort</label>
+  <input type="password" id="mqtt_pass" placeholder="MQTT Passwort" autocomplete="off">
+
   <button class="btn-primary" onclick="connect()">Verbinden &amp; Speichern</button>
 
   <div id="status"></div>
@@ -124,6 +137,12 @@ function connect() {
   }
   setStatus('Anmeldedaten werden gespeichert...', 'info');
   var body = 'ssid=' + encodeURIComponent(ssid) + '&pass=' + encodeURIComponent(pass);
+  var mqttUri  = document.getElementById('mqtt_uri').value;
+  var mqttUser = document.getElementById('mqtt_user').value;
+  var mqttPass = document.getElementById('mqtt_pass').value;
+  if (mqttUri)  body += '&mqtt_uri='  + encodeURIComponent(mqttUri);
+  if (mqttUser) body += '&mqtt_user=' + encodeURIComponent(mqttUser);
+  if (mqttPass) body += '&mqtt_pass=' + encodeURIComponent(mqttPass);
   fetch('/save', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

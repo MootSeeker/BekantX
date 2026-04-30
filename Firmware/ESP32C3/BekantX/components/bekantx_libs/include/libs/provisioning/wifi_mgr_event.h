@@ -22,8 +22,11 @@ typedef enum {
 
 typedef struct {
     wifi_mgr_event_type_t type;
-    char ssid[33];      /**< Populated only when type == WIFI_MGR_EVT_SAVE_CREDS */
-    char password[65];  /**< Populated only when type == WIFI_MGR_EVT_SAVE_CREDS */
+    char ssid[33];          /**< Populated only when type == WIFI_MGR_EVT_SAVE_CREDS */
+    char password[65];      /**< Populated only when type == WIFI_MGR_EVT_SAVE_CREDS */
+    char mqtt_uri[128];     /**< Populated only when type == WIFI_MGR_EVT_SAVE_CREDS */
+    char mqtt_user[65];     /**< Populated only when type == WIFI_MGR_EVT_SAVE_CREDS */
+    char mqtt_pass[65];     /**< Populated only when type == WIFI_MGR_EVT_SAVE_CREDS */
 } wifi_mgr_event_t;
 
 #ifdef __cplusplus

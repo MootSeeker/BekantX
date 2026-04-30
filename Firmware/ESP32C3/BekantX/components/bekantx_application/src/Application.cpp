@@ -1,6 +1,8 @@
 #include "application/Application.hpp"
 #include "application/StatusIndicator.hpp"
 #include "application/wifi/WifiManager.hpp"
+#include "mqtt/MqttCredentialStore.hpp"
+#include "mqtt/MqttService.hpp"
 #include "drivers/LedDriver.hpp"
 #include "drivers/LedAnimator.hpp"
 
@@ -54,9 +56,15 @@ void BekantXApplication::Run()
     status.SetStatus(DeviceStatus::kBooting);
 
     /* Initialise and start the Wi-Fi manager — spawns its own FreeRTOS task */
+    static mqtt::MqttCredentialStore mqtt_cred_store;
     static WifiManager wifi;
-    wifi.Init(status);
+    wifi.Init(status, &mqtt_cred_store);
     wifi.Start();
+
+    /* Initialise and start the MQTT service — connects when Wi-Fi is up */
+    static mqtt::MqttService mqtt;
+    mqtt.Init(mqtt_cred_store);
+    mqtt.Start();
 
     /* LED animation loop — runs in the main task context */
     while (true) {
