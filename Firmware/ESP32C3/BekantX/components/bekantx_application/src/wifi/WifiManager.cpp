@@ -63,7 +63,7 @@ void WifiManager::Init(StatusIndicator& status,
 {
     status_     = &status;
     mqtt_store_ = mqtt_store;
-    event_queue_ = xQueueCreate(16, sizeof(wifi_mgr_event_t));
+    event_queue_ = xQueueCreate(4, sizeof(wifi_mgr_event_t));
 
     /* NVS — erase on corruption (first boot or partition mismatch) */
     esp_err_t err = nvs_flash_init();
@@ -238,7 +238,11 @@ void WifiManager::_enter_connecting(const WifiCredentials& creds)
     }
 
     wifi_config_t sta_cfg = {};
-    /* wifi_sta_config_t.ssid / .password are uint8_t arrays, not null-terminated */
+    /*
+     * wifi_sta_config_t fields are fixed-size uint8_t arrays (32 / 64 bytes).
+     * Null-termination is not required by ESP-IDF — strncpy fills the
+     * remainder with zeros which is the expected format.
+     */
     strncpy(reinterpret_cast<char *>(sta_cfg.sta.ssid),
             creds.ssid, sizeof(sta_cfg.sta.ssid));
     strncpy(reinterpret_cast<char *>(sta_cfg.sta.password),

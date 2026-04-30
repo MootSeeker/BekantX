@@ -60,6 +60,14 @@ void MqttService::_mqtt_event_handler(void* arg, esp_event_base_t /*base*/,
         break;
 
     case MQTT_EVENT_DATA:
+        /* Skip continuation fragments of multi-part messages */
+        if (event->current_data_offset > 0) {
+            break;
+        }
+        if (event->total_data_len > (int)(sizeof(msg.data) - 1)) {
+            ESP_LOGW(TAG, "MQTT payload truncated (%d > %zu bytes)",
+                     event->total_data_len, sizeof(msg.data) - 1);
+        }
         msg.type = SvcEvent::kMqttData;
         /* Copy topic */
         if (event->topic && event->topic_len > 0) {
@@ -113,7 +121,8 @@ void MqttService::Init(MqttCredentialStore& store)
 
     _build_topics();
 
-    ESP_LOGI(TAG, "MqttService initialised (broker: %s)", credentials_.broker_uri);
+    ESP_LOGD(TAG, "MqttService initialised (broker: %s)", credentials_.broker_uri);
+    ESP_LOGI(TAG, "MqttService initialised");
 }
 
 void MqttService::Start()
@@ -253,11 +262,15 @@ void MqttService::_connect_mqtt()
 
 void MqttService::_disconnect_mqtt()
 {
-    if (mqtt_client_ && mqtt_started_) {
+    if (!mqtt_started_) {
+        return;
+    }
+    /* Clear flag first to guard against re-entry from another context */
+    mqtt_started_ = false;
+    if (mqtt_client_) {
         esp_mqtt_client_stop(mqtt_client_);
         esp_mqtt_client_destroy(mqtt_client_);
-        mqtt_client_  = nullptr;
-        mqtt_started_ = false;
+        mqtt_client_ = nullptr;
     }
     public_state_.store(MqttState::kDisconnected);
 }

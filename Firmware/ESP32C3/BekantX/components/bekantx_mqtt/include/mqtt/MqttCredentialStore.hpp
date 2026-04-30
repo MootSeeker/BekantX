@@ -2,9 +2,7 @@
 
 #include <cstddef>
 
-extern "C" {
 #include "mqtt/mqtt_types.h"
-}
 
 namespace mqtt {
 

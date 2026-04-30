@@ -127,7 +127,8 @@ static esp_err_t handler_scan(httpd_req_t *req)
         return ESP_FAIL;
     }
 
-    /* Blocking scan — runs in the httpd task, acceptable for portal use */
+    /* Blocking scan — runs in the single-threaded httpd task.
+     * Parallel requests are serialised by httpd, so no concurrent-scan guard needed. */
     esp_err_t err = esp_wifi_scan_start(NULL, true);
     if (err != ESP_OK) {
         ESP_LOGW(TAG, "Scan failed: %s", esp_err_to_name(err));
@@ -316,6 +317,7 @@ esp_err_t portal_http_start(httpd_handle_t *out_handle, QueueHandle_t event_queu
 
 esp_err_t portal_http_stop(httpd_handle_t handle)
 {
+    esp_err_t err = httpd_stop(handle);
     s_event_queue = NULL;
-    return httpd_stop(handle);
+    return err;
 }

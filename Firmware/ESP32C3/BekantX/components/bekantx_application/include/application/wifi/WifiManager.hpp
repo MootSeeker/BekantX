@@ -113,7 +113,7 @@ private:
 
     State            state_             = State::kConnecting;
     int              connect_attempts_  = 0;
-    bool             force_portal_      = false;
+    std::atomic<bool> force_portal_{false};
     bool             creds_loaded_      = false; /**< true when NVS had credentials at boot */
 
     WifiCredentialStore store_;

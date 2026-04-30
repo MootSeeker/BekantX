@@ -38,7 +38,8 @@ static int              s_sock        = -1;
 static int _build_dns_response(const uint8_t *query, int query_len,
                                 uint8_t *resp, int resp_size)
 {
-    if (query_len < 12 || resp_size < query_len + 16) {
+    /* Reject too-short queries and ensure response fits (form avoids int overflow) */
+    if (query_len < 12 || query_len > resp_size - 16) {
         return -1;
     }
 

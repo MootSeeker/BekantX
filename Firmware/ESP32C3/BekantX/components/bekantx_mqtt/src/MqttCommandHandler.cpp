@@ -80,7 +80,8 @@ void MqttCommandHandler::HandleMessage(const char* topic, const char* payload, i
 
     cJSON_Delete(root);
 
-    /* Deduplication: drop identical commands within window */
+    /* Deduplication: drop identical commands within window.
+     * uint32_t wraps after ~49 days; unsigned subtraction is still correct. */
     uint32_t now_ms = (uint32_t)(esp_timer_get_time() / 1000);
     if ((now_ms - last_cmd_time_) < DEDUP_WINDOW_MS &&
         memcmp(&cmd, &last_cmd_, sizeof(desk_command_t)) == 0) {

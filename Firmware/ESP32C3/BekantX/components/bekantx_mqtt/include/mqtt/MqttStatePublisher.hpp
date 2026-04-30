@@ -3,9 +3,7 @@
 struct esp_mqtt_client;
 typedef struct esp_mqtt_client *esp_mqtt_client_handle_t;
 
-extern "C" {
 #include "mqtt/mqtt_types.h"
-}
 
 namespace mqtt {
 
