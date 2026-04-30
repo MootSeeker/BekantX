@@ -1,5 +1,8 @@
 #include "application/Application.hpp"
 #include "application/StatusIndicator.hpp"
+#include "application/wifi/WifiManager.hpp"
+#include "mqtt/MqttCredentialStore.hpp"
+#include "mqtt/MqttService.hpp"
 #include "drivers/LedDriver.hpp"
 #include "drivers/LedAnimator.hpp"
 
@@ -16,8 +19,8 @@ extern "C" {
 namespace {
 constexpr const char *TAG = "bkx_app";
 
-constexpr int      LED_GPIO            = 18;
-constexpr uint16_t LED_COUNT           = 1;
+constexpr int      LED_GPIO            = 10;
+constexpr uint16_t LED_COUNT           = 8;
 constexpr uint32_t LED_RMT_RESOLUTION  = 10000000;  /* 10 MHz */
 constexpr uint32_t LED_TICK_INTERVAL   = 16;         /* ~60 Hz */
 }
@@ -51,6 +54,17 @@ void BekantXApplication::Run()
     static StatusIndicator status(led, animator);
 
     status.SetStatus(DeviceStatus::kBooting);
+
+    /* Initialise and start the Wi-Fi manager — spawns its own FreeRTOS task */
+    static mqtt::MqttCredentialStore mqtt_cred_store;
+    static WifiManager wifi;
+    wifi.Init(status, &mqtt_cred_store);
+    wifi.Start();
+
+    /* Initialise and start the MQTT service — connects when Wi-Fi is up */
+    static mqtt::MqttService mqtt;
+    mqtt.Init(mqtt_cred_store);
+    mqtt.Start();
 
     /* LED animation loop — runs in the main task context */
     while (true) {

@@ -99,6 +99,20 @@ void StatusIndicator::_apply_pattern(DeviceStatus status)
             animator_.SetSolid(RGB_BLUE);
             break;
 
+        // A slow cyan breath indicates that the device is in provisioning portal mode.
+        case DeviceStatus::kWifiPortal:
+        {
+            LedFadeConfig cfg = {
+                .color      = RGB_CYAN,
+                .mode       = LED_BREATH,
+                .period_ms  = 3000,
+                .min_bright = 0,
+                .max_bright = 120,
+            };
+            animator_.StartFade(cfg);
+            break;
+        }
+
         // A blinking red light indicates that the device has encountered an error.
         case DeviceStatus::kError: 
         {

@@ -31,6 +31,7 @@ namespace application
         kReady,
         kConnecting,
         kConnected,
+        kWifiPortal,  /* SoftAP provisioning portal active — awaiting credentials */
         kError,
         kOta,
         kSleep,
