@@ -24,6 +24,9 @@ Eingerichtet 2026-11-13, damit Claude Leiterplatte und Gehäuse selbst erzeugen 
 - Telemetrie abgeschaltet (`-da`, `%APPDATA%\freerouting\freerouting.json`). Der Router prüft beim Start auf Updates (Netzwerkzugriff).
 - Erkenntnisse: Kostenparameter nur als ganze Zahlen; `automatic_neckdown=false` verhindert zu dünne Leiterbahnen; Zonen müssen nach dem Import neu gefüllt werden; Einzelne JVM-Abstürze kommen vor (Wiederholung im Skript). Details im Skill `pcb-design`.
 
+## Schaltplan-Edits per Skript
+- `tools/sch/sch_edit.py`: editiert `.kicad_sch` auf Textebene (Blöcke klonen/löschen, Symbole, Labels, Drähte setzen), ohne die Datei neu zu serialisieren. Pin-Positionen werden aus `lib_symbols` berechnet; die Transformation ist gegen alle bestehenden Sheets geprüft. Nach jedem Lauf ERC, Netzliste und PDF über `kicad-cli` auf dem Root-Sheet.
+
 ## Workflow
 1. PCB-Umriss/Bohrungen aus KiCad (`pcbnew` oder `export step`) lesen.
 2. Gehäuse in build123d parametrisch modellieren, STEP+STL nach `CAD/` exportieren.

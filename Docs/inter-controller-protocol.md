@@ -43,6 +43,8 @@ Unless implementation constraints require otherwise, the protocol assumes:
 
 This specification does not require an interrupt line. Event delivery is poll-based.
 
+Hardware note: the board routes one optional line `FSPI_INT` (primary PB5, open-drain, to secondary GPIO9 with pull-up). It is reserved for a future wake/event signal and carries no protocol meaning in this version. GPIO9 is an ESP32-C3 strapping pin, so the primary must leave the line released while the secondary resets.
+
 ## 3. Link Model
 
 ### 3.1 Direction and Ownership

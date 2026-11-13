@@ -30,6 +30,6 @@ CAD/            Gehäuse (Case, Lid als STL)
 Docs/           Specs, Datenblätter ESP32-S2, drawio
 Firmware/ESP32C3/BekantX   ESP-IDF C++ Projekt (IoT-Coprozessor)
 Firmware/ST/Bekanntx       STM32CubeMX (.ioc), noch kein Code
-Pcb_Controller/ KiCad: Hauptplatine (STM32 + ESP32-C3, LIN, Power)
-Pcb_HMI/        KiCad: Bedienplatine (OLED, 7-Segment HDSP-433G)
+Pcb_Controller/ KiCad: die eine Platine (STM32 + ESP32-C3, LIN, Power, HMI)
+Pcb_HMI/        KiCad: frühere Bedienplatine (abgelöst, Referenz)
 ```
