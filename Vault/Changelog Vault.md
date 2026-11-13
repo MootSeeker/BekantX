@@ -7,5 +7,6 @@
 - 2026-11-13 – Schaltplan-Optimierungen: Schutz am Tisch-Eingang, 3.3-V-Netzteil mit LMR51610, SK6812 an GPIO8, Boot-Taster, NRST-Kondensator, SPI1 im `.ioc` als Slave, Footprints/MPNs gesetzt. Display weiter offen (Datenblatt fehlt).
 - 2026-11-13 – OLED verdrahtet (FPC J3, Ladungspumpe, IREF); offene Prüfpunkte zu VDD2 und Stecker in [[Offene Punkte]].
 - 2026-11-13 – Review-Befunde eingearbeitet: LIN_TX-Pull-up, SPI-Netze nach ESP-IOMUX, 100 nF an U9, CHIP_EN-RC, `.ioc` (PB5 Open-Drain, Tasten-Pull-ups). Offen bleiben SK6812 an 3.3 V und die ESP-Firmware.
+- 2026-11-13 – Gehäuse Rev. 2 parametrisch aufgebaut (build123d), Platinen-Schnittstelle als JSON, Passprüfung gegen Hüllgeometrie bestanden; Probedruck offen.
 
 Zurück: [[00 Index]]

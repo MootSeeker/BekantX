@@ -47,6 +47,14 @@ Hinweise für die Firmware (nicht verifiziert): PA8/PA9/PA10 liegen im UCPD-Umfe
 Dev auf ESP32-S2-Saola (Datenblätter in `Docs/`), Zielhardware ESP32-C3. Wake-GPIO per Kconfig = GPIO 9, WS2812 als Status-LED.
 
 ## Gehäuse
-`CAD/BekantX_Case.stl`, `CAD/BekantX_Lid.stl` (nur STL, keine Quelldatei im Repo).
+**Rev. 2 (2026-11-13, Branch `cad/enclosure-single-pcb`):** parametrisch in build123d, Quelle `CAD/src/bekantx_enclosure.py` (alle Masse im Block `Params`). Exporte: `CAD/BekantX_Case_r2`, `BekantX_Lid_r2`, `BekantX_ButtonCap_r2` (je STEP + STL). Die alten `BekantX_Case.stl` / `BekantX_Lid.stl` bleiben als Stil-Referenz und sind **nicht** ersetzt, solange r2 nicht gedruckt und geprüft ist.
+
+- **Form wie das Original**: Frontblock mit Tasten und Anzeige, um 55° abgewinkelter Arm zur Befestigung unter der Tischplatte, Deckel mit Knick in einem Falz. Der Frontblock ist tiefer (44 statt 31.5 mm) und höher (23 statt 20 mm), damit die eine Platine hineinpasst. Aussenmasse 140 × 76.7 × 53 mm (alt 140 × 64.1 × 53).
+- **Platine**: 129 × 38 × 1.6 mm, liegt flach hinter der Front auf 6 Domen (selbstschneidende Schrauben 2.2 mm, Vorbohrung 1.9 wie im Original). Die Seite mit Tasten und OLED-Stecker (F.Cu) zeigt zur Front, 6 mm Abstand; Rückseite 11.4 mm frei (C40 braucht 10.2). Der Arm enthält nur noch Kabel und Zugentlastung.
+- **Das Gehäuse gibt die Platine vor**, weil das Layout noch leer ist: Umriss, Bohrungen, Tasten, OLED, LEDs, USB und Höhengrenzen stehen in `CAD/board_interface.json` (vom Skript erzeugt, Board-Koordinaten wie in KiCad auf F.Cu gesehen). Sobald ein Layout existiert, dreht sich die Richtung um: Board-STEP als Eingang für die Passprüfung.
+- **Bedienfeld**: Tastenbild des Originals (6 Löcher 10.6 mm, Raster 15 mm) mit gedruckten Kappen (Flansch hinter der Front, B3F-1000). OLED-Glas von innen in eine Tasche geklebt, Fenster = Sichtfläche 30.4 × 15.7 mm, FPC geht Richtung +X ab. Zwei Status-LEDs (D5, D1) scheinen durch die auf 0.6 mm ausgedünnte Front, je mit Lichtschacht.
+- **Anschlüsse**: USB-C in der Seitenwand (+X), Buchse auf der Platinenrückseite, 1.5 mm über die Platinenkante. Tischkabel verlässt das Gehäuse am Armende (Fenster 9 × 6 mm), Kabelbinder-Schlitze im Armboden.
+- **Deckel**: zwei Zungen vorne, zwei Schrauben am Armende. Befestigung am Tisch über zwei Laschen (Holzschrauben, Loch 4.5 mm).
+- **Geprüft**: Skript-Passprüfung gegen eine Hüllgeometrie (Platine, Taster, Kappen, OLED, USB, 10.2-mm-Schicht über der ganzen Rückseite): 0 mm³ Überschneidung; alle STL wasserdicht; Renderings gesichtet. **Nicht geprüft**: kein Probedruck, kein echtes Board-STEP, Masse von Taster und USB-Buchse nicht gegen Datenblatt. Details in [[Offene Punkte]].
 
 Zurück: [[00 Index]]

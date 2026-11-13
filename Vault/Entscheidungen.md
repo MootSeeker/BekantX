@@ -16,5 +16,8 @@
 | 2026-11-13 | Tisch-Eingang: Sicherung + bidirektionale TVS + Serien-Schottky, LIN mit PESD1LIN | Schutz gegen Verpolung, Überspannung und ESD an der einzigen Schnittstelle nach aussen |
 | 2026-11-13 | ESP32-C3 bleibt **diskret** (kein Modul) | Wunsch des Projekts: HF-Design als Lernziel |
 | 2026-11-13 | ESP-Status-LED als adressierbare LED (SK6812MINI) an **GPIO8** | Firmware nutzt WS2812-Treiber; GPIO10 ist auf der Platine CS des Inter-Controller-Links |
+| 2026-11-13 | Gehäuse Rev. 2: Platine **flach hinter der Front**, Frontblock tiefer (44 mm) und höher (23 mm), Arm bleibt als Befestigung und Kabelraum | Eine starre Platine passt nicht über den 55°-Knick; im alten Frontblock wären nur 129 × 25 mm frei gewesen. Stil und Tastenbild bleiben |
+| 2026-11-13 | USB-C in der Seitenwand, Tischkabel am Armende, Status-LEDs hinter ausgedünnter Front | Entscheid des Nutzers; Front bleibt geschlossen, USB von vorne unsichtbar |
+| 2026-11-13 | Das Gehäuse gibt Umriss und UI-Positionen der Platine vor (`CAD/board_interface.json`) | Das Layout ist noch leer; so bleibt das Tastenbild des Originals erhalten |
 
 Neue Einträge hier ergänzen. Zurück: [[00 Index]]
