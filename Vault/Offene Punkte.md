@@ -7,14 +7,14 @@
 - [ ] Ordnername `Bekanntx` (doppeltes n) in `Firmware/ST/`.
 
 ## Hardware
-- [ ] Ein-PCB-Layout: Umriss, Montage, UI-Positionen (Display, Tasten, LED) aus dem Gehäuse-Style ableiten, siehe [[Entscheid - Ein PCB]]
-- [ ] Gehäuse parametrisch neu aufbauen (build123d) und an die eine Platine anpassen
+- [x] Ein-PCB-Layout: Umriss, Montage, UI-Positionen aus dem Gehäuse abgeleitet (2026-11-13, `CAD/board_interface.json`), siehe [[Entscheid - Ein PCB]]
+- [x] Gehäuse parametrisch neu aufgebaut (Rev. 2, 2026-11-13); offen ist der Probedruck, siehe unten
 - [x] ERC-Befunde des Controller-Schaltplans gesichtet (2026-11-13): auf main 43 Meldungen (8 Fehler), im Branch 28 Warnungen und 0 Fehler; 26 davon sind alte Draht-Stummel (< 0.2 mm) an Labels. Das HMI-PCB ist abgelöst.
 - [x] Freerouting eingerichtet (Pipeline `tools/pcb/autoroute.py`, siehe [[Toolchain]]); offen: Profil an das Ein-PCB-Layout anpassen und die Netzklassen-Regeln im `.kicad_pro` definieren
 - [ ] Controller-PCB: Layout (0 Footprints), Schaltplan fertigstellen
 - [ ] Pinbelegung final + SPI-Taktlimit validieren
 - [ ] LIN-PHY/Pegelanpassung zum Tisch klären
-- [ ] Gehäuse: CAD-Quelle (nur STL im Repo), Passung zu PCBs
+- [x] Gehäuse: CAD-Quelle liegt in `CAD/src/`; Passung zum echten Board folgt nach dem Layout
 
 ## Schaltplan (Stand 2026-11-13, Branch `pcb/merge-hmi-oled`)
 Erledigt: HMI integriert, eine Rail `+3V3`, LPUART gekreuzt, CS_N-Pull-up, `FSPI_INT` verdrahtet, Schutz am Tisch-Eingang, neues 3.3-V-Netzteil, adressierbare Status-LED am ESP, Boot-Taster, NRST-Kondensator, Footprints und MPNs. ERC: 0 Fehler, 28 Warnungen (26 alte Draht-Stummel, `SWO`, 1 Lib-Hinweis).
@@ -31,7 +31,7 @@ Erledigt: HMI integriert, eine Rail `+3V3`, LPUART gekreuzt, CS_N-Pull-up, `FSPI
 - [ ] Antenne AE1: Johanson 2450AT18A100 angenommen (Pin 1 Feed, Pin 2 unbeschaltet). Anpassnetzwerk C8/L2/C9 und Keep-out nach Datenblatt im Layout festlegen und abstimmen.
 - [ ] MPNs der Standard-Passiven (Yageo RC, Samsung CL, Murata, TDK) folgen der Serien-Nomenklatur und sind **nicht einzeln** gegen Datenblatt und Lager geprüft. Geprüft sind LMR51610 (Datenblatt in `Docs/datasheets/`), 0468001.NR, EEE-FK1J101P.
 - [ ] Ohne MPN: Y1 (40-MHz-Quarz 3225, CL passend zu C10/C11 wählen), D5 (RGB-LED am STM32, auch ohne Footprint; Vorwiderstände jetzt 91R/24R), J10, J2 (nur Footprint).
-- [ ] Tasten SW3–SW8: Omron B3F-1000 (THT 6 mm) gesetzt; Bauhöhe und Stössel gegen den Gehäusedeckel prüfen.
+- [ ] Tasten SW3–SW8: Omron B3F-1000 (THT 6 mm) gesetzt; Gehäuse Rev. 2 rechnet mit 4.3 mm Höhe und gedruckten Kappen, am Probedruck prüfen.
 - [ ] ESP-Link: Serienwiderstand nur auf SCK (R3); ESP32-C3 ohne internes Flash + W25Q32 (Alternative ESP32-C3FH4 spart U3).
 - [ ] **Review-Befunde (schematic-reviewer, 2026-11-13, Stand vor dem Display; Urteil: PASS WITH NOTES, 5 Major):**
   - [x] Behoben mit R45 (10k an +3V3); Firmware muss PB6 beim Init hoch setzen. Befund: `LIN_TX` ohne Pull-up: TLIN1027 hat keinen Dominant-Timeout, TXD hat internen Pull-down. Im Reset des STM32 bleibt der Bus dominant. Pull-up ca. 10k an +3V3, PB6 beim Init hoch (bestand schon auf main, sicherheitsrelevant).
@@ -51,6 +51,22 @@ Erledigt: HMI integriert, eine Rail `+3V3`, LPUART gekreuzt, CS_N-Pull-up, `FSPI
   - [ ] VPP 7.4 V statt 9.5–10.5 V: geringere Helligkeit und Lebensdauer; C47/C48 (X5R) verlieren unter Gleichspannung Kapazität, Welligkeit am Prototyp messen.
   - [ ] SPI2-Takt fürs Display konservativ wählen (CH1115: ca. 4 MHz oder weniger, Tabelle im Datenblatt nachlesen).
   - [ ] Für den Review fehlen in `Docs/`: ESP32-C3-Datenblatt, STM32G0B1-Datenblatt/Referenzhandbuch, Hirose FH12.
+
+## Gehäuse Rev. 2 (Stand 2026-11-13, Branch `cad/enclosure-single-pcb`)
+- [x] Gehäuse parametrisch neu aufgebaut (`CAD/src/bekantx_enclosure.py`), Platinen-Schnittstelle in `CAD/board_interface.json`. Siehe [[Hardware]].
+- [ ] **Review `cad-reviewer` 2026-11-13: FAIL (1 Blocker), Stand im Repo ist noch NICHT korrigiert, so nicht drucken.**
+  - [ ] **Blocker: Deckel ist gefangen.** Als starres Teil lässt er sich weder aufsetzen noch abnehmen (Zungen brauchen 1.3 mm Weg in +Y, der Falz im Arm samt Verjüngung und Endwand sperrt). Geplante Korrektur: Falz, Deckelkante und Hohlraum im Arm als Wände parallel zu Z (statt senkrecht zum Arm), damit der Deckel um die Zungen aufschwenkt; danach den Bewegungsweg rechnerisch prüfen.
+  - [ ] Major: FPC des OLED nicht berücksichtigt (Faltung zwischen Glaskante und SW5, Stecker ER-CON16HB-1 unter dem Glas); als Sperrflächen in Hüllgeometrie und `board_interface.json` aufnehmen, Glas/Flansch verschieben.
+  - [ ] Major: Überhänge im Arm (Endwand innen ca. 440 mm², Verjüngung je ca. 290 mm², 55° bzw. 49.5° zur Senkrechten) bei Druck mit der Front nach unten; entfällt mit den Z-parallelen Wänden.
+  - [ ] Minor: Senkung Deckelschraube 4.2 < Kopf 4.4; Kabelbinder-Schlitze 2.0 mm zu schmal (3 oder mehr); Sturz über dem Kabelfenster und Dach der Zungentaschen nur 1.0 mm; USB-Anschlag 0.5 mm vor der Buchse; OLED-Fenster gleich gross wie die Sichtfläche (kleiner machen); `wall` > 5.1 bricht den Offset; Parameter `end_wall` wirkt nicht auf den Hohlraum; einzelne feste Zahlen im Skript.
+  - Bestätigt vom Review: 0 mm³ Überschneidung (an den STEP-Dateien nachgerechnet), STL wasserdicht, `board_interface.json` stimmt mit der Geometrie überein, Parameter-Variation ±10 % regeneriert.
+- [ ] **Probedruck** von Gehäuse, Deckel und Tastenkappen: Passungen (Deckelfalz 0.25 mm, Kappen 0.3 mm radial), Zungen, Durchscheinen der LED-Fenster. Alle Toleranzen sind Schätzwerte.
+- [ ] **ASSUMPTION Tischkabel**: Durchmesser (5 mm) und Stecker sind nicht gemessen; Austritt 9 × 6 mm lässt ein 3-poliges 2.54-mm-Gehäuse durch.
+- [ ] Taster B3F-1000 (Höhe 4.3 mm) und USB-Buchse HRO TYPE-C-31-M-12 (8.94 × 7.35 × 3.26 mm) gegen die Datenblätter prüfen; beide Masse stammen nicht aus `Docs/`.
+- [ ] OLED-Befestigung: Glas in der Tasche kleben (dünnes doppelseitiges Band) oder Schaumstoff zwischen Glas und Platine; Lage des FPC-Abgangs am echten Display prüfen.
+- [ ] Layout: `CAD/board_interface.json` übernehmen (Umriss 129 × 38, 6 Bohrungen, Tasten, J3 unter dem Display, J1 auf B.Cu an der +X-Kante, D5/D1 unter den Lichtschächten). D5 hat noch keinen Footprint.
+- [ ] Bauhöhen: Vorderseite 6 mm (an der hinteren Kante weniger, siehe JSON), Rückseite 11.4 mm. C40 (10.2 mm) passt mit 1.2 mm Luft.
+- [ ] Nach dem Layout: Board-STEP exportieren und die Passprüfung gegen das echte Board wiederholen.
 
 ## Firmware
 - [ ] ESP: SPI-Slave-Transport + Protokoll, Lease-/Safety-Filter, Deep Sleep
