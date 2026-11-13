@@ -1,5 +1,7 @@
 # Hardware
 
+> **Entscheid 2026-11-13:** Controller- und HMI-Platine werden zu **einer** Platine zusammengeführt, der Gehäuse-Style bleibt. Siehe [[Entscheid - Ein PCB]]. Die Abschnitte unten beschreiben den Ist-Stand der beiden bisherigen Platinen.
+
 ## Pcb_Controller (KiCad)
 Hauptplatine, aufgeteilt in Sheets: `mastersheet`, `microcontroller`, `powerSupply`, `wifi`, `Connector`, `hmi`.
 - Der `.kicad_pcb` enthält aktuell **0 Footprints** (Layout noch nicht begonnen; Schaltplan in Arbeit, letzte Änderung Sep).

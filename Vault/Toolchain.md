@@ -18,6 +18,12 @@ Eingerichtet 2026-11-13, damit Claude Leiterplatte und Gehäuse selbst erzeugen 
 - Aufruf: `%USERPROFILE%\.venvs\bekantx-cad\Scripts\python.exe script.py`
 - `cadquery` bewusst **nicht** installiert: bringt inkompatiblen OCP-Kern zu build123d.
 
+## Autorouter (Freerouting 2.5.0)
+- Pipeline `tools/pcb/autoroute.py` (mit KiCad-Python): DSN-Export → Freerouting → SES-Import → Zonen neu füllen → Messung (offene Verbindungen, Vias, Länge, DRC-Differenz zur Ausgangslage). Profile in `tools/pcb/profiles/`. `route` für einen Lauf, `tune` für einen parallelen Parameter-Sweep.
+- Freerouting als JAR (`%USERPROFILE%\tools\freerouting\freerouting.jar`) mit portablem Temurin-JDK 25 (`%USERPROFILE%\tools\jdk25`). Installiert 2026-11-13, Prüfsummen gegen die Release-Werte verglichen. Die native `freerouting-cli.exe` (GraalVM) bricht beim Routen mit `SerializationConstructorAccessor`-Fehler ab und wurde entfernt.
+- Telemetrie abgeschaltet (`-da`, `%APPDATA%\freerouting\freerouting.json`). Der Router prüft beim Start auf Updates (Netzwerkzugriff).
+- Erkenntnisse: Kostenparameter nur als ganze Zahlen; `automatic_neckdown=false` verhindert zu dünne Leiterbahnen; Zonen müssen nach dem Import neu gefüllt werden; Einzelne JVM-Abstürze kommen vor (Wiederholung im Skript). Details im Skill `pcb-design`.
+
 ## Workflow
 1. PCB-Umriss/Bohrungen aus KiCad (`pcbnew` oder `export step`) lesen.
 2. Gehäuse in build123d parametrisch modellieren, STEP+STL nach `CAD/` exportieren.

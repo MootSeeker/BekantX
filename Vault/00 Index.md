@@ -13,6 +13,7 @@ Die normativen Specs bleiben in `Docs/`. Der Vault fasst zusammen, hält Entsche
 - [[Protokolle]] – LIN (Tisch) und SPI (Inter-Controller)
 - [[Toolchain]] – KiCad-CLI/Python, build123d für Gehäuse
 - [[Entscheidungen]] – Decision Log
+  - [[Entscheid - Ein PCB]]
 - [[Offene Punkte]] – Backlog / Risiken
 - [[Changelog Vault]]
 

@@ -1,0 +1,9 @@
+{
+  "autorouter.max_passes": 60,
+  "scoring.via_costs": 50,
+  "scoring.plane_via_costs": 5,
+  "scoring.start_ripup_costs": 100,
+  "optimizer.enabled": true,
+  "optimizer.improvement_threshold": 2.5,
+  "automatic_neckdown": false
+}

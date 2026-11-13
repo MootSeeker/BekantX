@@ -14,3 +14,8 @@ fp-info-cache
 
 
 *.vscode/
+
+# generated PCB/CAD build output (routing runs, renders, fab files)
+build/
+hs_err_pid*.log
+replay_pid*.log
