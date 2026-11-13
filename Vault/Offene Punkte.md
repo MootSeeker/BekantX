@@ -7,6 +7,10 @@
 - [ ] Ordnername `Bekanntx` (doppeltes n) in `Firmware/ST/`.
 
 ## Hardware
+- [ ] Ein-PCB-Layout: Umriss, Montage, UI-Positionen (Display, Tasten, LED) aus dem Gehäuse-Style ableiten, siehe [[Entscheid - Ein PCB]]
+- [ ] Gehäuse parametrisch neu aufbauen (build123d) und an die eine Platine anpassen
+- [ ] Bestehende ERC/DRC-Befunde der KiCad-Projekte sichten (HMI-PCB: 227 DRC-Meldungen, Controller-Schaltplan: 43 ERC-Meldungen, Stand 2026-11-13)
+- [x] Freerouting eingerichtet (Pipeline `tools/pcb/autoroute.py`, siehe [[Toolchain]]); offen: Profil an das Ein-PCB-Layout anpassen und die Netzklassen-Regeln im `.kicad_pro` definieren
 - [ ] Controller-PCB: Layout (0 Footprints), Schaltplan fertigstellen
 - [ ] Pinbelegung final + SPI-Taktlimit validieren
 - [ ] LIN-PHY/Pegelanpassung zum Tisch klären

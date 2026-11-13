@@ -11,7 +11,9 @@ Die normativen Specs bleiben in `Docs/`. Der Vault fasst zusammen, hält Entsche
 - [[Firmware ESP32-C3]] – Netzwerk-Coprozessor (Stand der Umsetzung)
 - [[Firmware STM32]] – Primary Controller (noch offen)
 - [[Protokolle]] – LIN (Tisch) und SPI (Inter-Controller)
+- [[Toolchain]] – KiCad-CLI/Python, build123d für Gehäuse
 - [[Entscheidungen]] – Decision Log
+  - [[Entscheid - Ein PCB]]
 - [[Offene Punkte]] – Backlog / Risiken
 - [[Changelog Vault]]
 
