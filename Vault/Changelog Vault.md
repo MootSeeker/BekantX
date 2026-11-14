@@ -8,5 +8,8 @@
 - 2026-11-13 – OLED verdrahtet (FPC J3, Ladungspumpe, IREF); offene Prüfpunkte zu VDD2 und Stecker in [[Offene Punkte]].
 - 2026-11-13 – Review-Befunde eingearbeitet: LIN_TX-Pull-up, SPI-Netze nach ESP-IOMUX, 100 nF an U9, CHIP_EN-RC, `.ioc` (PB5 Open-Drain, Tasten-Pull-ups). Offen bleiben SK6812 an 3.3 V und die ESP-Firmware.
 - 2026-11-13 – Gehäuse Rev. 2 parametrisch aufgebaut (build123d), Platinen-Schnittstelle als JSON, Passprüfung gegen Hüllgeometrie bestanden; Probedruck offen.
+- 2026-11-14 – Gehäuse Rev. 3 nach dem Probedruck von Rev. 2: Deckel mit Scharnier und Schnapper, Tastenmatte, USB-C bündig (Platine mit Nase), Frontblock 19.5 mm. Offen: C40-Bauhöhe, Probedruck.
+- 2026-11-14 – Gehäuse Rev. 3 nach Feedback: Bauhöhe 19.5 mm bestätigt (C40 ersetzen), einheitliche Fasen, M2.5×6-Schrauben, 10 % weniger Material am Gehäuse, Symbole auf den Tasten, Druckhinweise für P1S.
+- 2026-11-14 – Gehäuse Rev. 3 gedruckt (PLA, P1S) und freigegeben: passt. r2-Exporte entfernt, PR #4 abgeschlossen. Offen: FPC des OLED, C40-Ersatz, PETG-Druck.
 
 Zurück: [[00 Index]]

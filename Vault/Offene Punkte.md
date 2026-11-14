@@ -31,7 +31,7 @@ Erledigt: HMI integriert, eine Rail `+3V3`, LPUART gekreuzt, CS_N-Pull-up, `FSPI
 - [ ] Antenne AE1: Johanson 2450AT18A100 angenommen (Pin 1 Feed, Pin 2 unbeschaltet). Anpassnetzwerk C8/L2/C9 und Keep-out nach Datenblatt im Layout festlegen und abstimmen.
 - [ ] MPNs der Standard-Passiven (Yageo RC, Samsung CL, Murata, TDK) folgen der Serien-Nomenklatur und sind **nicht einzeln** gegen Datenblatt und Lager geprüft. Geprüft sind LMR51610 (Datenblatt in `Docs/datasheets/`), 0468001.NR, EEE-FK1J101P.
 - [ ] Ohne MPN: Y1 (40-MHz-Quarz 3225, CL passend zu C10/C11 wählen), D5 (RGB-LED am STM32, auch ohne Footprint; Vorwiderstände jetzt 91R/24R), J10, J2 (nur Footprint).
-- [ ] Tasten SW3–SW8: Omron B3F-1000 (THT 6 mm) gesetzt; Gehäuse Rev. 2 rechnet mit 4.3 mm Höhe und gedruckten Kappen, am Probedruck prüfen.
+- [ ] Tasten SW3–SW8: Omron B3F-1000 (THT 6 mm) gesetzt; Gehäuse Rev. 3 rechnet mit 4.3 mm Höhe und der gedruckten Tastenmatte, am Probedruck prüfen.
 - [ ] ESP-Link: Serienwiderstand nur auf SCK (R3); ESP32-C3 ohne internes Flash + W25Q32 (Alternative ESP32-C3FH4 spart U3).
 - [ ] **Review-Befunde (schematic-reviewer, 2026-11-13, Stand vor dem Display; Urteil: PASS WITH NOTES, 5 Major):**
   - [x] Behoben mit R45 (10k an +3V3); Firmware muss PB6 beim Init hoch setzen. Befund: `LIN_TX` ohne Pull-up: TLIN1027 hat keinen Dominant-Timeout, TXD hat internen Pull-down. Im Reset des STM32 bleibt der Bus dominant. Pull-up ca. 10k an +3V3, PB6 beim Init hoch (bestand schon auf main, sicherheitsrelevant).
@@ -52,21 +52,27 @@ Erledigt: HMI integriert, eine Rail `+3V3`, LPUART gekreuzt, CS_N-Pull-up, `FSPI
   - [ ] SPI2-Takt fürs Display konservativ wählen (CH1115: ca. 4 MHz oder weniger, Tabelle im Datenblatt nachlesen).
   - [ ] Für den Review fehlen in `Docs/`: ESP32-C3-Datenblatt, STM32G0B1-Datenblatt/Referenzhandbuch, Hirose FH12.
 
-## Gehäuse Rev. 2 (Stand 2026-11-13, Branch `cad/enclosure-single-pcb`)
-- [x] Gehäuse parametrisch neu aufgebaut (`CAD/src/bekantx_enclosure.py`), Platinen-Schnittstelle in `CAD/board_interface.json`. Siehe [[Hardware]].
-- [ ] **Review `cad-reviewer` 2026-11-13: FAIL (1 Blocker), Stand im Repo ist noch NICHT korrigiert, so nicht drucken.**
-  - [ ] **Blocker: Deckel ist gefangen.** Als starres Teil lässt er sich weder aufsetzen noch abnehmen (Zungen brauchen 1.3 mm Weg in +Y, der Falz im Arm samt Verjüngung und Endwand sperrt). Geplante Korrektur: Falz, Deckelkante und Hohlraum im Arm als Wände parallel zu Z (statt senkrecht zum Arm), damit der Deckel um die Zungen aufschwenkt; danach den Bewegungsweg rechnerisch prüfen.
-  - [ ] Major: FPC des OLED nicht berücksichtigt (Faltung zwischen Glaskante und SW5, Stecker ER-CON16HB-1 unter dem Glas); als Sperrflächen in Hüllgeometrie und `board_interface.json` aufnehmen, Glas/Flansch verschieben.
-  - [ ] Major: Überhänge im Arm (Endwand innen ca. 440 mm², Verjüngung je ca. 290 mm², 55° bzw. 49.5° zur Senkrechten) bei Druck mit der Front nach unten; entfällt mit den Z-parallelen Wänden.
-  - [ ] Minor: Senkung Deckelschraube 4.2 < Kopf 4.4; Kabelbinder-Schlitze 2.0 mm zu schmal (3 oder mehr); Sturz über dem Kabelfenster und Dach der Zungentaschen nur 1.0 mm; USB-Anschlag 0.5 mm vor der Buchse; OLED-Fenster gleich gross wie die Sichtfläche (kleiner machen); `wall` > 5.1 bricht den Offset; Parameter `end_wall` wirkt nicht auf den Hohlraum; einzelne feste Zahlen im Skript.
-  - Bestätigt vom Review: 0 mm³ Überschneidung (an den STEP-Dateien nachgerechnet), STL wasserdicht, `board_interface.json` stimmt mit der Geometrie überein, Parameter-Variation ±10 % regeneriert.
-- [ ] **Probedruck** von Gehäuse, Deckel und Tastenkappen: Passungen (Deckelfalz 0.25 mm, Kappen 0.3 mm radial), Zungen, Durchscheinen der LED-Fenster. Alle Toleranzen sind Schätzwerte.
-- [ ] **ASSUMPTION Tischkabel**: Durchmesser (5 mm) und Stecker sind nicht gemessen; Austritt 9 × 6 mm lässt ein 3-poliges 2.54-mm-Gehäuse durch.
-- [ ] Taster B3F-1000 (Höhe 4.3 mm) und USB-Buchse HRO TYPE-C-31-M-12 (8.94 × 7.35 × 3.26 mm) gegen die Datenblätter prüfen; beide Masse stammen nicht aus `Docs/`.
-- [ ] OLED-Befestigung: Glas in der Tasche kleben (dünnes doppelseitiges Band) oder Schaumstoff zwischen Glas und Platine; Lage des FPC-Abgangs am echten Display prüfen.
-- [ ] Layout: `CAD/board_interface.json` übernehmen (Umriss 129 × 38, 6 Bohrungen, Tasten, J3 unter dem Display, J1 auf B.Cu an der +X-Kante, D5/D1 unter den Lichtschächten). D5 hat noch keinen Footprint.
-- [ ] Bauhöhen: Vorderseite 6 mm (an der hinteren Kante weniger, siehe JSON), Rückseite 11.4 mm. C40 (10.2 mm) passt mit 1.2 mm Luft.
+## Gehäuse Rev. 3 (Stand 2026-11-14, Branch `cad/enclosure-single-pcb`)
+Rev. 2 wurde gedruckt: der Deckel passte nicht (gefangen, wie vom Review vorhergesagt). Rev. 3 ersetzt Rev. 2, siehe [[Hardware]].
+- [x] Blocker aus dem Review von Rev. 2 (Deckel gefangen) und die Überhänge im Arm: behoben durch Scharnier am Armende, Schnapper vorne und Wände entlang der Schwenkrichtung; Bewegungsweg im Skript nachgerechnet.
+- [x] Minor aus dem Review von Rev. 2: Senkung Deckelschraube 4.8, Kabelbinder-Schlitze 3.2 mm, Sturz über dem Kabelfenster 1.6 mm, OLED-Fenster 0.3 mm kleiner als die Sichtfläche, Parameter `end_wall` entfernt.
+- [x] Review `cad-reviewer` 2026-11-14: **PASS WITH NOTES**, kein Blocker für den Probedruck. Bestätigt an STEP/STL: 0 mm³ Überschneidung, Deckel lässt sich starr aufsetzen und abnehmen (frei ab 5°, Herausziehen 2.5 mm ab 6°), Überhänge über 45° von ca. 1000 auf 87 mm², alle Parameter ±10 % regenerieren. Nach dem Review geändert: Wand vor der USB-Nase 1.2 mm und 0.3 mm Luft beim Absenken, Kappen-Durchmesser 9.8 (0.4 mm Spiel), Deckel-Export liegt auf Z = 0.
+  - [ ] Major: der Schnapper braucht ca. 0.3 mm elastische Stauchung des Deckels; ±0.15 mm Druckfehler machen ihn sehr lose oder zu stramm, Elefantenfuss an der Deckelnase erhöht die Überdeckung. Am Probedruck messen, dann `snap_compress` / `snap_gap` nachstellen. Geschlossen hat der Deckel 0.2 mm Spiel, die Schrauben halten ihn fest.
+  - [ ] Minor: dünne tragende Stellen (Dach der Zungentaschen 1.15 mm, Wand hinter der Tasche 1.8 mm, Wand vor USB 1.2 mm); Taschenenden 55° Überhang auf 1 mm; Brücke über der USB-Öffnung 9.5 mm; Arme der Tastenmatte nur bei 0.2 mm Schichthöhe zwei Lagen; Schraubenlänge der Deckelschrauben nicht festgelegt; einzelne feste Zahlen im Skript; `lid_t` unter ca. 2.3 und `arm_angle` +10 % brauchen Nacharbeit am Schnapper bzw. Entnahmeweg.
+- [x] Entscheid Bauhöhe (Nutzer, 2026-11-14): der Frontblock bleibt 19.5 mm hoch.
+- [ ] **C40 ersetzen**: C40 (EEE-FK1J101P, 10.2 mm) passt nicht mehr, auf der Platinenrückseite sind Bauteile bis 7.0 mm möglich. Ersatz später wählen (kein MPN gewählt, Schaltplan unverändert). Ebenso: Tischstecker J10 muss liegend (abgewinkelt) bestückt werden.
+- [x] **Probedruck Rev. 3** (2026-11-14, Nutzer, Bambu P1S, PLA): gedruckt, **passt**. Das ist die Aussage des Nutzers; Schnappkraft, Klick, Tastenmatte, USB-Passung und Schraubengriff wurden nicht einzeln protokolliert. Der PETG-Druck des Endteils steht noch aus (zäher: Schnapper und Kernloch dort prüfen).
+- [ ] Major aus dem Review von Rev. 2, **weiter offen**: FPC des OLED nicht berücksichtigt (Faltung zwischen Glaskante und SW5, Stecker unter dem Glas); als Sperrflächen aufnehmen, Glas/Flansch verschieben.
+- [x] Änderungen nach dem ersten Review von Rev. 3 (einheitliche Fasen, M2.5×6-Schrauben, Entlastung der Armwände, dünnere Frontwand, Symbole auf den Tasten): der zweite Review des `cad-reviewer` wurde **nicht abgeschlossen** (Agent vorzeitig gestoppt, kein Befund). Stattdessen gilt der Probedruck des Nutzers als Freigabe (PASS, Entscheid des Nutzers 2026-11-14); Prüfungen im Skript: 0 mm³ Überschneidung.
+- [ ] **Schrauben M2.5×6 direkt in Kunststoff**: im PLA-Probedruck passend (Aussage des Nutzers). Kernloch 2.25 mm für PETG am Endteil bestätigen (Dom 5.5 mm, Wand 1.6 mm).
+- [ ] **ASSUMPTION Tastenbelegung**: M1–M4 links, Hoch/Runter rechts der Anzeige; mit der Firmware (`BTN_1`…`BTN_6`) abgleichen.
+- [ ] **ASSUMPTION USB-C**: Buchse HRO TYPE-C-31-M-12 (8.94 × 7.35 × 3.26 mm) und der Überstand von 1.5 mm über die Kante der Platinen-Nase sind nicht gegen Datenblatt und Footprint geprüft. Davon hängt ab, ob die Buchse wirklich bündig sitzt.
+- [ ] **ASSUMPTION Tischkabel**: Durchmesser (5 mm) und Stecker sind nicht gemessen; Austritt 9 × 5 mm lässt ein 3-poliges 2.54-mm-Gehäuse durch.
+- [ ] Taster B3F-1000 (Höhe 4.3 mm) gegen das Datenblatt prüfen; das Mass stammt nicht aus `Docs/`.
+- [ ] OLED-Befestigung: Glas in der Tasche kleben (dünnes doppelseitiges Band) oder Schaumstoff zwischen Glas und Platine.
+- [ ] Layout: `CAD/board_interface.json` (r3) übernehmen: Umriss 129 × 38 **mit USB-Nase**, 6 Bohrungen (vordere Reihe verschoben), Tasten, J3 unter dem Display, J1 auf B.Cu am Ende der Nase, D5/D1 unter den Lichtschächten, Sperrfläche Tastenmatte. Nichts darf an der +X-Kante über den Umriss ragen (Platine wird seitlich eingeschoben). D5 hat noch keinen Footprint.
 - [ ] Nach dem Layout: Board-STEP exportieren und die Passprüfung gegen das echte Board wiederholen.
+- [x] r2-Exporte (`CAD/BekantX_*_r2.*`) aus dem Repo entfernt (2026-11-14, nach dem passenden Druck von Rev. 3; bleiben in der Git-Historie).
 
 ## Firmware
 - [ ] ESP: SPI-Slave-Transport + Protokoll, Lease-/Safety-Filter, Deep Sleep

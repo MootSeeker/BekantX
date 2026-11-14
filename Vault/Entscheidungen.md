@@ -19,5 +19,11 @@
 | 2026-11-13 | Gehäuse Rev. 2: Platine **flach hinter der Front**, Frontblock tiefer (44 mm) und höher (23 mm), Arm bleibt als Befestigung und Kabelraum | Eine starre Platine passt nicht über den 55°-Knick; im alten Frontblock wären nur 129 × 25 mm frei gewesen. Stil und Tastenbild bleiben |
 | 2026-11-13 | USB-C in der Seitenwand, Tischkabel am Armende, Status-LEDs hinter ausgedünnter Front | Entscheid des Nutzers; Front bleibt geschlossen, USB von vorne unsichtbar |
 | 2026-11-13 | Das Gehäuse gibt Umriss und UI-Positionen der Platine vor (`CAD/board_interface.json`) | Das Layout ist noch leer; so bleibt das Tastenbild des Originals erhalten |
+| 2026-11-14 | Gehäuse Rev. 3: Deckel mit **Scharnier am Armende und Schnapper an der Frontwand**, Schrauben nur als Sicherung, Lasche vorne | Probedruck Rev. 2: Deckel gefangen. Das Original rastet am Armende; dort gäbe ein druckbarer Überhang (45°) nur eine flache Haltefläche von ca. 19° zur Bewegung. Vorne reichen 14° Überhang für 40° |
+| 2026-11-14 | **Tastenmatte** statt Einzelkappen | Wunsch des Nutzers: ein Druckteil, Kappen fallen nicht heraus |
+| 2026-11-14 | USB-C **bündig** in der Seitenwand, Platine mit Nase, seitliches Einschieben | Wunsch des Nutzers: jedes Kabel soll passen, nur die Buchse ist sichtbar |
+| 2026-11-14 | Frontblock **19.5 mm** hoch, Rückseite der Platine max. 7.0 mm; **C40 wird ersetzt** | Entscheid des Nutzers (schlanker). Ersatz für C40 (10.2 mm) wird später gewählt |
+| 2026-11-14 | Alle Gehäuseschrauben **M2.5×6 Linsenkopf direkt in den Kunststoff** (8 Stück, ein Typ) | Wunsch des Nutzers; ersetzt selbstschneidende 2.2 mm. Alternative: selbstschneidende Schrauben gleicher Grösse |
+| 2026-11-14 | Eine einheitliche Fase (3 mm / 45°) statt der ungleichen Fasen des Originals | Wunsch des Nutzers: gleichmässiges, modernes Bild |
 
 Neue Einträge hier ergänzen. Zurück: [[00 Index]]
