@@ -16,6 +16,8 @@ Eingerichtet 2026-11-13, damit Claude Leiterplatte und Gehäuse selbst erzeugen 
 ## Gehäuse-CAD (Python-venv `%USERPROFILE%\.venvs\bekantx-cad`, Python 3.13)
 - `build123d` (parametrisches CAD, STEP/STL-Export), `trimesh` (Mesh-Prüfung), `numpy-stl`
 - Aufruf: `%USERPROFILE%\.venvs\bekantx-cad\Scripts\python.exe script.py`
+- Gehäuse bauen: `...\python.exe CAD/src/bekantx_enclosure.py` (baut, prüft die Passung, exportiert STEP/STL nach `CAD/` und schreibt `CAD/board_interface.json`; bricht bei einer Überschneidung ab).
+- Im venv fehlen `matplotlib`, `shapely` und `networkx`: `trimesh`-Schnitte als Pfad (`section().discrete`, `to_planar`) gehen nicht, `trimesh.intersections.mesh_plane` schon. Bilder lassen sich mit dem mitinstallierten `vtk` offscreen rendern.
 - `cadquery` bewusst **nicht** installiert: bringt inkompatiblen OCP-Kern zu build123d.
 
 ## Autorouter (Freerouting 2.5.0)
