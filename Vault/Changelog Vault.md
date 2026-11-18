@@ -18,5 +18,6 @@
 - 2026-11-18 – PCB-Review (PASS WITH NOTES, 3 Major) eingearbeitet: U20-Zelle kompakt, C15 und R41/R42 an U9, C7 am ESP32, Via im Pad entfernt; Abstand GND/+3V3/USB 0.15 mm. DRC 0 Fehler / 0 offen / Parität 0, Passprüfung bestanden. Zwei Review-Punkte begründet abgelehnt (IPC B4, JLC-Via-Restring), siehe [[Offene Punkte]] und [[Entscheidungen]].
 - 2026-11-18 – PR-Feedback #5 umgesetzt: In1 geteilt (VCC-Fläche im Leistungsteil), VCC- und überflüssige +3V3-Leitungen entfernt, Treppen geglättet und Pad-Einführungen gerade gezogen. DRC 0 Fehler / 0 offen / Parität 0, Passprüfung bestanden.
 - 2026-11-18 – PR-Feedback #5, zweite Runde nach dem Review: Kanten der VCC-Fläche von der USB-Leitung weg, TP10 in die VCC-Fläche verschoben, Vias aus den Pads, alle Segmente auf 0/45/90° (183 → 11 schräg), kleine Versätze teilweise entfernt. DRC 0 Fehler / 0 offen / Parität 0, Passprüfung bestanden.
+- 2026-11-18 – PR-Feedback #5, 4. Punkt: VBUS am USB-C-Stecker J1 auf F.Cu, D+/D−/CC1/CC2 gerade auf B.Cu (vorher Umwege), neues Skript `bekantx_usb_rework.py`. DRC 0 Fehler / 0 offen / Parität 0, Passprüfung bestanden.
 
 Zurück: [[00 Index]]
