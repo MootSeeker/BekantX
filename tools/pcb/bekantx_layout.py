@@ -37,13 +37,15 @@ NETCLASSES = {
     # +3V3 is distributed by the plane on In1, the tracks are only the stubs to the vias
     "Power": (0.3, 0.2, 0.6, 0.3, ["+3.3VA", "VCC_SPI"]),
     # plane nets: every SMD pad gets its own via by drop_plane_vias(); the autorouter ignores this class
-    "Planes": (0.3, 0.2, 0.6, 0.3, ["GND", "+3V3"]),
+    # clearance 0.15 like Default (2026-11-18): 0.2 blocked the escape of fine-pitch pins next to decoupling pads
+    "Planes": (0.3, 0.15, 0.6, 0.3, ["GND", "+3V3"]),
     "PowerMid": (0.4, 0.2, 0.8, 0.4, ["+12V", "VBUS"]),
     # up to 53 V (TVS clamp) on these nets
     "PowerHV": (0.5, 0.3, 0.8, 0.4, ["VDESK", "VIN", "VCC", "Net-(U9-SW)", "Net-(D20-K)", "Net-(U9-CB)",
                                       "Net-(U20-CB)", "Net-(U9-~{SHDN})", "Net-(U20-~{SHDN})"]),
     "LIN": (0.3, 0.3, 0.6, 0.3, ["LINBUS", "Net-(D70-K)"]),
-    "USB": (0.25, 0.2, 0.6, 0.3, ["USB*", "Net-(J1-D*", "Net-(U8-D*"]),
+    # USB 2.0 full speed only (12 Mbit/s): no impedance control, 0.15 mm clearance is enough
+    "USB": (0.25, 0.15, 0.6, 0.3, ["USB*", "Net-(J1-D*", "Net-(U8-D*"]),
     "RF": (0.35, 0.2, 0.6, 0.3, ["Net-(U2-LNA_IN)", "Net-(AE1-FEED)"]),
 }
 
@@ -58,7 +60,7 @@ def write_project_rules():
         c.update(name=name, track_width=w, clearance=cl, via_diameter=via, via_drill=drill,
                  priority=2147483647 if name == "Default" else prio)
         if name == "USB":
-            c.update(diff_pair_width=0.25, diff_pair_gap=0.2, diff_pair_via_gap=0.25)
+            c.update(diff_pair_width=0.25, diff_pair_gap=0.15, diff_pair_via_gap=0.25)
         classes.append(c)
         patterns += [{"netclass": name, "pattern": p} for p in pats]
     pro["net_settings"]["classes"] = classes

@@ -16,11 +16,19 @@ from bekantx_layout import LATE_VIA_REFS, P, add_rule_area, add_track, add_zone,
 WIFI = (0.6, 0.6, 34.0, 37.4)          # region of the ESP32-C3 block on B.Cu
 
 
-def fixed(part, x, y, side, test):
-    """Put a part at x, y and pick the rotation for which test(part) is true."""
+PLACER = None      # set by place(); used by fixed() to check for overlaps
+
+
+def fixed(part, x, y, side, test, check=True):
+    """Put a part at x, y and pick the rotation for which test(part) is true; fail on an overlap."""
     for rot in (0, 90, 180, 270):
         part.put(x, y, rot, side)
         if test(part):
+            if check and PLACER is not None:
+                from bekantx_layout import overlap
+                hit = [b for b in PLACER.boxes(side, skip=part) if overlap(part.box(), b)]
+                if hit:
+                    raise RuntimeError(f"{part.ref}: fixed position {x}, {y} overlaps {hit[:3]}")
             return part
     raise RuntimeError(f"{part.ref}: no rotation satisfies the constraint")
 
@@ -40,6 +48,8 @@ def best_rot(pl, part, x, y, side, near=None):
 
 
 def place(board, pl, parts, iface):
+    global PLACER
+    PLACER = pl
     p = parts
     W, H = pl.W, pl.H
 
@@ -67,7 +77,7 @@ def place(board, pl, parts, iface):
     # shell front 1.5 mm beyond the end of the tab (footprint: shell front at +3.65 from the origin)
     fixed(p["J1"], usb["shell_front_x"] - 3.65, usb["centre_y"], "B", lambda q: q.pad("A6")[0] < q.x - 3)
     # desk connector: angled header, pins and the cable housing point to +x and stay above the board
-    j10 = fixed(p["J10"], 68.6, 30.0, "B", lambda q: q.box()[2] > q.x + 8)
+    j10 = fixed(p["J10"], 68.6, 30.0, "B", lambda q: q.box()[2] > q.x + 8, check=False)   # moved below
     j10.put(68.6, 30.0 + (22.0 - min(j10.pad(1)[1], j10.pad(3)[1])), j10.rot)     # pads span y = 22.0 .. 27.08
     pl.keepout("B", (70.2, 20.3, 90.0, 28.8), "J10 housing and cable")
     # input protection directly at the VDESK pin, on the side away from the STM32: fuse, TVS, then D4
@@ -91,9 +101,18 @@ def place(board, pl, parts, iface):
     best_rot(pl, p["U7"], 57.0, 13.6, "B", near={"LINBUS": p["J10"].pad(3)})
     pl.auto("C70", side="B", near={"+12V": p["U7"].pad(7)}, radius=5)          # VSUP decoupling at the pin
     best_rot(pl, p["U9"], 100.5, 24.0, "B", near={"VCC": (97.0, 21.0), "Net-(U9-SW)": (104.0, 24.0)})
-    # 12 V buck in a row above the J10 housing: U20 - D20 - L20 - output capacitors
-    best_rot(pl, p["U20"], 83.0, 33.2, "B", near={"VCC": (79.0, 33.0), "Net-(D20-K)": (88.0, 33.0)})
-    best_rot(pl, p["L20"], 93.2, 33.3, "B", near={"Net-(D20-K)": (88.0, 33.0)})
+    # 12 V buck (LV2862, asynchronous) between the cable housing (y < 28.8) and the board edge, as one compact
+    # cell (review 2026-11-15, Majors 1 and 2; AN-1149): VIN, SW and SHDN on the upper pin row (pins 4-6),
+    # CB, GND and FB on the lower row (1-3).
+    #   C25 (input) right above VIN pin 5, its GND pad next to it -> short loop C25 - VIN - switch
+    #   C26 (boot) between pin 1 (CB) and pin 6 (SW), directly beside the IC
+    #   D20 (catch diode) right of C26, cathode at the top towards SW, anode (GND) at the bottom
+    #   L20 right of D20; output capacitors right of L20
+    fixed(p["U20"], 83.0, 33.4, "B", lambda q: q.pad(5)[1] < q.y and q.pad(6)[0] > q.x)
+    fixed(p["C25"], 83.0, 30.05, "B", lambda q: q.pad(1)[0] < q.x and abs(q.pad(1)[1] - q.y) < 0.1)
+    fixed(p["C26"], 85.78, 33.4, "B", lambda q: q.pad(1)[1] > q.y and abs(q.pad(1)[0] - q.x) < 0.1)
+    fixed(p["D20"], 88.65, 33.4, "B", lambda q: q.pad(1)[1] < q.y and abs(q.pad(1)[0] - q.x) < 0.1)
+    fixed(p["L20"], 94.05, 33.4, "B", lambda q: q.pad(1)[0] < q.x and abs(q.pad(1)[1] - q.y) < 0.1)
     best_rot(pl, p["U4"], 121.3, 26.0, "B")
     best_rot(pl, p["U8"], 115.3, 25.6, "B")
 
@@ -102,28 +121,30 @@ def place(board, pl, parts, iface):
     inflate = lambda b, m: (b[0] - m, b[1] - m, b[2] + m, b[3] + m)
 
     # ------------------------------------------------------------ 12 V buck (U20) and 3.3 V buck (U9): compact loops first
-    a("C25", side="B", near={"VCC": pin("U20", 5)}, radius=6)
-    a("R22", side="B", radius=6)                                             # feedback divider at the FB pin
+    a("R22", side="B", radius=6, near={"U2_FB": pin("U20", 3)})              # feedback divider at the FB pin
     a("R21", side="B", radius=6, near={"U2_FB": pin("U20", 3)})
-    a("D20", side="B", radius=8)
-    a("C26", side="B", radius=6)
     a("R20", side="B", radius=8)
+    # U9 (LMR51610 data sheet 8.4.1): input capacitor as close as possible to VIN/GND, both feedback resistors
+    # close to FB. Placed before anything else around U9 (review 2026-11-15, Major 3 and Minor 5).
+    a("C15", side="B", near={"VCC": pin("U9", 5), "GND": pin("U9", 2)}, radius=4)
+    a("C49", side="B", near={"VCC": pin("U9", 5)}, radius=5)
+    a("C16", side="B", radius=6)
+    a("R42", side="B", near={"U9_FB": pin("U9", 3)}, radius=5)
+    a("R41", side="B", near={"U9_FB": pin("U9", 3)}, radius=5)
     # D4 (VIN -> VCC) between the TVS and the regulators, right of the cable housing
     a("D4", side="B", near={"VIN": (90.5, 24.5), "VCC": (95.0, 24.5)}, radius=6)
     a("C24", side="B", near={"VCC": pin("D4", 1)})
     a("C27", side="B", near={"+12V": pin("L20", 2)}); a("C34", side="B", near={"+12V": pin("L20", 2)})
-    a("C49", side="B", near={"VCC": pin("U9", 5)}, radius=5)
-    a("C16", side="B", radius=6)
     a("L4", side="B", radius=12, step=0.5)
-    a("C15", side="B", near={"VCC": pin("U9", 5)})
-    a("R41", side="B", near={"+3V3": pin("L4", 2)}); a("R42", side="B"); a("R40", side="B")
+    a("R40", side="B")
     a("C17", side="B", near={"+3V3": pin("L4", 2)})
     a("C18", side="B", near={"+3V3": pin("L4", 2)})
 
     # ------------------------------------------------------------ ESP32-C3 block
     # U2 sits between the pin columns of SW3 and SW4. Seen on this side: pins 1-8 on the left (pin 1 lowest),
     # 9-16 on top (GPIOs to the STM32), 17-24 on the right (flash), 25-32 at the bottom (USB, UART, crystal, VDDA).
-    fixed(p["U2"], 16.0, 22.3, "B", lambda q: q.pad(1)[0] < q.x - 2 and q.pad(1)[1] > q.y + 1)
+    # its courtyard corners touch the 0.3 mm margin around the THT pads of SW3/SW4 (no copper conflict, DRC clean)
+    fixed(p["U2"], 16.0, 22.3, "B", lambda q: q.pad(1)[0] < q.x - 2 and q.pad(1)[1] > q.y + 1, check=False)
     w = dict(side="B", region=WIFI)
     # matching network (C8 | L2 | C9) at the antenna, 50 ohm line from U2 pin 1 to it
     a("C9", **w, near={"Net-(AE1-FEED)": (fx + 2.8, fy - 2.3)}, radius=3)
@@ -138,14 +159,16 @@ def place(board, pl, parts, iface):
         for i in range(n + 1):
             qx, qy = ax + (bx - ax) * i / n, ay + (by - ay) * i / n
             pl.keepout("B", (qx - 0.75, qy - 0.75, qx + 0.75, qy + 0.75), "RF line")
-    a("L1", **w, near={"+3.3VA": pin("U2", 3)}, radius=6)                    # VDD3P3 (pins 2, 3) behind L1
-    a("C7", **w, radius=6)
+    # VDD3P3 (pins 2, 3): C7 right above the RF line keep-out, its +3.3VA pad about 2 mm from pin 3; L1 behind it
+    fixed(p["C7"], 10.9, 22.0, "B", lambda q: q.pad(1)[0] > q.x and abs(q.pad(1)[1] - q.y) < 0.1)
+    a("L1", **w, near={"+3.3VA": pin("C7", 1)}, radius=4)
     # VDDA decoupling and crystal below the bottom pin row; 1.6 mm stay free under U2 for the escape of
     # USB and UART (pins 25-28); everything else keeps 1.2 mm distance to U2
     fixed(p["C1"], 14.2, 27.3, "B", lambda q: abs(q.pad(1)[0] - q.x) < 0.1 and q.pad(1)[1] < q.pad(2)[1])
     best_rot(pl, p["Y1"], 17.5, 28.4, "B")
     pl.keepout("B", inflate(p["U2"].box(), 1.2), "U2 escape ring")
-    a("C11", **w); a("R1", **w); a("C10", **w)
+    a("R1", **w, near={"Net-(U2-XTAL_P)": pin("U2", 30)}, radius=4)          # series resistor at the XTAL_P pin
+    a("C11", **w); a("C10", **w)
     a("C3", **w, near={"+3V3": pin("U2", 11)})
     a("C14", **w)                                                            # VDD_SPI
     a("C2", **w, near={"+3V3": pin("U2", 17)})

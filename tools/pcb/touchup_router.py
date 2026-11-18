@@ -118,6 +118,7 @@ class Grid:
         exact = {l: np.zeros((self.nx, self.ny), bool) for l in L}
         viablock = np.zeros((self.nx, self.ny), bool)
         ownvia = np.zeros((self.nx, self.ny), bool)                    # inside a via or THT pad of the own net
+        core = {l: np.zeros((self.nx, self.ny), bool) for l in self.layers}   # well inside own copper
         iface = self.iface
         Wb, Hb = iface["board"]["width"], iface["board"]["depth"]
         tab = [q for q in iface["board"]["outline"] if q[0] > Wb]
@@ -156,8 +157,11 @@ class Grid:
                 d = self.dist(kind, geo, i0, i1, j0, j1)
                 for l in on(lay):
                     own[l][i0:i1, j0:j1] |= d <= 0
+                    core[l][i0:i1, j0:j1] |= d <= -0.02
                 if lay == "A":
                     ownvia[i0:i1, j0:j1] |= d <= -0.1                  # well inside: the layer change is already there
+                elif kind == "rect":
+                    viablock[i0:i1, j0:j1] |= d < VIA_D / 2 + 0.05     # no via in or touching an SMD pad (review)
                 continue
             cl = max(net_clearance(net), net_clearance(n)) + g / 2 + 0.04
             mt, mv = cl + width / 2, cl + VIA_D / 2
@@ -181,6 +185,9 @@ class Grid:
         for l in L:
             soft[l] &= ~blocked[l] & ~own[l]
         self.ownvia = ownvia
+        # connectivity uses only cells 0.02 mm inside the copper: two items closer than a grid step must not
+        # look connected (they are not, the DRC still reports them open)
+        self.core = core
         self.exact = exact
         return blocked, viablock, own, soft
 
@@ -193,17 +200,46 @@ class Grid:
         lay_at = lambda c: [l for l in "FB" if own[l][c]] or ["B", "F"]
         L = self.layers
         lcost = {l: (INNER_COST if l == "I" else 1.0) for l in L}
-        starts = [(ca, l) for l in lay_at(ca)]
-        goal_l = set(lay_at(cb))
         # own copper may be walked on freely; free the area right at the end points (inside the own pad)
         free = {l: ~blocked[l] | (own[l] & ~self.exact[l]) for l in L}
         for c in (ca, cb):                    # the end points themselves are existing copper
             for l in L:
                 if own[l][c]:
                     free[l][c] = True
+
+        def flood(c0):
+            """All grid nodes of the own copper connected to c0 (tracks, pads, vias of the item at c0).
+            The search starts from / ends on any of them: existing own copper may run closer to other nets
+            than a new track would be allowed to, so walking on it is not possible."""
+            core = self.core
+            seen = set((c0, l) for l in L if core[l][c0])
+            stack = list(seen)
+            while stack and len(seen) < 400000:
+                (i, j), l = stack.pop()
+                for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    nn = ((i + di, j + dj), l)
+                    if nn not in seen and 0 <= i + di < self.nx and 0 <= j + dj < self.ny and core[l][i + di, j + dj]:
+                        seen.add(nn)
+                        stack.append(nn)
+                if self.ownvia[i, j]:
+                    for ol in L:
+                        if ((i, j), ol) not in seen and core[ol][i, j]:
+                            seen.add(((i, j), ol))
+                            stack.append(((i, j), ol))
+            return seen
+
+        self._free = free
+        src = flood(ca) or {(ca, l) for l in lay_at(ca)}
+        dst = flood(cb) or {(cb, l) for l in lay_at(cb)}
+        starts = list(src)
+        dst_cells = np.array([c for c, _l in dst])
+        for c, l in dst:                      # the goal copper must be enterable
+            free[l][c] = True
         S2 = math.sqrt(2)
         moves = [(1, 0, 1), (-1, 0, 1), (0, 1, 1), (0, -1, 1), (1, 1, S2), (1, -1, S2), (-1, 1, S2), (-1, -1, S2)]
-        h = lambda c: math.hypot(c[0] - cb[0], c[1] - cb[1])
+        # admissible heuristic: distance to the nearest goal cell (subsampled for large goal sets)
+        hc = dst_cells if len(dst_cells) <= 2000 else dst_cells[:: max(1, len(dst_cells) // 2000)]
+        h = lambda c: float(np.min(np.hypot(hc[:, 0] - c[0], hc[:, 1] - c[1]))) * (1.0 if len(hc) == len(dst_cells) else 0.0)
         best, prev, pq = {}, {}, []
         for s in starts:
             best[s] = 0.0
@@ -214,7 +250,7 @@ class Grid:
             if cost > best.get(node, 1e18):
                 continue
             (i, j), l = node
-            if (i, j) == cb and l in goal_l:
+            if node in dst:
                 end = node
                 break
             for di, dj, c in moves:
@@ -254,7 +290,11 @@ class Grid:
                 d = np.hypot(pts[:, 0] - ax - u * (bx - ax), pts[:, 1] - ay - u * (by - ay)) - r
                 if (d < max(net_clearance(net), net_clearance(n)) + g / 2 + 0.01 + width / 2).any():
                     ripped.append(obj)
-        return path, width, ripped
+        # the path starts and ends on existing own copper; the given end points are only used when the
+        # path begins / ends exactly there
+        a_eff = a if path[0][0] == ca else None
+        b_eff = b if path[-1][0] == cb else None
+        return path, width, ripped, a_eff, b_eff
 
     def commit(self, net, path, width, a, b):
         g = self.g
@@ -270,12 +310,36 @@ class Grid:
             else:
                 run.append(node)
         segs.append(run)
+        free = getattr(self, "_free", None)
+
+        def clear(l, p, q):
+            """Straight segment p-q (mm) runs only through free grid cells (sampled every g/4)."""
+            n = max(1, int(math.dist(p, q) / (g / 4)))
+            for i in range(n + 1):
+                x, y = p[0] + (q[0] - p[0]) * i / n, p[1] + (q[1] - p[1]) * i / n
+                if not free[l][int(round(x / g)), int(round(y / g))]:
+                    return False
+            return True
+
         for k, run in enumerate(segs):
             layer = LAYER[run[0][1]]
             pts = [(c[0] * g, c[1] * g) for c, _l in run]
-            if k == 0:
+            if free is not None and len(pts) > 2:
+                # string pulling: replace the grid staircase by the longest straight segments that stay in free
+                # cells. Free cells already include the clearance plus half a grid step, so a straight segment
+                # between them keeps the rule distance (nearest cell centre within g/sqrt(2) < g/2 + 0.04).
+                l = run[0][1]
+                out, i = [pts[0]], 0
+                while i < len(pts) - 1:
+                    j = i + 1
+                    while j + 1 < len(pts) and clear(l, pts[i], pts[j + 1]):
+                        j += 1
+                    out.append(pts[j])
+                    i = j
+                pts = out
+            if k == 0 and a is not None:
                 pts.insert(0, a)
-            if k == len(segs) - 1:
+            if k == len(segs) - 1 and b is not None:
                 pts.append(b)
             simp = [pts[0]]                           # drop collinear points
             for q in pts[1:]:
@@ -305,10 +369,13 @@ def release(board, nets, vias_at):
     """Manual help for sealed-in pins: remove the unlocked tracks and vias of `nets` (they are routed again)
     and the vias at the given board positions (x, y in mm, also locked ones)."""
     n = 0
+    near = lambda p: any(math.hypot(p[0] - vx, p[1] - vy) < 0.05 for vx, vy in vias_at)
     for t in list(board.GetTracks()):
-        x, y = unP(t.GetPosition())
-        if (t.GetNetname() in nets and not t.IsLocked()) or \
-                (t.GetClass() == "PCB_VIA" and any(math.hypot(x - vx, y - vy) < 0.05 for vx, vy in vias_at)):
+        if t.GetClass() == "PCB_VIA":
+            hit = near(unP(t.GetPosition()))
+        else:                                  # track stubs that end at a released via go with it
+            hit = near(unP(t.GetStart())) or near(unP(t.GetEnd()))
+        if (t.GetNetname() in nets and not t.IsLocked()) or hit:
             board.Remove(t)
             n += 1
     return n
@@ -370,9 +437,7 @@ def main(src, dst, g=0.05, layers="FB", rip=False, rounds=4, rip_rounds=1, first
             if res is None:
                 failed.append(f"{net} ({a[0]:.1f},{a[1]:.1f})-({b[0]:.1f},{b[1]:.1f})")
                 continue
-            path, width, ripped = res
-            if math.dist((path[0][0][0] * g, path[0][0][1] * g), a) > math.dist((path[0][0][0] * g, path[0][0][1] * g), b):
-                a, b = b, a
+            path, width, ripped, a, b = res
             for obj in ripped:
                 board.Remove(obj)
             n_rip += len(ripped)

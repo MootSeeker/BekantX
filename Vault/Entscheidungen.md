@@ -34,5 +34,8 @@
 | 2026-11-15 | Jedes GND- und `+3V3`-SMD-Pad bekommt ein eigenes Via zur Plane | Kurze Rückstrompfade an den Entkopplern und unabhängig von zerschnittenen Aussenflächen |
 | 2026-11-15 | Tischstecker J10 **abgewinkelt**, Kabel liegt über der Platine | Rückseite nur 7.5 mm frei; so bleibt alles im Platinenvolumen |
 | 2026-11-15 | Bauteil-Bezeichner auf den Fab-Lagen statt im Bestückungsdruck | Die Rückseite ist zu dicht für lesbaren Druck; für die Bestückung wird ein Bestückungsplan exportiert |
+| 2026-11-18 | Review-Befunde **lokal umgebaut** statt das ganze Board neu zu routen | Ein neuer Freerouting-Lauf mit der korrigierten Platzierung liess 10 Verbindungen offen, am USB-Mux U8 nicht sauber lösbar. Der Umbau verschiebt nur die 14 betroffenen Bauteile, der Rest bleibt wie geprüft |
+| 2026-11-18 | Abstand GND/`+3V3` und USB **0.15 mm** statt 0.2 mm | Ausfahrten neben Entkoppel-Pads; USB nur Full Speed. JLCPCB fertigt 0.09 mm |
+| 2026-11-18 | 53-V-Netze bleiben bei **0.3 mm** Abstand | IPC-2221B Spalte B4 (mit Lötstopplack) verlangt 0.13 mm für 31–100 V; der Review nannte die unbeschichtete Spalte B2 |
 
 Neue Einträge hier ergänzen. Zurück: [[00 Index]]

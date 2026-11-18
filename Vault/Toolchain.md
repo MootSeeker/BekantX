@@ -49,6 +49,11 @@ Das Board Rev. 1 ist: Lauf mit 0.15-mm-Regeln (4 offen nach Freerouting) + `beka
 - Mehrere `LoadBoard` in einem pcbnew-Prozess sind unzuverlässig; nach dem Entfernen von Objekten in einem neuen Prozess weiterarbeiten.
 - Der DRC fand einen Kurzschluss, den ich beim Handsetzen eines Vias übersehen hatte (Via auf dem Pad von L4): jede Handkorrektur per DRC prüfen, nicht per Augenschein.
 
+**Umbau nach dem Review (2026-11-18):** `tools/pcb/bekantx_rework.py <routed> <out>` verschiebt einzelne Bauteile auf einem fertig gerouteten Board, entfernt die Leitungen an ihren alten Pads und die, die jetzt im Weg liegen, räumt lose Enden auf, setzt Plane-Vias und von Hand definierte kurze Leitungen (Schaltschleife U20, VIN von C15) und überlässt den Rest dem Nachrouter. Danach `bekantx_finish.py`.
+- pcbnew: Nach einem `board.Remove()` liefern `GetTracks()`, `GetFootprints()` und sogar `GetStart()` unbrauchbare `SwigPyObject`. Deshalb alles auf einer Python-Kopie der Geometrie entscheiden, am Schluss in einem Zug entfernen, speichern und in einem neuen Prozess weitermachen.
+- Nachrouter `touchup_router.py` (Stand 2026-11-18): sucht vom ganzen zusammenhängenden Kupfer des Start- und Zielpunkts aus (nur Rasterpunkte 0.02 mm innerhalb des Kupfers, sonst gelten 0.05 mm nahe Stücke als verbunden), glättet Treppen zu geraden Strecken (die freien Rasterzellen enthalten Abstand plus halben Rasterschritt, deshalb bleibt eine gerade Strecke regelkonform), setzt keine Vias in SMD-Pads. Aufreissen (`--rip`) nur eine Runde.
+- `bekantx_finish.py` setzt Stitching-Vias nur dort, wo im Umkreis eines halben Rasters (2.5 mm) noch keines liegt; ein zweiter Lauf auf einem fertigen Board verdoppelt sie sonst.
+
 ## Schaltplan-Edits per Skript
 - `tools/sch/sch_edit.py`: editiert `.kicad_sch` auf Textebene (Blöcke klonen/löschen, Symbole, Labels, Drähte setzen), ohne die Datei neu zu serialisieren. Pin-Positionen werden aus `lib_symbols` berechnet; die Transformation ist gegen alle bestehenden Sheets geprüft. Nach jedem Lauf ERC, Netzliste und PDF über `kicad-cli` auf dem Root-Sheet.
 

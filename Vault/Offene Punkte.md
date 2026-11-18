@@ -52,23 +52,36 @@ Erledigt: HMI integriert, eine Rail `+3V3`, LPUART gekreuzt, CS_N-Pull-up, `FSPI
   - [ ] SPI2-Takt fürs Display konservativ wählen (CH1115: ca. 4 MHz oder weniger, Tabelle im Datenblatt nachlesen).
   - [ ] Für den Review fehlen in `Docs/`: ESP32-C3-Datenblatt, STM32G0B1-Datenblatt/Referenzhandbuch, Hirose FH12.
 
-## PCB-Layout Controller Rev. 1 (Stand 2026-11-15, Branch `pcb/layout-4layer`, noch nicht committet)
-Fertig geroutet, siehe [[Hardware]] (Abschnitt Layout) und [[Toolchain]] (Pipeline, Erkenntnisse). DRC mit Schaltplan-Parität: 0 Fehler, 0 offen, 0 Paritätsfehler, 2 Warnungen (Bestückungsdruck von J1 an der Platinenkante). Passprüfung gegen Gehäuse Rev. 3 bestanden.
+## PCB-Layout Controller Rev. 1 (Stand 2026-11-18, Branch `pcb/layout-4layer`)
+Fertig geroutet, siehe [[Hardware]] (Abschnitt Layout) und [[Toolchain]] (Pipeline, Erkenntnisse). DRC mit Schaltplan-Parität: 0 Fehler, 0 offen, 0 Paritätsfehler, 2 Warnungen (Bestückungsdruck von J1 an der Platinenkante, harmlos; Entfernen würde J1 von der Bibliothek abweichen lassen). Passprüfung gegen Gehäuse Rev. 3 bestanden.
 - [x] Schaltplan angepasst: C40 → C40/C50–C52 (4 × 22 µF / 63 V), D5 = Cree CLVBA-FKA, J10 abgewinkelt, Testpunkte nicht in der Stückliste. ERC unverändert (0 Fehler, 28 alte Warnungen).
-- [x] Layout: 0 offene Verbindungen. Vier davon brauchten Handkorrekturen (`tools/pcb/bekantx_manual.json`): je ein eingeschlossener Pin an U1 (BTN_6), U2 (USB D+) und U8 (USB D+).
-- [x] Board-STEP `CAD/BekantX_PCB.step` und Passprüfung (`CAD/src/check_board_fit.py`): 0 mm³ Überschneidung, Einbauweg frei. Die gestrige Meldung (0.645 mm³) kam von den eckigen Kanten des USB-Hüllmodells, nicht vom Board.
+- [x] Layout: 0 offene Verbindungen (Stand 2026-11-15 mit Handkorrekturen aus `tools/pcb/bekantx_manual.json`).
+- [x] Board-STEP `CAD/BekantX_PCB.step` und Passprüfung (`CAD/src/check_board_fit.py`): 0 mm³ Überschneidung, Einbauweg frei.
+- [x] **Review `pcb-reviewer` 2026-11-15: PASS WITH NOTES**, kein Blocker, 3 Major. Behoben 2026-11-18 mit `tools/pcb/bekantx_rework.py` (lokaler Umbau auf dem committeten Stand, Rest des Routings unverändert):
+  - [x] Major 1/2: Boot- und Schaltschleife von U20 zu gross (C26 22 mm mit 6 Vias, D20/C25 8–10 mm vom IC) → kompakte Zelle, siehe [[Hardware]].
+  - [x] Major 3: C15 ca. 11 mm Leiterbahn vom VIN-Pin von U9 → direkte Leitung, ca. 5 mm. Direkt am Pin geht beim SOT-23-6 nicht (siehe [[Hardware]]).
+  - [x] Minor 5: `U9_FB` 15 mm → 4.3 mm, R41/R42 am FB-Pin. Minor 3: C7 an die VDD3P3-Pins. Minor 1: Via im VIN-Pad von U20 entfernt; der Nachrouter setzt keine Vias mehr in SMD-Pads.
+  - [x] Minor 6 (53-V-Abstand 0.3 mm, Review verlangte 0.6 mm): **nicht geändert**. IPC-2221B Spalte B4 (Aussenlage mit dauerhafter Polymerbeschichtung = Lötstopplack) nennt 0.13 mm für 31–100 V; 0.6 mm ist die Spalte B2 ohne Beschichtung. Wert aus Sekundärquellen, die Norm selbst lag nicht vor.
+  - [x] Minor 7 (Via-Restring 0.1 mm): **nicht geändert**. JLCPCB nennt für Vias Durchmesser = Bohrung + 0.15 mm (0.075 mm Restring); 0.13 mm gilt für Bauteil-Durchkontaktierungen. Beim Bestellen im DFM-Check bestätigen.
+  - [ ] Minor 2 (Quarz Y1: XTAL_P 11 mm mit Lagenwechsel, R1 6 mm vom Pin) und Minor 4 (HF-Anpassnetz 9 mm vom Pin, Breite nicht berechnet): offen, am Prototyp beurteilen.
+  - [ ] Minor 1 Rest: je 3 × 3 Vias in den Exposed Pads von U1/U2 (gewollt). Beim Bestellen abgedeckt oder gefüllt angeben, sonst fliesst Lot in die Vias.
+- [x] **Nachprüfung `pcb-reviewer` 2026-11-18: PASS WITH NOTES**, alle drei Major behoben, kein neuer Major; IPC-B4- und JLC-Via-Begründung akzeptiert. Neue Minor:
+  - [ ] Eingangsschleife U9 (VIN → C15 → GND) ist mit dem Weg durch die Plane noch ca. 9 mm (vorher ca. 20 mm). Optional: zweites GND-Via an C15 näher bei Pin 2.
+  - [ ] Ca. 41 mm überflüssige `+3V3`-Leitungen (vor allem 11 mm auf F.Cu von (103.2, 21.4) nach (92.0, 20.0)), die der Nachrouter zwischen Plane-Vias gelegt hat. Elektrisch harmlos (parallel zur In1-Plane); bei Gelegenheit entfernen und jedem `+3V3`-Pad ein eigenes Via geben.
+  - [ ] Ein Via am Pad 2 von D70 (61.8, 16.35, `+12V`) laut Reviewer; mit den Wärme-Vias zusammen abgedeckt bestellen oder verschieben.
+- [x] Netzklassen GND/`+3V3` und USB auf 0.15 mm Abstand gesenkt (vorher 0.2). Für USB Full Speed und die Plane-Netze unkritisch; nötig für die Ausfahrten neben Entkoppel-Pads.
 - [ ] **Schaltplan-Review nachholen** für die drei Änderungen am Schaltplan (C40-Aufteilung, D5, J10); sie sind bisher nur über ERC, Netzliste und Parität geprüft.
 - [ ] **ASSUMPTION USB-C J1** (HRO TYPE-C-31-M-12): Lage der Buchse zur Platinenkante (Gehäusefront 1.5 mm vor dem Ende der Nase) und die Gehäusemasse 8.94 × 7.3 × 3.26 mm stammen aus dem KiCad-Footprint und den Gehäuseparametern, nicht aus dem Datenblatt (nicht abrufbar). Die hinteren Schirm-Pads haben nur 0.3 mm bis zur Kante. Vor der Bestellung gegen das Datenblatt prüfen.
 - [ ] **ASSUMPTION OLED-FPC**: Pin 1 liegt auf der Platine bei y = 20.25 (Pin 16 bei 12.75), der Stecker öffnet nach +x, Kontakte unten. Abgeleitet aus der Zeichnung im OLED-Datenblatt (Ansicht von vorn, FPC nach rechts, Pin 1 unten; nach dem Falten zeigen die Kontakte zur Platine). Das Hirose-Datenblatt (Landmuster, FPC-Dicke 0.3 mm) war nicht abrufbar. Der 22-mm-Schwanz reicht gefaltet bis etwa x = 47; der Stecker sitzt bei x = 50. Footprint 1:1 drucken und mit dem echten Display probestecken. Die Anzeige steht für den Betrachter auf dem Kopf (FPC nach links): in der Firmware drehen (CH1115 Segment-Remap/COM-Scan).
-- [ ] **Antenne**: Sperrfläche 6.5 × 6.5 mm und Lage nach dem Referenzboard im Johanson-Datenblatt (Rev. 4.0), Anpassnetz C8/L2/C9 mit den Schaltplanwerten. 50-Ω-Breite 0.35 mm ist eine Schätzung für 0.21 mm Prepreg. Muss am Prototyp abgestimmt werden (Johanson bietet Tuning an). Die Schraube bei (12.5, 33) sitzt 6 mm neben der Sperrfläche.
-- [ ] **USB**: Full Speed, die Paare sind nicht gekoppelt und nicht impedanzkontrolliert geführt, Längenunterschied bis 10 mm (unkritisch bei 12 Mbit/s). `USBESP_D_P` wurde vom Nachrouter verlegt (4 Vias).
-- [ ] **12-V-Regler U20**: Boot-Kondensator C26 und der obere Teilerwiderstand R21 sitzen 8 bis 12 mm vom IC, der Schaltknoten `Net-(D20-K)` ist 22 mm lang (mit zwei Vias). Funktioniert voraussichtlich (nur LIN-Versorgung), ist aber nicht nach Lehrbuch. Bei einer Rev. 2 enger platzieren.
-- [ ] `U9_FB` (3.3-V-Regler) ist 15 mm lang und läuft 2 mm über In1.
+- [ ] **Antenne**: Sperrfläche 6.5 × 6.5 mm und Lage nach dem Referenzboard im Johanson-Datenblatt (Rev. 4.0), Anpassnetz C8/L2/C9 mit den Schaltplanwerten. 50-Ω-Breite 0.35 mm ist eine Schätzung für 0.21 mm Prepreg; die GND-Flächen daneben senken die Impedanz zusätzlich. Muss am Prototyp abgestimmt werden (Johanson bietet Tuning an). Die Schraube bei (12.5, 33) sitzt 6 mm neben der Sperrfläche: Kunststoffschraube erwägen.
+- [ ] **USB**: Full Speed, die Paare sind nicht gekoppelt und nicht impedanzkontrolliert geführt, Längenunterschied bis 10 mm (unkritisch bei 12 Mbit/s).
+- [ ] Freigabe von U20: `Net-(U20-~{SHDN})` 29 mm mit 4 Vias (Gleichspannung, unkritisch).
 - [ ] C40-Ersatz: Bauhöhe 6.5 mm max. stammt aus Distributor-Angaben, nicht aus dem Panasonic-Datenblatt.
-- [ ] Bezeichner stehen nur auf den Fab-Lagen; für die Handbestückung einen Bestückungsplan (PDF je Seite) exportieren (Skill `fab-export`).
+- [ ] Bezeichner stehen nur auf den Fab-Lagen; für die Handbestückung einen Bestückungsplan (PDF je Seite) und ein interaktives BOM exportieren (Skill `fab-export`). Polaritätsmarken von D1/D5, D3/D4/D20 und der Elkos im Bestückungsplan prüfen.
 - [ ] Keine Passermarken, keine Teardrops. Für Handbestückung unnötig, für Bestückung beim Fertiger nachrüsten.
 - [ ] Lagenaufbau JLC04161H-7628 ist aus dem Gedächtnis eingetragen (0.2104 mm Prepreg, 1.065 mm Kern); beim Bestellen mit dem JLCPCB-Formular abgleichen.
-- [ ] Reproduzierbarkeit: `bekantx_manual.json` gehört zu genau einem Freerouting-Ergebnis. Ein neuer Pipeline-Lauf liefert andere offene Verbindungen; die Board-Datei ist das Ergebnis, die Skripte dokumentieren den Weg.
+- [ ] Reproduzierbarkeit: Der Stand ist «Pipeline 2026-11-15 + `bekantx_manual.json`» und darauf «`bekantx_rework.py` + Nachrouter». Ein neuer Gesamtlauf mit der Platzierung nach dem Review wurde 2026-11-18 versucht: 10 offen nach Freerouting, am USB-Mux U8 auch mit Handkorrekturen nicht sauber lösbar. Die Board-Datei ist das Ergebnis, die Skripte dokumentieren den Weg. `bekantx_manual.json` gehört zum Lauf vom 2026-11-15.
+- [ ] `Pcb_Controller/3DxService.log` (3Dconnexion-Treiber) gehört in `.gitignore`.
 
 ## Gehäuse Rev. 3 (Stand 2026-11-14, Branch `cad/enclosure-single-pcb`)
 Rev. 2 wurde gedruckt: der Deckel passte nicht (gefangen, wie vom Review vorhergesagt). Rev. 3 ersetzt Rev. 2, siehe [[Hardware]].

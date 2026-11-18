@@ -75,7 +75,11 @@ def stitch(board, iface, pitch=5.0, via=0.6, drill=0.3, extra=()):
     nx, ny = int(W / pitch), int(H / pitch)
     pts += [(pitch / 2 + i * pitch, pitch / 2 + j * pitch) for i in range(nx + 1) for j in range(ny + 1)]
     n = 0
-    for x, y in pts:
+    for k, (x, y) in enumerate(pts):
+        # grid points only where no GND via is within half a pitch yet: a board that was finished before keeps
+        # its stitching and only the gaps (e.g. after a rework) are filled; the fence points always count
+        if k >= len(extra) and any(vn == "GND" and math.hypot(x - vx, y - vy) < pitch / 2 for vx, vy, _vr, vn in vias):
+            continue
         for dx, dy in ((0, 0), (0.6, 0), (-0.6, 0), (0, 0.6), (0, -0.6), (1.2, 0), (-1.2, 0), (0, 1.2), (0, -1.2)):
             if ok(x + dx, y + dy):
                 add_via(board, "GND", (x + dx, y + dy), via, drill, locked=False)
@@ -122,6 +126,21 @@ MODELS = {
 }
 
 
+def trim_offboard_silk(board, iface, margin=0.2):
+    """Remove footprint silkscreen lines that end beyond the board edge (the USB-C outline in front of the tab).
+    They would not be printed anyway; removing them clears the silk_edge_clearance warnings."""
+    xmax = max(q[0] for q in iface["board"]["outline"])
+    n = 0
+    for fp in board.GetFootprints():
+        for g in list(fp.GraphicalItems()):
+            if g.GetLayer() not in (pcbnew.F_SilkS, pcbnew.B_SilkS) or g.GetClass() != "PCB_SHAPE":
+                continue
+            if max(unP(g.GetStart())[0], unP(g.GetEnd())[0]) > xmax - margin:
+                fp.Remove(g)
+                n += 1
+    return n
+
+
 def attach_models(board):
     n = 0
     for fp in board.GetFootprints():
@@ -164,6 +183,8 @@ def finish(src, out):
     # ground vias along the edge of the antenna clearance (recommended by the antenna data sheet)
     fence = [(x, H - 6.5 - 0.7) for x in (0.9, 3.6, 5.2, 6.8)] + [(6.5 + 0.7, y) for y in (H - 5.2, H - 3.6, H - 2.0, H - 0.9)]
     print("3D models attached:", attach_models(board))
+    # trim_offboard_silk() would clear the 2 silk_edge_clearance warnings of J1, but makes J1 differ from the
+    # library (lib_footprint_mismatch), so the library footprint stays untouched.
     n = stitch(board, iface, extra=fence)
     if not any(d.GetClass() == "PCB_TEXT" for d in board.GetDrawings()):
         labels(board)
