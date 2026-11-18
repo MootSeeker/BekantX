@@ -36,6 +36,7 @@
 | 2026-11-15 | Bauteil-Bezeichner auf den Fab-Lagen statt im Bestückungsdruck | Die Rückseite ist zu dicht für lesbaren Druck; für die Bestückung wird ein Bestückungsplan exportiert |
 | 2026-11-18 | Review-Befunde **lokal umgebaut** statt das ganze Board neu zu routen | Ein neuer Freerouting-Lauf mit der korrigierten Platzierung liess 10 Verbindungen offen, am USB-Mux U8 nicht sauber lösbar. Der Umbau verschiebt nur die 14 betroffenen Bauteile, der Rest bleibt wie geprüft |
 | 2026-11-18 | Abstand GND/`+3V3` und USB **0.15 mm** statt 0.2 mm | Ausfahrten neben Entkoppel-Pads; USB nur Full Speed. JLCPCB fertigt 0.09 mm |
+| 2026-11-18 | **In1 geteilt**: VCC-Fläche im Leistungsteil, Rest `+3V3`; In2 bleibt durchgehend GND | PR-Feedback des Nutzers (VCC-Leitungen auf B.Cu unübersichtlich). GND muss ungeteilt unter B.Cu bleiben (HF-Leitung, fast alle Signale); `+3V3`-Verbraucher liegen fast alle links |
 | 2026-11-18 | 53-V-Netze bleiben bei **0.3 mm** Abstand | IPC-2221B Spalte B4 (mit Lötstopplack) verlangt 0.13 mm für 31–100 V; der Review nannte die unbeschichtete Spalte B2 |
 
 Neue Einträge hier ergänzen. Zurück: [[00 Index]]

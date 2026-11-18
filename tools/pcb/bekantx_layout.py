@@ -403,7 +403,7 @@ LATE_VIA_REFS = ()
 
 
 def drop_plane_vias(board, iface, nets=("GND", "+3V3"), via=0.6, drill=0.3, clearance=0.2, ep_grid=None,
-                    skip=(), only=None, pads_only=None):
+                    skip=(), only=None, pads_only=None, share=True, allowed=None):
     """Give every SMD pad of the plane nets a via next to it (short stub), locked.
     Exposed pads listed in ep_grid {ref: (pad number, n)} get an n x n via array inside the pad.
     Returns the number of vias and the pads that found no place."""
@@ -442,6 +442,8 @@ def drop_plane_vias(board, iface, nets=("GND", "+3V3"), via=0.6, drill=0.3, clea
     def via_ok(x, y, net, own):
         if not inside_board(x, y, r_via + 0.4):
             return False
+        if allowed is not None and not allowed(x, y):       # e.g. only where the plane of the net is
+            return False
         for hx, hy, hr in holes:
             if math.hypot(x - hx, y - hy) < hr + r_via + 0.4:
                 return False
@@ -450,6 +452,9 @@ def drop_plane_vias(board, iface, nets=("GND", "+3V3"), via=0.6, drill=0.3, clea
                 return False
         for rect, n, side, pad, _fp in pads:
             if pad is own:
+                # the via ring stays 0.1 mm outside its own pad (no via in pad: solder wicking, review 2026-11-18)
+                if _rect_dist(x, y, rect) < r_via + 0.1 - eps:
+                    return False
                 continue
             # no via in or at a pad (solder wicking); 0.15 mm to pads of the same net
             if _rect_dist(x, y, rect) < r_via + cl(n) + (0.1 if side == "FB" else 0) - eps:
@@ -510,8 +515,8 @@ def drop_plane_vias(board, iface, nets=("GND", "+3V3"), via=0.6, drill=0.3, clea
         elif hy > 1.5 * hx:
             ang0 = math.pi / 2 if cy >= fy else -math.pi / 2
         best = None
-        for vx, vy, vn, _vr in vias:       # a via of the same net close by is shared
-            if vn == net and _rect_dist(vx, vy, rect) < 0.9 and stub_ok((cx, cy), (vx, vy), w, net, side, pad):
+        for vx, vy, vn, _vr in (vias if share else []):   # a via of the same net close by is shared
+            if vn == net and (allowed is None or allowed(vx, vy)) and _rect_dist(vx, vy, rect) < 0.9 and stub_ok((cx, cy), (vx, vy), w, net, side, pad):
                 best = (vx, vy, False)
                 break
         if best is None:

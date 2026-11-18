@@ -13,6 +13,7 @@ that is found is DRC clean; a connection that finds no path is reported and stay
 --release=NET,NET        remove the unlocked routing of these nets first (they are routed again)
 --release-vias=X/Y,X/Y   remove the vias at these board positions first (mm, also locked ones)
 --first=NET,NET          route the open connections of these nets before all others
+--plane-nets=NET,NET     for these nets a via into their filled inner-layer plane also closes a connection
 --manual=FILE            json with release_nets, release_vias, tracks, vias and first (see bekantx_manual.json)
 The tracks are not locked.
 """
@@ -24,7 +25,7 @@ import pcbnew
 
 from bekantx_layout import KICAD_BIN, NETCLASSES, ORIGIN, P, ROOT, net_clearance, unP
 
-VIA_D, VIA_DRILL, VIA_COST = 0.5, 0.3, 12.0
+VIA_D, VIA_DRILL, VIA_COST = 0.5, 0.3, 40.0   # a via costs as much as 2 mm of track (fewer layer changes)
 LAYER = {"F": pcbnew.F_Cu, "B": pcbnew.B_Cu, "I": pcbnew.In1_Cu}
 INNER_COST = 4.0        # a track on In1 cuts the +3V3 plane: only where nothing else works
 RIP_COST = 8.0          # per grid cell inside the clearance area of a track that would have to be ripped up
@@ -59,8 +60,16 @@ def open_connections(board_path):
 
 
 class Grid:
-    def __init__(self, board, iface, g, layers="FB"):
+    def __init__(self, board, iface, g, layers="FB", plane_nets=()):
         self.b, self.g, self.layers = board, g, layers
+        # filled plane copper of the given nets on the inner layers (zones must be filled)
+        self.plane_nets = {}
+        for z in board.Zones():
+            if z.GetIsRuleArea() or z.GetNetname() not in plane_nets:
+                continue
+            for lay in (pcbnew.In1_Cu, pcbnew.In2_Cu):
+                if z.IsOnLayer(lay):
+                    self.plane_nets.setdefault(z.GetNetname(), []).append(z.GetFilledPolysList(lay))
         self.W, self.H = iface["board"]["width"] + 4.0, iface["board"]["depth"]
         self.nx, self.ny = int(self.W / g) + 1, int(self.H / g) + 1
         self.iface = iface
@@ -191,6 +200,24 @@ class Grid:
         self.exact = exact
         return blocked, viablock, own, soft
 
+    def plane_mask(self, net, c0, viablock, radius=12.0):
+        """Cells (within `radius` mm of c0) where a via of `net` can stand and lands well inside the filled plane
+        of that net on an inner layer (all of its pad plus 0.1 mm inside the fill)."""
+        g = self.g
+        mask = np.zeros((self.nx, self.ny), bool)
+        polys = self.plane_nets[net]
+        n = int(radius / g)
+        r = VIA_D / 2 + 0.1
+        offs = [(0, 0), (r, 0), (-r, 0), (0, r), (0, -r)]
+        for i in range(max(0, c0[0] - n), min(self.nx, c0[0] + n + 1), 2):      # every second cell is enough
+            for j in range(max(0, c0[1] - n), min(self.ny, c0[1] + n + 1), 2):
+                if viablock[i, j]:
+                    continue
+                x, y = i * g, j * g
+                if all(any(ps.Contains(P(x + dx, y + dy)) for ps in polys) for dx, dy in offs):
+                    mask[i, j] = True
+        return mask
+
     def route(self, prim, net, a, b, rip=False):
         g = self.g
         width = touchup_width(net)
@@ -229,8 +256,16 @@ class Grid:
             return seen
 
         self._free = free
+        # plane nets: a via that lands in the filled plane of the net (In1/In2) is a goal as well
+        plane_ok = self.plane_mask(net, ca, viablock) if self.plane_nets and net in self.plane_nets else None
         src = flood(ca) or {(ca, l) for l in lay_at(ca)}
         dst = flood(cb) or {(cb, l) for l in lay_at(cb)}
+        if plane_ok is not None:
+            # route from the end that is not on the plane yet; if this one is, let the caller try the other way
+            polys = self.plane_nets[net]
+            on_plane = lambda c: any(ps.Contains(P(c[0] * g, c[1] * g)) for ps in polys)
+            if any(self.ownvia[c] and on_plane(c) for c, _l in src):
+                return None
         starts = list(src)
         dst_cells = np.array([c for c, _l in dst])
         for c, l in dst:                      # the goal copper must be enterable
@@ -240,6 +275,8 @@ class Grid:
         # admissible heuristic: distance to the nearest goal cell (subsampled for large goal sets)
         hc = dst_cells if len(dst_cells) <= 2000 else dst_cells[:: max(1, len(dst_cells) // 2000)]
         h = lambda c: float(np.min(np.hypot(hc[:, 0] - c[0], hc[:, 1] - c[1]))) * (1.0 if len(hc) == len(dst_cells) else 0.0)
+        if plane_ok is not None:
+            h = lambda c: 0.0                 # the nearest plane via is the goal: plain Dijkstra
         best, prev, pq = {}, {}, []
         for s in starts:
             best[s] = 0.0
@@ -251,6 +288,9 @@ class Grid:
                 continue
             (i, j), l = node
             if node in dst:
+                end = node
+                break
+            if plane_ok is not None and plane_ok[i, j] and node not in src:
                 end = node
                 break
             for di, dj, c in moves:
@@ -276,6 +316,8 @@ class Grid:
         while path[-1] in prev:
             path.append(prev[path[-1]])
         path.reverse()
+        if plane_ok is not None and end not in dst:      # finish with a via into the plane
+            path.append((end[0], "F" if end[1] != "F" else "B"))
         # tracks of other nets whose clearance area the path crosses: they are ripped up by the caller
         ripped = []
         cells = {l: np.array([[c[0] * g, c[1] * g] for c, pl in path if pl == l and soft[l][c]]) for l in L}
@@ -398,7 +440,8 @@ def add_manual(board, man):
     return len(man.get("tracks", [])), len(man.get("vias", []))
 
 
-def main(src, dst, g=0.05, layers="FB", rip=False, rounds=4, rip_rounds=1, first=(), rel_nets=(), rel_vias=(), manual=None):
+def main(src, dst, g=0.05, layers="FB", rip=False, rounds=4, rip_rounds=1, first=(), rel_nets=(), rel_vias=(), manual=None,
+         plane_nets=()):
     iface = json.loads((ROOT / "CAD" / "board_interface.json").read_text(encoding="utf-8"))
     board = pcbnew.LoadBoard(str(src))
     man = json.loads(Path(manual).read_text(encoding="utf-8")) if manual else {}
@@ -417,7 +460,7 @@ def main(src, dst, g=0.05, layers="FB", rip=False, rounds=4, rip_rounds=1, first
         raise SystemExit(subprocess.run([sys.executable, sys.argv[0], str(src), str(dst), *args]).returncode)
     todo = open_connections(src)
     ox, oy = ORIGIN
-    grid = Grid(board, iface, g, layers)
+    grid = Grid(board, iface, g, layers, plane_nets)
     done, failed, total = 0, [], len(todo)
     tmp = Path(dst).with_name("touchup_tmp.kicad_pcb")
     for rnd in range(rounds):
@@ -467,4 +510,4 @@ if __name__ == "__main__":
          first=tuple(n for n in opt("first").split(",") if n),
          rel_nets=tuple(n for n in opt("release").split(",") if n),
          rel_vias=tuple(tuple(float(v) for v in q.split("/")) for q in opt("release-vias").split(",") if q),
-         manual=opt("manual") or None)
+         manual=opt("manual") or None, plane_nets=tuple(n for n in opt("plane-nets").split(",") if n))
