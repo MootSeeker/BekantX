@@ -11,7 +11,7 @@
 - [x] Gehäuse parametrisch neu aufgebaut (Rev. 2, 2026-11-13); offen ist der Probedruck, siehe unten
 - [x] ERC-Befunde des Controller-Schaltplans gesichtet (2026-11-13): auf main 43 Meldungen (8 Fehler), im Branch 28 Warnungen und 0 Fehler; 26 davon sind alte Draht-Stummel (< 0.2 mm) an Labels. Das HMI-PCB ist abgelöst.
 - [x] Freerouting eingerichtet (Pipeline `tools/pcb/autoroute.py`, siehe [[Toolchain]]); offen: Profil an das Ein-PCB-Layout anpassen und die Netzklassen-Regeln im `.kicad_pro` definieren
-- [ ] Controller-PCB: Layout (0 Footprints), Schaltplan fertigstellen
+- [x] Controller-PCB: Layout Rev. 1 fertig (2026-11-15), siehe unten
 - [ ] Pinbelegung final + SPI-Taktlimit validieren
 - [ ] LIN-PHY/Pegelanpassung zum Tisch klären
 - [x] Gehäuse: CAD-Quelle liegt in `CAD/src/`; Passung zum echten Board folgt nach dem Layout
@@ -52,6 +52,24 @@ Erledigt: HMI integriert, eine Rail `+3V3`, LPUART gekreuzt, CS_N-Pull-up, `FSPI
   - [ ] SPI2-Takt fürs Display konservativ wählen (CH1115: ca. 4 MHz oder weniger, Tabelle im Datenblatt nachlesen).
   - [ ] Für den Review fehlen in `Docs/`: ESP32-C3-Datenblatt, STM32G0B1-Datenblatt/Referenzhandbuch, Hirose FH12.
 
+## PCB-Layout Controller Rev. 1 (Stand 2026-11-15, Branch `pcb/layout-4layer`, noch nicht committet)
+Fertig geroutet, siehe [[Hardware]] (Abschnitt Layout) und [[Toolchain]] (Pipeline, Erkenntnisse). DRC mit Schaltplan-Parität: 0 Fehler, 0 offen, 0 Paritätsfehler, 2 Warnungen (Bestückungsdruck von J1 an der Platinenkante). Passprüfung gegen Gehäuse Rev. 3 bestanden.
+- [x] Schaltplan angepasst: C40 → C40/C50–C52 (4 × 22 µF / 63 V), D5 = Cree CLVBA-FKA, J10 abgewinkelt, Testpunkte nicht in der Stückliste. ERC unverändert (0 Fehler, 28 alte Warnungen).
+- [x] Layout: 0 offene Verbindungen. Vier davon brauchten Handkorrekturen (`tools/pcb/bekantx_manual.json`): je ein eingeschlossener Pin an U1 (BTN_6), U2 (USB D+) und U8 (USB D+).
+- [x] Board-STEP `CAD/BekantX_PCB.step` und Passprüfung (`CAD/src/check_board_fit.py`): 0 mm³ Überschneidung, Einbauweg frei. Die gestrige Meldung (0.645 mm³) kam von den eckigen Kanten des USB-Hüllmodells, nicht vom Board.
+- [ ] **Schaltplan-Review nachholen** für die drei Änderungen am Schaltplan (C40-Aufteilung, D5, J10); sie sind bisher nur über ERC, Netzliste und Parität geprüft.
+- [ ] **ASSUMPTION USB-C J1** (HRO TYPE-C-31-M-12): Lage der Buchse zur Platinenkante (Gehäusefront 1.5 mm vor dem Ende der Nase) und die Gehäusemasse 8.94 × 7.3 × 3.26 mm stammen aus dem KiCad-Footprint und den Gehäuseparametern, nicht aus dem Datenblatt (nicht abrufbar). Die hinteren Schirm-Pads haben nur 0.3 mm bis zur Kante. Vor der Bestellung gegen das Datenblatt prüfen.
+- [ ] **ASSUMPTION OLED-FPC**: Pin 1 liegt auf der Platine bei y = 20.25 (Pin 16 bei 12.75), der Stecker öffnet nach +x, Kontakte unten. Abgeleitet aus der Zeichnung im OLED-Datenblatt (Ansicht von vorn, FPC nach rechts, Pin 1 unten; nach dem Falten zeigen die Kontakte zur Platine). Das Hirose-Datenblatt (Landmuster, FPC-Dicke 0.3 mm) war nicht abrufbar. Der 22-mm-Schwanz reicht gefaltet bis etwa x = 47; der Stecker sitzt bei x = 50. Footprint 1:1 drucken und mit dem echten Display probestecken. Die Anzeige steht für den Betrachter auf dem Kopf (FPC nach links): in der Firmware drehen (CH1115 Segment-Remap/COM-Scan).
+- [ ] **Antenne**: Sperrfläche 6.5 × 6.5 mm und Lage nach dem Referenzboard im Johanson-Datenblatt (Rev. 4.0), Anpassnetz C8/L2/C9 mit den Schaltplanwerten. 50-Ω-Breite 0.35 mm ist eine Schätzung für 0.21 mm Prepreg. Muss am Prototyp abgestimmt werden (Johanson bietet Tuning an). Die Schraube bei (12.5, 33) sitzt 6 mm neben der Sperrfläche.
+- [ ] **USB**: Full Speed, die Paare sind nicht gekoppelt und nicht impedanzkontrolliert geführt, Längenunterschied bis 10 mm (unkritisch bei 12 Mbit/s). `USBESP_D_P` wurde vom Nachrouter verlegt (4 Vias).
+- [ ] **12-V-Regler U20**: Boot-Kondensator C26 und der obere Teilerwiderstand R21 sitzen 8 bis 12 mm vom IC, der Schaltknoten `Net-(D20-K)` ist 22 mm lang (mit zwei Vias). Funktioniert voraussichtlich (nur LIN-Versorgung), ist aber nicht nach Lehrbuch. Bei einer Rev. 2 enger platzieren.
+- [ ] `U9_FB` (3.3-V-Regler) ist 15 mm lang und läuft 2 mm über In1.
+- [ ] C40-Ersatz: Bauhöhe 6.5 mm max. stammt aus Distributor-Angaben, nicht aus dem Panasonic-Datenblatt.
+- [ ] Bezeichner stehen nur auf den Fab-Lagen; für die Handbestückung einen Bestückungsplan (PDF je Seite) exportieren (Skill `fab-export`).
+- [ ] Keine Passermarken, keine Teardrops. Für Handbestückung unnötig, für Bestückung beim Fertiger nachrüsten.
+- [ ] Lagenaufbau JLC04161H-7628 ist aus dem Gedächtnis eingetragen (0.2104 mm Prepreg, 1.065 mm Kern); beim Bestellen mit dem JLCPCB-Formular abgleichen.
+- [ ] Reproduzierbarkeit: `bekantx_manual.json` gehört zu genau einem Freerouting-Ergebnis. Ein neuer Pipeline-Lauf liefert andere offene Verbindungen; die Board-Datei ist das Ergebnis, die Skripte dokumentieren den Weg.
+
 ## Gehäuse Rev. 3 (Stand 2026-11-14, Branch `cad/enclosure-single-pcb`)
 Rev. 2 wurde gedruckt: der Deckel passte nicht (gefangen, wie vom Review vorhergesagt). Rev. 3 ersetzt Rev. 2, siehe [[Hardware]].
 - [x] Blocker aus dem Review von Rev. 2 (Deckel gefangen) und die Überhänge im Arm: behoben durch Scharnier am Armende, Schnapper vorne und Wände entlang der Schwenkrichtung; Bewegungsweg im Skript nachgerechnet.
@@ -60,7 +78,7 @@ Rev. 2 wurde gedruckt: der Deckel passte nicht (gefangen, wie vom Review vorherg
   - [ ] Major: der Schnapper braucht ca. 0.3 mm elastische Stauchung des Deckels; ±0.15 mm Druckfehler machen ihn sehr lose oder zu stramm, Elefantenfuss an der Deckelnase erhöht die Überdeckung. Am Probedruck messen, dann `snap_compress` / `snap_gap` nachstellen. Geschlossen hat der Deckel 0.2 mm Spiel, die Schrauben halten ihn fest.
   - [ ] Minor: dünne tragende Stellen (Dach der Zungentaschen 1.15 mm, Wand hinter der Tasche 1.8 mm, Wand vor USB 1.2 mm); Taschenenden 55° Überhang auf 1 mm; Brücke über der USB-Öffnung 9.5 mm; Arme der Tastenmatte nur bei 0.2 mm Schichthöhe zwei Lagen; Schraubenlänge der Deckelschrauben nicht festgelegt; einzelne feste Zahlen im Skript; `lid_t` unter ca. 2.3 und `arm_angle` +10 % brauchen Nacharbeit am Schnapper bzw. Entnahmeweg.
 - [x] Entscheid Bauhöhe (Nutzer, 2026-11-14): der Frontblock bleibt 19.5 mm hoch.
-- [ ] **C40 ersetzen**: C40 (EEE-FK1J101P, 10.2 mm) passt nicht mehr, auf der Platinenrückseite sind Bauteile bis 7.0 mm möglich. Ersatz später wählen (kein MPN gewählt, Schaltplan unverändert). Ebenso: Tischstecker J10 muss liegend (abgewinkelt) bestückt werden.
+- [x] **C40 ersetzt** (2026-11-14: 4 × EEE-FK1J220P), Tischstecker J10 abgewinkelt.
 - [x] **Probedruck Rev. 3** (2026-11-14, Nutzer, Bambu P1S, PLA): gedruckt, **passt**. Das ist die Aussage des Nutzers; Schnappkraft, Klick, Tastenmatte, USB-Passung und Schraubengriff wurden nicht einzeln protokolliert. Der PETG-Druck des Endteils steht noch aus (zäher: Schnapper und Kernloch dort prüfen).
 - [ ] Major aus dem Review von Rev. 2, **weiter offen**: FPC des OLED nicht berücksichtigt (Faltung zwischen Glaskante und SW5, Stecker unter dem Glas); als Sperrflächen aufnehmen, Glas/Flansch verschieben.
 - [x] Änderungen nach dem ersten Review von Rev. 3 (einheitliche Fasen, M2.5×6-Schrauben, Entlastung der Armwände, dünnere Frontwand, Symbole auf den Tasten): der zweite Review des `cad-reviewer` wurde **nicht abgeschlossen** (Agent vorzeitig gestoppt, kein Befund). Stattdessen gilt der Probedruck des Nutzers als Freigabe (PASS, Entscheid des Nutzers 2026-11-14); Prüfungen im Skript: 0 mm³ Überschneidung.
@@ -70,8 +88,8 @@ Rev. 2 wurde gedruckt: der Deckel passte nicht (gefangen, wie vom Review vorherg
 - [ ] **ASSUMPTION Tischkabel**: Durchmesser (5 mm) und Stecker sind nicht gemessen; Austritt 9 × 5 mm lässt ein 3-poliges 2.54-mm-Gehäuse durch.
 - [ ] Taster B3F-1000 (Höhe 4.3 mm) gegen das Datenblatt prüfen; das Mass stammt nicht aus `Docs/`.
 - [ ] OLED-Befestigung: Glas in der Tasche kleben (dünnes doppelseitiges Band) oder Schaumstoff zwischen Glas und Platine.
-- [ ] Layout: `CAD/board_interface.json` (r3) übernehmen: Umriss 129 × 38 **mit USB-Nase**, 6 Bohrungen (vordere Reihe verschoben), Tasten, J3 unter dem Display, J1 auf B.Cu am Ende der Nase, D5/D1 unter den Lichtschächten, Sperrfläche Tastenmatte. Nichts darf an der +X-Kante über den Umriss ragen (Platine wird seitlich eingeschoben). D5 hat noch keinen Footprint.
-- [ ] Nach dem Layout: Board-STEP exportieren und die Passprüfung gegen das echte Board wiederholen.
+- [x] (2026-11-15 im Layout umgesetzt) Layout: `CAD/board_interface.json` (r3) übernehmen: Umriss 129 × 38 **mit USB-Nase**, 6 Bohrungen (vordere Reihe verschoben), Tasten, J3 unter dem Display, J1 auf B.Cu am Ende der Nase, D5/D1 unter den Lichtschächten, Sperrfläche Tastenmatte. Nichts darf an der +X-Kante über den Umriss ragen (Platine wird seitlich eingeschoben). D5 hat noch keinen Footprint.
+- [x] Nach dem Layout: Board-STEP exportiert, Passprüfung gegen das echte Board bestanden (2026-11-15).
 - [x] r2-Exporte (`CAD/BekantX_*_r2.*`) aus dem Repo entfernt (2026-11-14, nach dem passenden Druck von Rev. 3; bleiben in der Git-Historie).
 
 ## Firmware

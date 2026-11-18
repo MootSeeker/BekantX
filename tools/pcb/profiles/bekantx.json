@@ -1,0 +1,14 @@
+{
+  "autorouter.max_passes": 30,
+  "scoring.via_costs": 50,
+  "scoring.plane_via_costs": 5,
+  "scoring.start_ripup_costs": 100,
+  "optimizer.enabled": true,
+  "optimizer.improvement_threshold": 2.5,
+  "automatic_neckdown": false,
+  "plane_as_obstacle": true,
+  "autorouter.ignore_net_classes": [
+    "Planes"
+  ],
+  "fanout.enabled": false
+}

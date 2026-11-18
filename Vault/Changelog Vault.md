@@ -12,4 +12,7 @@
 - 2026-11-14 – Gehäuse Rev. 3 nach Feedback: Bauhöhe 19.5 mm bestätigt (C40 ersetzen), einheitliche Fasen, M2.5×6-Schrauben, 10 % weniger Material am Gehäuse, Symbole auf den Tasten, Druckhinweise für P1S.
 - 2026-11-14 – Gehäuse Rev. 3 gedruckt (PLA, P1S) und freigegeben: passt. r2-Exporte entfernt, PR #4 abgeschlossen. Offen: FPC des OLED, C40-Ersatz, PETG-Druck.
 
+- 2026-11-14 – PCB-Layout Controller begonnen (Branch `pcb/layout-4layer`): Schaltplan-Änderungen (C40 ersetzt, D5 Cree, J10), Platzierungsskripte, zweistufige Freerouting-Pipeline, Nachrouter. Stand: 4 offene Verbindungen, Board noch nicht geschrieben. Details in [[Offene Punkte]].
+- 2026-11-15 – PCB-Layout Controller Rev. 1 fertig: 4 Lagen, DRC 0 Fehler / 0 offen / Parität 0, Board-STEP exportiert, Passprüfung gegen Gehäuse Rev. 3 bestanden. Entscheide (Lagen, Regeln 0.15 mm, Via je Plane-Pad) in [[Entscheidungen]], Pipeline und Erkenntnisse in [[Toolchain]].
+
 Zurück: [[00 Index]]

@@ -7,8 +7,21 @@ Sheets: `mastersheet` (Root `BekantX.kicad_sch`), `microcontroller`, `powerSuppl
 - **Stand 2026-11-13 (Branch `pcb/merge-hmi-oled`):** HMI ist im Schaltplan integriert. Der Board-zu-Board-Stecker J11 ist entfernt, auf dem Sheet `hmi` sitzen jetzt 6 Tasten (SW3–SW8) mit RC-Filter (100R/100n, Pull-ups 4k7 DNP), das EEPROM 24FC01 (U5, I2C1) und das OLED.
 - **Anzeige:** OLED 1.29" 128x64, CH1115, 4-Draht-SPI (EastRising ER-OLED1.29-2W, 16-Pin-FPC). Ersetzt 7-Segment HDSP-433G und Treiber AS1115. Verdrahtet über J3 (16-Pin-FPC, 0.5 mm): interne Ladungspumpe (2× 220 nF), VPP/VCOMH je 4.7 µF, IREF 309k, IM1 an GND (4-Draht-SPI), VDD1/VDD2 an `+3V3`. Datenblätter: `Docs/ER-OLED1.29-2_Datasheet.pdf`, `Docs/CH1115.pdf`, `Docs/ER-CON16HB-1.pdf`. Offene Prüfpunkte siehe [[Offene Punkte]].
 - Eine 3.3-V-Rail `+3V3` (vorher zwei unverbundene Netze `+3.3V` und `+3V3`, der STM32 war dadurch unversorgt).
-- Der `.kicad_pcb` enthält weiterhin **0 Footprints** (Layout noch nicht begonnen).
 - Schaltplan-Edits per Skript: `tools/sch/sch_edit.py` (siehe [[Toolchain]]).
+- **Layout Rev. 1 (2026-11-15, Branch `pcb/layout-4layer`)**: siehe Abschnitt «Layout» unten.
+
+## Layout Rev. 1 (2026-11-15)
+`Pcb_Controller/BekantX.kicad_pcb`: 145 Bauteile + 6 Bohrungen, 129 × 38 mm mit USB-Nase, 4 Lagen. Das Board wird von Skripten erzeugt (siehe [[Toolchain]]), nicht von Hand gezeichnet.
+
+- **Lagen** (JLCPCB JLC04161H-7628 angenommen, 1.6 mm): F.Cu (Tasten, OLED-Stecker J3 mit seinen Kondensatoren, LEDs D1/D5) / In1 `+3V3`-Plane / In2 GND-Plane / B.Cu (alle übrigen Teile, HF-Leitung, USB). GND liegt bewusst direkt unter B.Cu. Auf beiden Aussenlagen zusätzlich GND-Flächen, 132 Stitching-Vias.
+- **Bestückung**: Vorderseite nur, was das Gehäuse dort verlangt (22 Footprints inkl. Bohrungen); Rückseite alles andere, höchstes Teil 6.3 mm (Elkos) bei 7.0 mm Grenze.
+- **Netzklassen** (`BekantX.kicad_pro`): Default 0.15/0.15 mm, Via 0.5/0.3; `+3.3VA`/`VCC_SPI` 0.3; `+12V`/`VBUS` 0.4; Hochvolt (`VDESK`, `VIN`, `VCC`, Schaltknoten, bis 53 V an der TVS) 0.5 mm mit 0.3 mm Abstand; LIN 0.3/0.3; USB 0.25/0.2; HF 0.35 mm.
+- **Planes**: jedes SMD-Pad an GND und `+3V3` hat ein eigenes Via (140 Stück), die Exposed Pads von U1/U2 je 3 × 3 Vias. In2 trägt keine Leiterbahn, In1 vier kurze Segmente (2 mm, `U9_FB`).
+- **Blöcke**: ESP32-C3 links (zwischen den Pin-Reihen von SW3/SW4), Chip-Antenne in der Ecke x 0–6.5 / y 31.5–38 mit kupferfreier Zone auf allen Lagen und Masse-Vias am Rand, Anpassnetz C8/L2/C9 an der Antenne, 50-Ω-Leitung 9 mm. STM32 in der Mitte mit 3 mm freiem Ring. Tischstecker J10 abgewinkelt, Stifte und Kabelgehäuse liegen über der Platine (Sperrfläche); Sicherung, TVS und C28 direkt am VDESK-Stift. 12-V- und 3.3-V-Regler rechts davon, vier Eingangs-Elkos entlang der Vorderkante, USB ganz rechts.
+- **Zahlen**: 1493 Leiterbahnsegmente (F.Cu 1.0 m, B.Cu 1.5 m), 390 Vias. DRC mit Schaltplan-Parität: 0 Fehler, 0 offene Verbindungen, 0 Paritätsfehler, 2 Warnungen (Bestückungsdruck des J1-Footprints an der Platinenkante). ERC unverändert 0 Fehler / 28 alte Warnungen.
+- **Gehäuse**: `CAD/BekantX_PCB.step` (Ursprung = Platinenecke), Passprüfung `CAD/src/check_board_fit.py` gegen Rev. 3: 0 mm³ Überschneidung mit Gehäuse, Deckel, Tastenmatte und OLED-Glas, Einbauweg (absenken, einschieben) frei. Für J1, SW2, D1, D5 und AE1 gibt es keine Bibliotheks-3D-Modelle; sie haben Hüllkörper aus `CAD/src/make_pcb_models.py` (`Pcb_Controller/3d/`).
+- **Nicht geprüft**: Signalintegrität, EMV, Erwärmung, HF-Anpassung (Antenne muss am Prototyp abgestimmt werden), reale Fertigungsregeln beim Bestellen. USB ist Full Speed und nicht als gekoppeltes Paar geführt (Längen: ESP 103/106 mm, STM 60/70 mm). Bezeichner stehen auf den Fab-Lagen, nicht im Bestückungsdruck (zu dicht).
+- Offene Punkte und Review-Befunde: [[Offene Punkte]].
 
 ## Speisung und Schutz (Stand 2026-11-13)
 ```
