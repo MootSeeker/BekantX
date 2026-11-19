@@ -26,10 +26,11 @@ Die normativen Specs bleiben in `Docs/`. Der Vault fasst zusammen, hält Entsche
 
 ## Repo-Struktur
 ```
-CAD/            Gehäuse (Case, Lid als STL)
-Docs/           Specs, Datenblätter ESP32-S2, drawio
+CAD/            Gehäuse r3 (STEP/STL), Board-STEP, board_interface.json; Quellen in CAD/src
+Docs/           Specs, Datenblätter, drawio, Bilder fürs README
 Firmware/ESP32C3/BekantX   ESP-IDF C++ Projekt (IoT-Coprozessor)
 Firmware/ST/Bekanntx       STM32CubeMX (.ioc), noch kein Code
 Pcb_Controller/ KiCad: die eine Platine (STM32 + ESP32-C3, LIN, Power, HMI)
-Pcb_HMI/        KiCad: frühere Bedienplatine (abgelöst, Referenz)
+LICENSES/       Lizenztexte und Zuordnung (Hardware CERN-OHL-S, Software GPL-3.0, Doku CC BY-SA)
+tools/          Layout-Pipeline (pcb) und Schaltplan-Skripte (sch)
 ```

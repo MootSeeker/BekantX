@@ -43,5 +43,7 @@
 | 2026-11-19 | B.Cu-GND vor F.Cu-GND: fünf Netze mit der langen Strecke auf F.Cu | Wunsch des Nutzers (Bottom zerstückelt). B.Cu liegt neben der GND-Plane und trägt fast alle Teile; F.Cu hat dafür mehr Stücke, jedes mit eigenem Via |
 | 2026-11-19 | Ecken **2.5 mm** (Nase 0.5 mm), im Gehäuse-Skript als Parameter | Optik; die Gehäusetasche bleibt eckig, die Platine wird nur kleiner. Der Umriss bleibt damit aus einer Quelle |
 | 2026-11-19 | Titelblock mit QR-Code zum Repository, Credits mit GitHub-Namen statt vollem Namen | „Wer es gemacht hat“; der GitHub-Name steht ohnehin in der Repo-URL. Voller Name auf Wunsch |
+| 2026-11-19 | Lizenzen getrennt: Hardware **CERN-OHL-S-2.0**, Software **GPL-3.0-or-later**, Doku **CC BY-SA 4.0** (vorher GPL-3.0 für alles) | GPL ist eine Software-Lizenz und passt schlecht auf Schaltpläne, Layout und Gehäuse. CERN-OHL-S ist das gleichwertige Copyleft für Hardware, die Absicht der GPL bleibt erhalten. Zuordnung in `LICENSES/README.md` |
+| 2026-11-19 | `Pcb_HMI/` und die Original-STLs entfernt, ersetzt den Entscheid «archivieren, nicht löschen» | Wunsch des Nutzers (Repo aufräumen). Archiv ist der Git-Tag `archive/pre-cleanup`; Stil-Referenz ist jetzt das gedruckte Gehäuse r3 |
 
 Neue Einträge hier ergänzen. Zurück: [[00 Index]]

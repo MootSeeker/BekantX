@@ -12,7 +12,7 @@ Die Aufteilung in zwei Platinen war nötig, weil das passende Gehäuse von Hand 
 - Architektur bleibt: Primary (STM32) und Secondary (ESP32-C3) sind weiter getrennte Controller. Nur die Platinenzahl ändert sich.
 - **Anforderungen AR-007/AR-008** (Primary unabhängig bestück- und testbar, IoT-Teil entfernbar) bleiben bindend: der ESP32-C3-Block muss als Ganzes unbestückt (DNP) möglich sein, ohne den Primary zu beeinträchtigen. Gemeinsame Rails und SPI-Leitungen entsprechend entkoppeln (CS_N-Pull-up, keine Rückspeisung).
 - Die HMI-Elemente (OLED, 7-Segment HDSP-433G, Tasten, LED) bestimmen die Platinenform und die Position im Gehäuse. Mögliche Form: eine Platine mit Bedienbereich an der Frontkante; Höhe der Bauteile gegen Deckel prüfen.
-- Bestehende Schaltpläne (`hmi.kicad_sch` im Controller-Projekt und `Pcb_HMI/BekantX_HMI.kicad_sch`) sind die Grundlage; `Pcb_HMI` wird nach der Zusammenführung archiviert, nicht gelöscht.
+- Bestehende Schaltpläne (`hmi.kicad_sch` im Controller-Projekt und `Pcb_HMI/BekantX_HMI.kicad_sch`) sind die Grundlage; `Pcb_HMI` wurde nach der Zusammenführung archiviert und am 2026-11-19 aus dem Repo entfernt (Git-Tag `archive/pre-cleanup`).
 - Pin-Zuordnung: `.ioc` bleibt Quelle der Wahrheit; durch den Wegfall des Board-zu-Board-Steckers werden I2C/Tasten-Pins direkt verdrahtet.
 
 ## Vorgehen
