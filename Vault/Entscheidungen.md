@@ -38,5 +38,10 @@
 | 2026-11-18 | Abstand GND/`+3V3` und USB **0.15 mm** statt 0.2 mm | Ausfahrten neben Entkoppel-Pads; USB nur Full Speed. JLCPCB fertigt 0.09 mm |
 | 2026-11-18 | **In1 geteilt**: VCC-Fläche im Leistungsteil, Rest `+3V3`; In2 bleibt durchgehend GND | PR-Feedback des Nutzers (VCC-Leitungen auf B.Cu unübersichtlich). GND muss ungeteilt unter B.Cu bleiben (HF-Leitung, fast alle Signale); `+3V3`-Verbraucher liegen fast alle links |
 | 2026-11-18 | 53-V-Netze bleiben bei **0.3 mm** Abstand | IPC-2221B Spalte B4 (mit Lötstopplack) verlangt 0.13 mm für 31–100 V; der Review nannte die unbeschichtete Spalte B2 |
+| 2026-11-19 | Bezeichner **doch im Bestückungsdruck** (1.0 mm, wo nötig 0.8 mm), ersetzt den Entscheid vom 2026-11-15 | Wunsch des Nutzers („Beschriftung fehlt“). Automatisch neben das Bauteil gesetzt, nie auf Pads oder fremdem Silk; 7 Teile ohne Platz bleiben auf Fab |
+| 2026-11-19 | Speisungs-Pads mit **geradem Stummel zum eigenen Plane-Via**, lange Speisungsbahnen auf den Aussenlagen entfernt; Ausnahme Eingangsschleifen C15–U9 und C25–U20 | Regel des Nutzers (kurze Speisungsleitungen über Planes). Die Schleife Eingangskondensator–VIN–GND bleibt kurz und direkt (Review 2026-11-15) |
+| 2026-11-19 | B.Cu-GND vor F.Cu-GND: fünf Netze mit der langen Strecke auf F.Cu | Wunsch des Nutzers (Bottom zerstückelt). B.Cu liegt neben der GND-Plane und trägt fast alle Teile; F.Cu hat dafür mehr Stücke, jedes mit eigenem Via |
+| 2026-11-19 | Ecken **2.5 mm** (Nase 0.5 mm), im Gehäuse-Skript als Parameter | Optik; die Gehäusetasche bleibt eckig, die Platine wird nur kleiner. Der Umriss bleibt damit aus einer Quelle |
+| 2026-11-19 | Titelblock mit QR-Code zum Repository, Credits mit GitHub-Namen statt vollem Namen | „Wer es gemacht hat“; der GitHub-Name steht ohnehin in der Repo-URL. Voller Name auf Wunsch |
 
 Neue Einträge hier ergänzen. Zurück: [[00 Index]]

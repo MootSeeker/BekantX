@@ -21,3 +21,4 @@
 - 2026-11-18 – PR-Feedback #5, 4. Punkt: VBUS am USB-C-Stecker J1 auf F.Cu, D+/D−/CC1/CC2 gerade auf B.Cu (vorher Umwege), neues Skript `bekantx_usb_rework.py`. DRC 0 Fehler / 0 offen / Parität 0, Passprüfung bestanden.
 
 Zurück: [[00 Index]]
+- 2026-11-19 – Layout-Regeln des Nutzers umgesetzt: keine 90°-Ecken, kurze Speisungsstummel zu Plane-Vias, B.Cu-GND 31 → 23 Stücke (5 Netze auf F.Cu neu verlegt), runde Ecken (2.5 mm), Bestückungsdruck mit Referenzen, Labels, QR-Code und Logo. DRC 0 Fehler / 0 offen / Parität 0, Passprüfung bestanden.

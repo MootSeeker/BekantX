@@ -128,3 +128,13 @@ Rev. 2 wurde gedruckt: der Deckel passte nicht (gefangen, wie vom Review vorherg
 - [ ] MQTT: Auth/TLS-Konzept (NFR-008)
 
 Zurück: [[00 Index]]
+- [x] **Layout-Regeln des Nutzers (2026-11-19)**: keine 90°-Ecken, ≥ 5 mil, kurze Speisungsleitungen über Planes, B.Cu-GND weniger zerstückelt, runde Ecken, Bestückungsdruck mit Logo. Umgesetzt, siehe [[Hardware]]. DRC mit Parität 0 Fehler / 0 offen / 0 Parität, 2 bekannte Warnungen; Passprüfung bestanden.
+  - [ ] F.Cu-GND-Fläche ist durch die Neuverlegung stärker geteilt (15 → 25 Stücke); jedes Stück ab 1.5 mm² hat ein Via. Prüfen, ob das so passt.
+  - [ ] Weitere lange B.Cu-Züge (`U0RXD`, `U0TXD`, `FSPI_CLK`, `FSPI_MISO`, `BTN_2`) teilen B.Cu unten links weiter; neu verlegen ginge nur mit Umplatzieren um U1 oder mit Freerouting.
+  - [ ] 7 Referenzen ohne Platz auf dem Silk (C15, C49, C16, R22, R27, R36, Label TP9); bei Bedarf von Hand setzen.
+  - [ ] Credits im Titelblock nennen den GitHub-Namen (MootSeeker), nicht den vollen Namen; bei Wunsch ändern in `tools/pcb/bekantx_silk.py`.
+  - [x] **Review `pcb-reviewer` 2026-11-19: PASS WITH NOTES**, kein Blocker. Behoben: 45°-Spitze bei `FSPI_MISO` an U2 (12.9, 21.45) samt zwei Null-Segmenten; Bohrloch des GND-Vias an U9 Pin 2 lag in der Lötstopp-Öffnung (Via 0.13 mm nach unten, ganz frei geht nicht: `USBESP_D_P` läuft darunter auf F.Cu); Titelblock-Zeilen auf 1.0 mm.
+    - [ ] Minor: 12 Referenzen und kleine Labels mit 0.8 mm bei 0.15 mm Strich (JLC empfiehlt ca. 1 mm); bewusst so, sonst fehlen sie ganz.
+    - [ ] Minor: ca. 60 Plane-Vias 0.1 mm neben SMD-Pads (gleiches Netz, Vias gedeckt/tented); beim Bestellen Tenting bestätigen. Thermal-Vias in den EPs von U1/U2 abgedeckt oder gefüllt bestellen (schon bekannt).
+    - [ ] Hinweis: `BTN_5` läuft 11 mm auf F.Cu über der VCC-Fläche (Bezug VCC). Langsames Tastensignal mit RC, unkritisch; gehört zum offenen Punkt «F.Cu-Signale über der VCC-Fläche».
+    - Nicht geprüft: Signalintegrität, EMV, ob der QR-Code scannt, Silk-Qualität in der echten Fertigung.
