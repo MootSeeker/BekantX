@@ -11,6 +11,8 @@ An off-axis segment is replaced by  pad centre -> exit point -> old far end. Eve
 copper of other nets (pads, tracks, vias, THT) with the net class clearance and against the board edge before it
 is applied; a pad entry that cannot be straightened this way is left as it was and reported.
 Only coordinates are changed or tracks added (no Remove(): pcbnew proxies break after it).
+--nets=NET,NET   work on these nets only (all other copper is an obstacle and stays as it is); used after a
+                 partial re-route so that finished areas (USB-C, chamfers) are not touched again
 """
 import json, math, sys
 from pathlib import Path
@@ -37,6 +39,11 @@ def no_acute(path):
     return True
 
 ROOT = Path(__file__).resolve().parents[2]
+ONLY = None          # set of net names (--nets), None = all nets
+
+
+def mine(net):
+    return ONLY is None or net in ONLY
 EXIT = 0.25          # mm beyond the pad edge before the track may bend
 ANG_TOL = 2.0        # degrees: a segment within this of the wanted direction is fine
 
@@ -120,7 +127,7 @@ def octilinear(board, segs, vias, vobjs, pads, clear, plane_ok, pad_at):
     vobj_at = {(vo.GetNetname(), round(unP(vo.GetPosition())[0], 3), round(unP(vo.GetPosition())[1], 3)): vo for vo in vobjs}
     moved = doglegs = 0
     left = []
-    for s in sorted([s for s in segs if math.dist(s["a"], s["b"]) > 0.05 and _dev(s["a"], s["b"]) > OCT_TOL],
+    for s in sorted([s for s in segs if math.dist(s["a"], s["b"]) > 0.05 and _dev(s["a"], s["b"]) > OCT_TOL and mine(s["net"])],
                     key=lambda s: math.dist(s["a"], s["b"])):
         done = False
         # a) movable stub via
@@ -244,7 +251,7 @@ def remove_jogs(segs, vias, dead, clear, pad_at, max_len=0.4):
     def jogs():
         out = []
         for j in segs:
-            if not 1e-6 < math.dist(j["a"], j["b"]) <= max_len:
+            if not 1e-6 < math.dist(j["a"], j["b"]) <= max_len or not mine(j["net"]):
                 continue
             net, lay, a, c = j["net"], j["lay"], j["a"], j["b"]
             if not (free(a, net, lay) and free(c, net, lay)):
@@ -439,7 +446,7 @@ def main(src, dst):
 
     dead, seen, n_chain, n_before, n_after = [], set(), 0, 0, 0
     for s0 in list(segs):
-        if id(s0) in seen:
+        if id(s0) in seen or not mine(s0["net"]):
             continue
         # walk to one end of the chain, then collect it in order
         s, p = s0, s0["a"]
@@ -489,6 +496,8 @@ def main(src, dst):
 
     fixed, kept, ok = 0, [], 0
     for s in list(segs):
+        if not mine(s["net"]):
+            continue
         for end in ("a", "b"):
             q, other = s[end], s["b" if end == "a" else "a"]
             pd = pad_at(q, s["net"], s["lay"])
@@ -573,6 +582,8 @@ def main(src, dst):
         p = unP(vo.GetPosition())
         rv = pcbnew.ToMM(vo.GetWidth(pcbnew.F_Cu)) / 2
         net = vo.GetNetname()
+        if not mine(net):
+            continue
         for pd in pads:
             r = pd["rect"]
             if pd["net"] != net or pd["tht"]:
@@ -608,13 +619,15 @@ def main(src, dst):
     widened = 0
     for s in segs:
         cw = net_width(s["net"])
-        if s["w"] < cw - 1e-6 and clear(s["a"], s["b"], cw, s["net"], s["lay"], s):
+        if mine(s["net"]) and s["w"] < cw - 1e-6 and clear(s["a"], s["b"], cw, s["net"], s["lay"], s):
             s["obj"].SetWidth(MM(cw))
             s["w"] = cw
             widened += 1
     # 5. a segment lying completely on another, wider or equal segment of the same net and layer is removed
     dup = 0
     for s in list(segs):
+        if not mine(s["net"]):
+            continue
         for o in segs:
             if o is s or o["net"] != s["net"] or o["lay"] != s["lay"] or o["w"] < s["w"] - 1e-6:
                 continue
@@ -634,4 +647,8 @@ def main(src, dst):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2])
+    nets = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--nets=")), "")
+    if nets:
+        ONLY = set(nets.split(","))
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    main(args[0], args[1])

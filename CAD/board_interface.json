@@ -39,7 +39,9 @@
         38.0
       ]
     ],
-    "outline_note": "rectangle plus a tab under the USB-C connector; inner corners of the tab may have a milling radius of up to 0.5 mm",
+    "outline_note": "rectangle plus a tab under the USB-C connector; the four outer corners of the rectangle are rounded with corner_radius, the corners of the tab (outer and inner) with tab_corner_radius",
+    "corner_radius": 2.5,
+    "tab_corner_radius": 0.5,
     "side_clearance_to_case": 1.7,
     "assembly": "lower the board shifted by 1.4 mm towards -x, then slide it towards +x into the USB pocket; nothing may reach beyond the outline on the +x edge"
   },

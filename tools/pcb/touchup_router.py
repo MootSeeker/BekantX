@@ -15,6 +15,8 @@ that is found is DRC clean; a connection that finds no path is reported and stay
 --first=NET,NET          route the open connections of these nets before all others
 --plane-nets=NET,NET     for these nets a via into their filled inner-layer plane also closes a connection
 --manual=FILE            json with release_nets, release_vias, tracks, vias and first (see bekantx_manual.json)
+--bcost=X                cost factor of a track step on B.Cu (default 1); > 1 keeps long runs on F.Cu so that
+                         the GND pour on B.Cu stays in one piece (B.Cu then only connects the pads)
 The tracks are not locked.
 """
 import heapq, json, math, re, subprocess, sys, tempfile
@@ -29,6 +31,7 @@ VIA_D, VIA_DRILL, VIA_COST = 0.5, 0.3, 40.0   # a via costs as much as 2 mm of t
 LAYER = {"F": pcbnew.F_Cu, "B": pcbnew.B_Cu, "I": pcbnew.In1_Cu}
 INNER_COST = 4.0        # a track on In1 cuts the +3V3 plane: only where nothing else works
 RIP_COST = 8.0          # per grid cell inside the clearance area of a track that would have to be ripped up
+B_COST = 1.0            # cost factor of B.Cu (--bcost)
 
 
 def net_width(net):
@@ -226,7 +229,7 @@ class Grid:
         ca, cb = cell(a), cell(b)
         lay_at = lambda c: [l for l in "FB" if own[l][c]] or ["B", "F"]
         L = self.layers
-        lcost = {l: (INNER_COST if l == "I" else 1.0) for l in L}
+        lcost = {l: (INNER_COST if l == "I" else B_COST if l == "B" else 1.0) for l in L}
         # own copper may be walked on freely; free the area right at the end points (inside the own pad)
         free = {l: ~blocked[l] | (own[l] & ~self.exact[l]) for l in L}
         for c in (ca, cb):                    # the end points themselves are existing copper
@@ -504,6 +507,7 @@ def main(src, dst, g=0.05, layers="FB", rip=False, rounds=4, rip_rounds=1, first
 
 if __name__ == "__main__":
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    B_COST = next((float(a.split("=")[1]) for a in sys.argv if a.startswith("--bcost=")), 1.0)
     grid_step = next((float(a.split("=")[1]) for a in sys.argv if a.startswith("--grid=")), 0.05)
     opt = lambda k: next((a.split("=", 1)[1] for a in sys.argv if a.startswith(f"--{k}=")), "")
     main(args[0], args[1], grid_step, "FBI" if "--inner" in sys.argv else "FB", "--rip" in sys.argv,
