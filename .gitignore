@@ -19,3 +19,11 @@ fp-info-cache
 build/
 hs_err_pid*.log
 replay_pid*.log
+
+# Python caches of the helper scripts (tools/)
+__pycache__/
+*.py[cod]
+
+# Logs written by vendor drivers next to the KiCad project
+3DxService.log
+
