@@ -9,7 +9,7 @@ Python: `%USERPROFILE%\.venvs\bekantx-cad\Scripts\python.exe` (build123d, trimes
 
 ## Principles
 - Millimetres, one `params` block at the top of the script: every dimension named (wall, clearance, board size, hole positions, screw sizes). No magic numbers in geometry code.
-- **Keep the existing enclosure style**: take outer shape, split line, proportions and details from `CAD/BekantX_Case.stl` / `BekantX_Lid.stl` (inspect with `trimesh`: bounds ≈ 140 × 64 × 53 mm). Recreate it parametrically, then adapt to the single PCB.
+- **Keep the existing enclosure style**: the reference is the printed and approved r3 (`CAD/BekantX_Case_r3`, `BekantX_Lid_r3`, `BekantX_Keypad_r3`, source `CAD/src/bekantx_enclosure.py`, bounds ≈ 140 × 77 × 53 mm). Change parameters instead of redrawing. The original STLs it was derived from are in git tag `archive/pre-cleanup`.
 - The board is an input, not a guess: read outline, mounting holes, connector and component positions/heights from the board (`pcbnew` via KiCad Python, or the STEP from `kicad-cli pcb export step`). Write them into a small JSON that the CAD script reads.
 - Design for FDM printing (PLA/PETG): wall ≥ 2 mm, 0.2–0.3 mm clearance for fits, no unsupported overhangs > 45° (or add chamfers), screw bosses with heat-set inserts or self-tapping holes (M2.5/M3, hole = 0.9 × thread dia for self-tapping), snap/screw lid, bridging-friendly.
 - Functional openings: connector cut-outs with 0.3 mm margin, display window and button/LED holes aligned to board coordinates, cable strain relief, ventilation if needed, label/mounting to the desk (mounting method is a Vault open point).
