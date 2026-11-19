@@ -11,7 +11,7 @@
 [![ESP-IDF](https://img.shields.io/badge/ESP--IDF-C%2B%2B-e7352c)](https://github.com/espressif/esp-idf)
 [![Status: prototype](https://img.shields.io/badge/status-prototype%2C%20not%20yet%20built-orange)](#status)
 
-<img src="Docs/images/pcb_iso.png" alt="BekantX controller board, 3D render of the component side" width="820">
+<img src="Docs/images/enclosure_open.png" alt="BekantX controller board in the open 3D-printed enclosure (KiCad render)" width="860">
 
 </div>
 
@@ -49,6 +49,9 @@ tested the parts.
 
 <table>
   <tr>
+    <td align="center"><img src="Docs/images/pcb_iso.png" alt="Board component side, 3D view" width="100%"><br><sub>Component side: power input and regulators (left), STM32G0B1 (centre), ESP32-C3 with chip antenna (right)</sub></td>
+  </tr>
+  <tr>
     <td align="center"><img src="Docs/images/pcb_front.png" alt="Board front: buttons, OLED connector, title block with QR code" width="100%"><br><sub>Front: six buttons, OLED connector, status LEDs, title block with QR code</sub></td>
   </tr>
   <tr>
@@ -56,12 +59,11 @@ tested the parts.
   </tr>
 </table>
 
-<table>
-  <tr>
-    <td align="center" width="50%"><img src="Docs/images/enclosure_open.png" alt="Board inside the open enclosure" width="100%"><br><sub>Board in the enclosure r3 (lid removed)</sub></td>
-    <td align="center" width="50%"><img src="Docs/images/enclosure_front.png" alt="Closed enclosure, front with buttons and display window" width="100%"><br><sub>Front panel with the printed keypad and the display window</sub></td>
-  </tr>
-</table>
+<p align="center">
+  <img src="Docs/images/enclosure_front.png" alt="Closed enclosure, front with buttons and display window" width="520"><br>
+  <sub>Enclosure r3, front panel with the printed keypad and the display window. The title image shows the
+  board in the open case: a KiCad render with the case STEP added as a 3D model.</sub>
+</p>
 
 ## Architecture
 
@@ -71,7 +73,7 @@ flowchart LR
     subgraph board["BekantX controller board"]
         stm["STM32G0B1<br/><b>primary</b><br/>LIN, motion, limits,<br/>safety, memory"]
         esp["ESP32-C3<br/><b>secondary, optional</b><br/>Wi-Fi, MQTT"]
-        hmi["6 buttons, OLED 1.29&quot;,<br/>RGB and status LEDs"]
+        hmi["6 buttons, 1.29 in OLED,<br/>RGB and status LEDs"]
     end
     ha["Home Assistant"]
     desk <-- "LIN (TLIN1027)" --> stm
