@@ -1,7 +1,7 @@
 """BekantX enclosure, revision 3: one PCB behind the front panel.
 
 Parametric rebuild of the original enclosure style (CAD/BekantX_Case.stl,
-CAD/BekantX_Lid.stl): a front block with buttons and display, and an arm
+CAD/BekantX_Lid.stl, removed 2026-11-19, kept in git tag archive/pre-cleanup): a front block with buttons and display, and an arm
 angled by 55 degrees that is screwed under the table top. The front block is
 deeper than the original so that the single PCB fits.
 

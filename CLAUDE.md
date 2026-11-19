@@ -21,8 +21,8 @@ CAD/                         enclosure (STL/STEP; source scripts go to CAD/src)
 Docs/                        specs: description.md (requirements), architecture.md, *-protocol.md, datasheets
 Firmware/ESP32C3/BekantX     ESP-IDF C++ project (secondary controller)
 Firmware/ST/Bekanntx         STM32CubeMX project (primary controller, no code yet)
-Pcb_Controller/              KiCad: main board (hierarchical sheets)
-Pcb_HMI/                     KiCad: front/HMI board (to be merged into one board, see Vault)
+Pcb_Controller/              KiCad: the single controller board (hierarchical sheets)
+LICENSES/                    licence texts and the mapping of licences to paths
 Vault/                       project memory
 .claude/                     skills, subagents, hooks
 ```
@@ -57,7 +57,7 @@ Details and workflow: `Vault/Toolchain.md`. Output of generated artifacts (rende
 
 **Mechanical**
 - Units are millimetres. The enclosure is parametric (`build123d`), every dimension a named parameter; the PCB outline and mounting holes come from the board (`pcbnew`/STEP), not typed by hand.
-- Keep the existing enclosure style (`CAD/BekantX_Case.stl`, `BekantX_Lid.stl`). Export STEP **and** STL; check wall thickness, tolerances (printer clearance), and PCB-vs-enclosure collision before calling a part done.
+- Keep the existing enclosure style (r3: `CAD/BekantX_Case_r3`, `BekantX_Lid_r3`, `BekantX_Keypad_r3`; the original STLs are in tag `archive/pre-cleanup`). Export STEP **and** STL; check wall thickness, tolerances (printer clearance), and PCB-vs-enclosure collision before calling a part done.
 
 **Firmware**
 - ESP-IDF C++ in components (`bekantx_*`), thin C `main`. No blocking calls in tasks that serve SPI; bounded queues; no secrets in logs.

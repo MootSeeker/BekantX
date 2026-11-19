@@ -3,7 +3,7 @@
 ## Inkonsistenzen in den Docs
 - [ ] SPI: `inter-controller-protocol.md` (kein IRQ, Frame `0xA5…`) vs. `APPLICATION_PLAN.md` (IRQ-GPIO, anderer Header). Eine kanonische Quelle festlegen → Spec gewinnt, Plan anpassen? Oder IRQ nachrüsten (Sleep-Wake braucht ohnehin Wake-Pin).
 - [ ] `architecture.md` nennt HA-Modell (MQTT/native/custom) als offen, Code nutzt MQTT.
-- [ ] Firmware-`README.md` ist noch das FTM-Beispiel.
+- [x] Firmware-`README.md` ersetzt (2026-11-19), war das FTM-Beispiel.
 - [ ] Ordnername `Bekanntx` (doppeltes n) in `Firmware/ST/`.
 
 ## Hardware
@@ -138,3 +138,5 @@ Zurück: [[00 Index]]
     - [ ] Minor: ca. 60 Plane-Vias 0.1 mm neben SMD-Pads (gleiches Netz, Vias gedeckt/tented); beim Bestellen Tenting bestätigen. Thermal-Vias in den EPs von U1/U2 abgedeckt oder gefüllt bestellen (schon bekannt).
     - [ ] Hinweis: `BTN_5` läuft 11 mm auf F.Cu über der VCC-Fläche (Bezug VCC). Langsames Tastensignal mit RC, unkritisch; gehört zum offenen Punkt «F.Cu-Signale über der VCC-Fläche».
     - Nicht geprüft: Signalintegrität, EMV, ob der QR-Code scannt, Silk-Qualität in der echten Fertigung.
+- [x] **Repo-Auftritt (2026-11-19, Branch `chore/github-presentation`)**: README mit Bildern, GitHub-Beschreibung und Topics, Lizenzen getrennt (siehe [[Entscheidungen]]), `Pcb_HMI/` und Original-STLs entfernt (Tag `archive/pre-cleanup`), `.vscode/` der Firmware nicht mehr versioniert (lokale Pfade, Ziel ESP32-S2), `.gitignore` um Obsidian-Workspace und venvs ergänzt.
+  - [ ] Hersteller-Datenblätter in `Docs/` (PDF) sind fremdes Urheberrecht im öffentlichen Repo. Prüfen, ob sie bleiben dürfen, oder durch Links ersetzen.

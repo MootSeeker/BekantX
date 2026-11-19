@@ -47,7 +47,7 @@ USB VBUS ----------------------------> D3 (B160) --------+
 - Bauteildaten: Footprint, MPN und Hersteller sind als Felder im Schaltplan gesetzt; BOM-Export über `kicad-cli sch export bom`.
 
 ## Pcb_HMI (KiCad) – abgelöst
-Frühere Bedienplatine (AS1115 + HDSP-433G, 6 Tasten über Key-Scan, EEPROM). Tasten und EEPROM sind in `Pcb_Controller` übernommen, 7-Segment und AS1115 entfallen. Das Projekt bleibt als Referenz im Repo (archivieren, nicht löschen).
+Frühere Bedienplatine (AS1115 + HDSP-433G, 6 Tasten über Key-Scan, EEPROM). Tasten und EEPROM sind in `Pcb_Controller` übernommen, 7-Segment und AS1115 entfallen. Am 2026-11-19 auf Wunsch des Nutzers aus dem Repo entfernt; der letzte Stand liegt im Git-Tag `archive/pre-cleanup`.
 
 ## STM32 (Primary)
 CubeMX `Firmware/ST/Bekanntx/Bekanntx.ioc`: **STM32G0B1KBUx**, alle 32 Pins sind belegt (keine Reserve).
@@ -71,7 +71,7 @@ Hinweise für die Firmware (nicht verifiziert): PA8/PA9/PA10 liegen im UCPD-Umfe
 Dev auf ESP32-S2-Saola (Datenblätter in `Docs/`), Zielhardware ESP32-C3. Wake-GPIO per Kconfig = GPIO 9, WS2812 als Status-LED.
 
 ## Gehäuse
-**Rev. 3 (2026-11-14, Branch `cad/enclosure-single-pcb`):** parametrisch in build123d, Quelle `CAD/src/bekantx_enclosure.py` (alle Masse im Block `Params`). Exporte: `CAD/BekantX_Case_r3`, `BekantX_Lid_r3`, `BekantX_Keypad_r3` (je STEP + STL). Rev. 3 ersetzt Rev. 2; die r2-Exporte liegen noch im Repo und können gelöscht werden. Die alten `BekantX_Case.stl` / `BekantX_Lid.stl` bleiben als Stil-Referenz.
+**Rev. 3 (2026-11-14, Branch `cad/enclosure-single-pcb`):** parametrisch in build123d, Quelle `CAD/src/bekantx_enclosure.py` (alle Masse im Block `Params`). Exporte: `CAD/BekantX_Case_r3`, `BekantX_Lid_r3`, `BekantX_Keypad_r3` (je STEP + STL). Rev. 3 ersetzt Rev. 2 und ist die Stil-Referenz. Die alten `BekantX_Case.stl` / `BekantX_Lid.stl` sind seit 2026-11-19 nur noch im Git-Tag `archive/pre-cleanup`.
 
 Anlass war der erste Probedruck von Rev. 2: der Deckel liess sich nur mit Gewalt eindrücken und stand am Armende und an den Schrägen über. Ursache war nicht die Toleranz, sondern die Geometrie (Falzwände senkrecht zum Arm, der Deckel war gefangen; der Review hatte das vor dem Druck als Blocker gemeldet).
 
