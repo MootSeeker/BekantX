@@ -12,4 +12,13 @@
 - 2026-11-14 – Gehäuse Rev. 3 nach Feedback: Bauhöhe 19.5 mm bestätigt (C40 ersetzen), einheitliche Fasen, M2.5×6-Schrauben, 10 % weniger Material am Gehäuse, Symbole auf den Tasten, Druckhinweise für P1S.
 - 2026-11-14 – Gehäuse Rev. 3 gedruckt (PLA, P1S) und freigegeben: passt. r2-Exporte entfernt, PR #4 abgeschlossen. Offen: FPC des OLED, C40-Ersatz, PETG-Druck.
 
+- 2026-11-14 – PCB-Layout Controller begonnen (Branch `pcb/layout-4layer`): Schaltplan-Änderungen (C40 ersetzt, D5 Cree, J10), Platzierungsskripte, zweistufige Freerouting-Pipeline, Nachrouter. Stand: 4 offene Verbindungen, Board noch nicht geschrieben. Details in [[Offene Punkte]].
+- 2026-11-15 – PCB-Layout Controller Rev. 1 fertig: 4 Lagen, DRC 0 Fehler / 0 offen / Parität 0, Board-STEP exportiert, Passprüfung gegen Gehäuse Rev. 3 bestanden. Entscheide (Lagen, Regeln 0.15 mm, Via je Plane-Pad) in [[Entscheidungen]], Pipeline und Erkenntnisse in [[Toolchain]].
+
+- 2026-11-18 – PCB-Review (PASS WITH NOTES, 3 Major) eingearbeitet: U20-Zelle kompakt, C15 und R41/R42 an U9, C7 am ESP32, Via im Pad entfernt; Abstand GND/+3V3/USB 0.15 mm. DRC 0 Fehler / 0 offen / Parität 0, Passprüfung bestanden. Zwei Review-Punkte begründet abgelehnt (IPC B4, JLC-Via-Restring), siehe [[Offene Punkte]] und [[Entscheidungen]].
+- 2026-11-18 – PR-Feedback #5 umgesetzt: In1 geteilt (VCC-Fläche im Leistungsteil), VCC- und überflüssige +3V3-Leitungen entfernt, Treppen geglättet und Pad-Einführungen gerade gezogen. DRC 0 Fehler / 0 offen / Parität 0, Passprüfung bestanden.
+- 2026-11-18 – PR-Feedback #5, zweite Runde nach dem Review: Kanten der VCC-Fläche von der USB-Leitung weg, TP10 in die VCC-Fläche verschoben, Vias aus den Pads, alle Segmente auf 0/45/90° (183 → 11 schräg), kleine Versätze teilweise entfernt. DRC 0 Fehler / 0 offen / Parität 0, Passprüfung bestanden.
+- 2026-11-18 – PR-Feedback #5, 4. Punkt: VBUS am USB-C-Stecker J1 auf F.Cu, D+/D−/CC1/CC2 gerade auf B.Cu (vorher Umwege), neues Skript `bekantx_usb_rework.py`. DRC 0 Fehler / 0 offen / Parität 0, Passprüfung bestanden.
+
 Zurück: [[00 Index]]
+- 2026-11-19 – Layout-Regeln des Nutzers umgesetzt: keine 90°-Ecken, kurze Speisungsstummel zu Plane-Vias, B.Cu-GND 31 → 23 Stücke (5 Netze auf F.Cu neu verlegt), runde Ecken (2.5 mm), Bestückungsdruck mit Referenzen, Labels, QR-Code und Logo. DRC 0 Fehler / 0 offen / Parität 0, Passprüfung bestanden.

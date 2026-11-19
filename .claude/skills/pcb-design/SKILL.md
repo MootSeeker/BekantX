@@ -57,6 +57,17 @@ Freerouting 2.5.0 facts (verified): valid keys include `autorouter.max_passes`, 
 - `pcb-reviewer` agent before the PR.
 - Save the winning profile as `tools/pcb/profiles/<board>.json`; note rules, profile, final metrics and what remained manual in `Vault/Hardware.md` (skill `vault-update`).
 
+## Multi-layer boards with planes (measured on the BekantX controller board, 2026-11-15)
+The board-specific pipeline is `tools/pcb/bekantx_route.py` (layout -> power stage -> signal stage -> touch-up -> finish); numbers and dead ends are in `Vault/Toolchain.md`. What carries over to other boards:
+- Never put a "no tracks" rule area on a plane layer before routing: Freerouting then places **no vias at all**. Use `"plane_as_obstacle": true`; it keeps tracks off the plane layers and still allows vias.
+- Do not rely on Freerouting to connect SMD pads to planes (fanout stage or plane vias): pads stay open. Drop one via per plane pad by script before routing (`drop_plane_vias`), put the plane nets in their own net class and list it in `autorouter.ignore_net_classes`.
+- Pour copper on signal layers only after routing; before that the router takes the pour for a plane.
+- Route in two stages: power classes first on the empty board, lock them, then the signals (`--keep-tracks`). Reserve the fan-out area of fine-pitch ICs with temporary keep-outs during the power stage, or the wide tracks run along the pin rows.
+- A net class wider than 0.3 mm cannot leave a 0.5 mm pitch pad with `automatic_neckdown=false`; keep such classes for nets that never touch fine-pitch pads.
+- If 0.5 mm pitch QFNs do not route out completely, loosen nothing and tighten the default class first (0.15/0.15 mm, 0.5/0.3 mm via is still standard at JLCPCB): 13 to 23 open connections became 4. Locked exit stubs, fan-out vias and a mixed plane/signal layer all made it worse.
+- Every footprint needs a library id (also script-made mounting holes), otherwise `ImportSpecctraSES` fails without a message.
+- Close the last connections with `tools/pcb/touchup_router.py`; describe manual interventions in a json file (`--manual`) so they stay reviewable, and run the DRC after each one. A hand-placed via landed on a pad that a coordinate dump had not shown; only the DRC caught it.
+
 ## Rules
 - The source board is never overwritten by the pipeline. Experiments stay in `build/` (git-ignored).
 - Pre-existing DRC findings are not yours; report the delta (the pipeline already does).

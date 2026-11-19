@@ -100,6 +100,8 @@ class Params:
     pcb_width: float = 129.0
     pcb_depth: float = 38.0
     pcb_t: float = 1.6
+    pcb_corner_r: float = 2.5          # rounded outer corners of the board (look; the case pocket stays square)
+    pcb_tab_corner_r: float = 0.5      # corners of the USB tab (outer: rounded, inner: milling radius)
     pcb_y0: float = 5.5                # front edge of the board
     pcb_top_z: float = 8.0             # component side that faces the front panel
     pcb_edge_clearance: float = 0.5
@@ -800,8 +802,10 @@ def board_interface() -> dict:
                       (PCB_X0, PCB_Y0), (PCB_X1, PCB_Y0), (PCB_X1, P.usb_y - P.usb_tab_w / 2),
                       (USB_TAB_X1, P.usb_y - P.usb_tab_w / 2), (USB_TAB_X1, P.usb_y + P.usb_tab_w / 2),
                       (PCB_X1, P.usb_y + P.usb_tab_w / 2), (PCB_X1, PCB_Y1), (PCB_X0, PCB_Y1))],
-                  "outline_note": "rectangle plus a tab under the USB-C connector; inner corners of the tab may "
-                                  "have a milling radius of up to 0.5 mm",
+                  "outline_note": "rectangle plus a tab under the USB-C connector; the four outer corners of the "
+                                  "rectangle are rounded with corner_radius, the corners of the tab (outer and inner) "
+                                  "with tab_corner_radius",
+                  "corner_radius": P.pcb_corner_r, "tab_corner_radius": P.pcb_tab_corner_r,
                   "side_clearance_to_case": round(CAVITY_HW - PCB_X1, 2),
                   "assembly": f"lower the board shifted by {USB_SLIDE:.1f} mm towards -x, then slide it towards +x "
                               "into the USB pocket; nothing may reach beyond the outline on the +x edge"},

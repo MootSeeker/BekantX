@@ -11,7 +11,7 @@
 - [x] Gehäuse parametrisch neu aufgebaut (Rev. 2, 2026-11-13); offen ist der Probedruck, siehe unten
 - [x] ERC-Befunde des Controller-Schaltplans gesichtet (2026-11-13): auf main 43 Meldungen (8 Fehler), im Branch 28 Warnungen und 0 Fehler; 26 davon sind alte Draht-Stummel (< 0.2 mm) an Labels. Das HMI-PCB ist abgelöst.
 - [x] Freerouting eingerichtet (Pipeline `tools/pcb/autoroute.py`, siehe [[Toolchain]]); offen: Profil an das Ein-PCB-Layout anpassen und die Netzklassen-Regeln im `.kicad_pro` definieren
-- [ ] Controller-PCB: Layout (0 Footprints), Schaltplan fertigstellen
+- [x] Controller-PCB: Layout Rev. 1 fertig (2026-11-15), siehe unten
 - [ ] Pinbelegung final + SPI-Taktlimit validieren
 - [ ] LIN-PHY/Pegelanpassung zum Tisch klären
 - [x] Gehäuse: CAD-Quelle liegt in `CAD/src/`; Passung zum echten Board folgt nach dem Layout
@@ -52,6 +52,51 @@ Erledigt: HMI integriert, eine Rail `+3V3`, LPUART gekreuzt, CS_N-Pull-up, `FSPI
   - [ ] SPI2-Takt fürs Display konservativ wählen (CH1115: ca. 4 MHz oder weniger, Tabelle im Datenblatt nachlesen).
   - [ ] Für den Review fehlen in `Docs/`: ESP32-C3-Datenblatt, STM32G0B1-Datenblatt/Referenzhandbuch, Hirose FH12.
 
+## PCB-Layout Controller Rev. 1 (Stand 2026-11-18, Branch `pcb/layout-4layer`)
+Fertig geroutet, siehe [[Hardware]] (Abschnitt Layout) und [[Toolchain]] (Pipeline, Erkenntnisse). DRC mit Schaltplan-Parität: 0 Fehler, 0 offen, 0 Paritätsfehler, 2 Warnungen (Bestückungsdruck von J1 an der Platinenkante, harmlos; Entfernen würde J1 von der Bibliothek abweichen lassen). Passprüfung gegen Gehäuse Rev. 3 bestanden.
+- [x] Schaltplan angepasst: C40 → C40/C50–C52 (4 × 22 µF / 63 V), D5 = Cree CLVBA-FKA, J10 abgewinkelt, Testpunkte nicht in der Stückliste. ERC unverändert (0 Fehler, 28 alte Warnungen).
+- [x] Layout: 0 offene Verbindungen (Stand 2026-11-15 mit Handkorrekturen aus `tools/pcb/bekantx_manual.json`).
+- [x] Board-STEP `CAD/BekantX_PCB.step` und Passprüfung (`CAD/src/check_board_fit.py`): 0 mm³ Überschneidung, Einbauweg frei.
+- [x] **Review `pcb-reviewer` 2026-11-15: PASS WITH NOTES**, kein Blocker, 3 Major. Behoben 2026-11-18 mit `tools/pcb/bekantx_rework.py` (lokaler Umbau auf dem committeten Stand, Rest des Routings unverändert):
+  - [x] Major 1/2: Boot- und Schaltschleife von U20 zu gross (C26 22 mm mit 6 Vias, D20/C25 8–10 mm vom IC) → kompakte Zelle, siehe [[Hardware]].
+  - [x] Major 3: C15 ca. 11 mm Leiterbahn vom VIN-Pin von U9 → direkte Leitung, ca. 5 mm. Direkt am Pin geht beim SOT-23-6 nicht (siehe [[Hardware]]).
+  - [x] Minor 5: `U9_FB` 15 mm → 4.3 mm, R41/R42 am FB-Pin. Minor 3: C7 an die VDD3P3-Pins. Minor 1: Via im VIN-Pad von U20 entfernt; der Nachrouter setzt keine Vias mehr in SMD-Pads.
+  - [x] Minor 6 (53-V-Abstand 0.3 mm, Review verlangte 0.6 mm): **nicht geändert**. IPC-2221B Spalte B4 (Aussenlage mit dauerhafter Polymerbeschichtung = Lötstopplack) nennt 0.13 mm für 31–100 V; 0.6 mm ist die Spalte B2 ohne Beschichtung. Wert aus Sekundärquellen, die Norm selbst lag nicht vor.
+  - [x] Minor 7 (Via-Restring 0.1 mm): **nicht geändert**. JLCPCB nennt für Vias Durchmesser = Bohrung + 0.15 mm (0.075 mm Restring); 0.13 mm gilt für Bauteil-Durchkontaktierungen. Beim Bestellen im DFM-Check bestätigen.
+  - [ ] Minor 2 (Quarz Y1: XTAL_P 11 mm mit Lagenwechsel, R1 6 mm vom Pin) und Minor 4 (HF-Anpassnetz 9 mm vom Pin, Breite nicht berechnet): offen, am Prototyp beurteilen.
+  - [ ] Minor 1 Rest: je 3 × 3 Vias in den Exposed Pads von U1/U2 (gewollt). Beim Bestellen abgedeckt oder gefüllt angeben, sonst fliesst Lot in die Vias.
+- [x] **Nachprüfung `pcb-reviewer` 2026-11-18: PASS WITH NOTES**, alle drei Major behoben, kein neuer Major; IPC-B4- und JLC-Via-Begründung akzeptiert. Neue Minor:
+  - [ ] Eingangsschleife U9 (VIN → C15 → GND) ist mit dem Weg durch die Plane noch ca. 9 mm (vorher ca. 20 mm). Optional: zweites GND-Via an C15 näher bei Pin 2.
+  - [ ] Ca. 41 mm überflüssige `+3V3`-Leitungen (vor allem 11 mm auf F.Cu von (103.2, 21.4) nach (92.0, 20.0)), die der Nachrouter zwischen Plane-Vias gelegt hat. Elektrisch harmlos (parallel zur In1-Plane); bei Gelegenheit entfernen und jedem `+3V3`-Pad ein eigenes Via geben.
+  - [ ] Ein Via am Pad 2 von D70 (61.8, 16.35, `+12V`) laut Reviewer; mit den Wärme-Vias zusammen abgedeckt bestellen oder verschieben.
+- [x] **PR-Feedback #5 (Nutzer, 2026-11-18)**: (1) VCC als Fläche auf einer Innenlage statt Leitungen auf B.Cu, (2) `+3V3` mit unnötigen Lagenwechseln, (3) Leitungen gerade und gerade ins Pad. Umgesetzt mit `tools/pcb/bekantx_power_planes.py`, `touchup_router.py --plane-nets`, `tools/pcb/straighten_pads.py`, siehe [[Hardware]].
+  - [x] 4. Punkt des Nutzers (2026-11-18, Bild von J1): VBUS auf F.Cu, D+/D−/CC ohne Umweg auf B.Cu, siehe [[Hardware]]. DRC 0 Fehler / 0 offen / Parität 0, Passprüfung bestanden.
+  - [ ] F.Cu-Signale, die auf In1 über die Grenze VCC/`+3V3` laufen, verlieren dort ihre durchgehende Bezugsfläche (In2 GND liegt 1.3 mm tiefer). Für die langsamen Signale unkritisch; USB-Leitungen am Prototyp beobachten. Abstände parallel zur Kante: `USBST_D_N` ≥ 1.0 mm, `USBESP_D_P` 0.75 mm, `LED_DIN` 0.6 mm.
+  - [ ] 38 Pad-Einführungen bleiben schräg (Liste im Ausgabeprotokoll von `straighten_pads.py`); gewollt bei J1/J3/U8 und den QFN-Eckpins, 45° an den Tasten-RC-Gliedern.
+  - [ ] **Review der zweiten Runde (pcb-reviewer, 2026-11-18): PASS WITH NOTES**, noch offen (Koordinaten Platine-lokal):
+    - [ ] Major: F.Cu-Signale über der VCC-Fläche (Bezug VCC statt GND/`+3V3`): `USBST_D_N` ca. 20 mm (x 84–104.6, y 20–22), `USBESP_D_P` ca. 70 %, `LED_DIN` kreuzt die Trennung zweimal (x 80.5 und 95.5 bei y 24.15). Optionen: Paare auf B.Cu (In2 GND als Bezug), VCC-Fläche verkleinern (Arm x 80.5–86.5 / y 24–33.3), oder 100-nF-Stitching-Kondensatoren VCC–`+3V3` an den Kreuzungen (Schaltplanänderung). Entscheid offen.
+    - [ ] Major: schräge Reste. VCC-Knoten C15/D4/U9 bei (97.25, 21.7) mit Keil zum Via (98.81, 20.96); BTN_6 bei R37 (70.38, 32.21) schmaler Schlitz zum Via (69.8, 29.4), Via auf (70.38, 29.4) setzen; BTN_6 an U1.3 (57.25–57.4, 30.5–30.8); +12V-Mikrostücke bei (61.6, 15.9–16.35) mit spitzem Knoten; FSPI_MISO an U2.6 (12.9–13.55, 21.45–21.55); Net-(SW2-B) Via (112.15, 29.4) auf die Achse von U8.1 (x 113.15); USBESP_D_P F.Cu (29.1, 29.25)–(49.2, 29.7) 1.3° schräg.
+    - [ ] Minor: VCC-Vias am Flächenrand (80.53, 30.05), (92.15, 26.19), (95.6, 7.15): Kante 0.6–1 mm nach aussen oder Vias nach innen.
+    - [ ] Minor: zweites VCC-Via an U9 Pin 5 (bei 99.2, 21.62).
+    - [ ] Minor: SWDIO-Stummel 0.3 mm hinter dem Via (58.67, 24.35) löschen.
+    - [ ] Minor: 0.3/0.35-mm-Leitungen auf 0.25-mm-QFN-Pads (U1 Pin 4/5, U2 Pin 1, 3, 11, 17, 18, 31, 32) auf 0.2 mm einschnüren; Verbreiterungsschritt in `straighten_pads.py` soll Fine-Pitch-Pads auslassen.
+    - [ ] Minor: Vias 0.16 mm neben J3-Pads (OLED_C2P, OLED_VPP), DISP_SCK 0.21 mm: Lötstopp-Steg gegen Fertigungsminimum prüfen.
+  - [ ] 11 Segmente nicht auf 0/45/90° und 42 kleine Versätze (meist 0.05 mm in den B.Cu-Bussen bei x 50–53 / y 24–27). Kosmetisch, DRC sauber; zum Entfernen Busse als Ganzes verschieben.
+  - [ ] D1 (Front-LED, `+3V3`) ist über 5 mm F.Cu an ein Via ausserhalb der VCC-Fläche angebunden (direkt darunter liegen die Pins von U9).
+- [x] Netzklassen GND/`+3V3` und USB auf 0.15 mm Abstand gesenkt (vorher 0.2). Für USB Full Speed und die Plane-Netze unkritisch; nötig für die Ausfahrten neben Entkoppel-Pads.
+- [ ] **Schaltplan-Review nachholen** für die drei Änderungen am Schaltplan (C40-Aufteilung, D5, J10); sie sind bisher nur über ERC, Netzliste und Parität geprüft.
+- [ ] **ASSUMPTION USB-C J1** (HRO TYPE-C-31-M-12): Lage der Buchse zur Platinenkante (Gehäusefront 1.5 mm vor dem Ende der Nase) und die Gehäusemasse 8.94 × 7.3 × 3.26 mm stammen aus dem KiCad-Footprint und den Gehäuseparametern, nicht aus dem Datenblatt (nicht abrufbar). Die hinteren Schirm-Pads haben nur 0.3 mm bis zur Kante. Vor der Bestellung gegen das Datenblatt prüfen.
+- [ ] **ASSUMPTION OLED-FPC**: Pin 1 liegt auf der Platine bei y = 20.25 (Pin 16 bei 12.75), der Stecker öffnet nach +x, Kontakte unten. Abgeleitet aus der Zeichnung im OLED-Datenblatt (Ansicht von vorn, FPC nach rechts, Pin 1 unten; nach dem Falten zeigen die Kontakte zur Platine). Das Hirose-Datenblatt (Landmuster, FPC-Dicke 0.3 mm) war nicht abrufbar. Der 22-mm-Schwanz reicht gefaltet bis etwa x = 47; der Stecker sitzt bei x = 50. Footprint 1:1 drucken und mit dem echten Display probestecken. Die Anzeige steht für den Betrachter auf dem Kopf (FPC nach links): in der Firmware drehen (CH1115 Segment-Remap/COM-Scan).
+- [ ] **Antenne**: Sperrfläche 6.5 × 6.5 mm und Lage nach dem Referenzboard im Johanson-Datenblatt (Rev. 4.0), Anpassnetz C8/L2/C9 mit den Schaltplanwerten. 50-Ω-Breite 0.35 mm ist eine Schätzung für 0.21 mm Prepreg; die GND-Flächen daneben senken die Impedanz zusätzlich. Muss am Prototyp abgestimmt werden (Johanson bietet Tuning an). Die Schraube bei (12.5, 33) sitzt 6 mm neben der Sperrfläche: Kunststoffschraube erwägen.
+- [ ] **USB**: Full Speed, die Paare sind nicht gekoppelt und nicht impedanzkontrolliert geführt, Längenunterschied bis 10 mm (unkritisch bei 12 Mbit/s).
+- [ ] Freigabe von U20: `Net-(U20-~{SHDN})` 29 mm mit 4 Vias (Gleichspannung, unkritisch).
+- [ ] C40-Ersatz: Bauhöhe 6.5 mm max. stammt aus Distributor-Angaben, nicht aus dem Panasonic-Datenblatt.
+- [ ] Bezeichner stehen nur auf den Fab-Lagen; für die Handbestückung einen Bestückungsplan (PDF je Seite) und ein interaktives BOM exportieren (Skill `fab-export`). Polaritätsmarken von D1/D5, D3/D4/D20 und der Elkos im Bestückungsplan prüfen.
+- [ ] Keine Passermarken, keine Teardrops. Für Handbestückung unnötig, für Bestückung beim Fertiger nachrüsten.
+- [ ] Lagenaufbau JLC04161H-7628 ist aus dem Gedächtnis eingetragen (0.2104 mm Prepreg, 1.065 mm Kern); beim Bestellen mit dem JLCPCB-Formular abgleichen.
+- [ ] Reproduzierbarkeit: Der Stand ist «Pipeline 2026-11-15 + `bekantx_manual.json`» und darauf «`bekantx_rework.py` + Nachrouter». Ein neuer Gesamtlauf mit der Platzierung nach dem Review wurde 2026-11-18 versucht: 10 offen nach Freerouting, am USB-Mux U8 auch mit Handkorrekturen nicht sauber lösbar. Die Board-Datei ist das Ergebnis, die Skripte dokumentieren den Weg. `bekantx_manual.json` gehört zum Lauf vom 2026-11-15.
+- [ ] `Pcb_Controller/3DxService.log` (3Dconnexion-Treiber) gehört in `.gitignore`.
+
 ## Gehäuse Rev. 3 (Stand 2026-11-14, Branch `cad/enclosure-single-pcb`)
 Rev. 2 wurde gedruckt: der Deckel passte nicht (gefangen, wie vom Review vorhergesagt). Rev. 3 ersetzt Rev. 2, siehe [[Hardware]].
 - [x] Blocker aus dem Review von Rev. 2 (Deckel gefangen) und die Überhänge im Arm: behoben durch Scharnier am Armende, Schnapper vorne und Wände entlang der Schwenkrichtung; Bewegungsweg im Skript nachgerechnet.
@@ -60,7 +105,7 @@ Rev. 2 wurde gedruckt: der Deckel passte nicht (gefangen, wie vom Review vorherg
   - [ ] Major: der Schnapper braucht ca. 0.3 mm elastische Stauchung des Deckels; ±0.15 mm Druckfehler machen ihn sehr lose oder zu stramm, Elefantenfuss an der Deckelnase erhöht die Überdeckung. Am Probedruck messen, dann `snap_compress` / `snap_gap` nachstellen. Geschlossen hat der Deckel 0.2 mm Spiel, die Schrauben halten ihn fest.
   - [ ] Minor: dünne tragende Stellen (Dach der Zungentaschen 1.15 mm, Wand hinter der Tasche 1.8 mm, Wand vor USB 1.2 mm); Taschenenden 55° Überhang auf 1 mm; Brücke über der USB-Öffnung 9.5 mm; Arme der Tastenmatte nur bei 0.2 mm Schichthöhe zwei Lagen; Schraubenlänge der Deckelschrauben nicht festgelegt; einzelne feste Zahlen im Skript; `lid_t` unter ca. 2.3 und `arm_angle` +10 % brauchen Nacharbeit am Schnapper bzw. Entnahmeweg.
 - [x] Entscheid Bauhöhe (Nutzer, 2026-11-14): der Frontblock bleibt 19.5 mm hoch.
-- [ ] **C40 ersetzen**: C40 (EEE-FK1J101P, 10.2 mm) passt nicht mehr, auf der Platinenrückseite sind Bauteile bis 7.0 mm möglich. Ersatz später wählen (kein MPN gewählt, Schaltplan unverändert). Ebenso: Tischstecker J10 muss liegend (abgewinkelt) bestückt werden.
+- [x] **C40 ersetzt** (2026-11-14: 4 × EEE-FK1J220P), Tischstecker J10 abgewinkelt.
 - [x] **Probedruck Rev. 3** (2026-11-14, Nutzer, Bambu P1S, PLA): gedruckt, **passt**. Das ist die Aussage des Nutzers; Schnappkraft, Klick, Tastenmatte, USB-Passung und Schraubengriff wurden nicht einzeln protokolliert. Der PETG-Druck des Endteils steht noch aus (zäher: Schnapper und Kernloch dort prüfen).
 - [ ] Major aus dem Review von Rev. 2, **weiter offen**: FPC des OLED nicht berücksichtigt (Faltung zwischen Glaskante und SW5, Stecker unter dem Glas); als Sperrflächen aufnehmen, Glas/Flansch verschieben.
 - [x] Änderungen nach dem ersten Review von Rev. 3 (einheitliche Fasen, M2.5×6-Schrauben, Entlastung der Armwände, dünnere Frontwand, Symbole auf den Tasten): der zweite Review des `cad-reviewer` wurde **nicht abgeschlossen** (Agent vorzeitig gestoppt, kein Befund). Stattdessen gilt der Probedruck des Nutzers als Freigabe (PASS, Entscheid des Nutzers 2026-11-14); Prüfungen im Skript: 0 mm³ Überschneidung.
@@ -70,8 +115,8 @@ Rev. 2 wurde gedruckt: der Deckel passte nicht (gefangen, wie vom Review vorherg
 - [ ] **ASSUMPTION Tischkabel**: Durchmesser (5 mm) und Stecker sind nicht gemessen; Austritt 9 × 5 mm lässt ein 3-poliges 2.54-mm-Gehäuse durch.
 - [ ] Taster B3F-1000 (Höhe 4.3 mm) gegen das Datenblatt prüfen; das Mass stammt nicht aus `Docs/`.
 - [ ] OLED-Befestigung: Glas in der Tasche kleben (dünnes doppelseitiges Band) oder Schaumstoff zwischen Glas und Platine.
-- [ ] Layout: `CAD/board_interface.json` (r3) übernehmen: Umriss 129 × 38 **mit USB-Nase**, 6 Bohrungen (vordere Reihe verschoben), Tasten, J3 unter dem Display, J1 auf B.Cu am Ende der Nase, D5/D1 unter den Lichtschächten, Sperrfläche Tastenmatte. Nichts darf an der +X-Kante über den Umriss ragen (Platine wird seitlich eingeschoben). D5 hat noch keinen Footprint.
-- [ ] Nach dem Layout: Board-STEP exportieren und die Passprüfung gegen das echte Board wiederholen.
+- [x] (2026-11-15 im Layout umgesetzt) Layout: `CAD/board_interface.json` (r3) übernehmen: Umriss 129 × 38 **mit USB-Nase**, 6 Bohrungen (vordere Reihe verschoben), Tasten, J3 unter dem Display, J1 auf B.Cu am Ende der Nase, D5/D1 unter den Lichtschächten, Sperrfläche Tastenmatte. Nichts darf an der +X-Kante über den Umriss ragen (Platine wird seitlich eingeschoben). D5 hat noch keinen Footprint.
+- [x] Nach dem Layout: Board-STEP exportiert, Passprüfung gegen das echte Board bestanden (2026-11-15).
 - [x] r2-Exporte (`CAD/BekantX_*_r2.*`) aus dem Repo entfernt (2026-11-14, nach dem passenden Druck von Rev. 3; bleiben in der Git-Historie).
 
 ## Firmware
@@ -83,3 +128,13 @@ Rev. 2 wurde gedruckt: der Deckel passte nicht (gefangen, wie vom Review vorherg
 - [ ] MQTT: Auth/TLS-Konzept (NFR-008)
 
 Zurück: [[00 Index]]
+- [x] **Layout-Regeln des Nutzers (2026-11-19)**: keine 90°-Ecken, ≥ 5 mil, kurze Speisungsleitungen über Planes, B.Cu-GND weniger zerstückelt, runde Ecken, Bestückungsdruck mit Logo. Umgesetzt, siehe [[Hardware]]. DRC mit Parität 0 Fehler / 0 offen / 0 Parität, 2 bekannte Warnungen; Passprüfung bestanden.
+  - [ ] F.Cu-GND-Fläche ist durch die Neuverlegung stärker geteilt (15 → 25 Stücke); jedes Stück ab 1.5 mm² hat ein Via. Prüfen, ob das so passt.
+  - [ ] Weitere lange B.Cu-Züge (`U0RXD`, `U0TXD`, `FSPI_CLK`, `FSPI_MISO`, `BTN_2`) teilen B.Cu unten links weiter; neu verlegen ginge nur mit Umplatzieren um U1 oder mit Freerouting.
+  - [ ] 7 Referenzen ohne Platz auf dem Silk (C15, C49, C16, R22, R27, R36, Label TP9); bei Bedarf von Hand setzen.
+  - [ ] Credits im Titelblock nennen den GitHub-Namen (MootSeeker), nicht den vollen Namen; bei Wunsch ändern in `tools/pcb/bekantx_silk.py`.
+  - [x] **Review `pcb-reviewer` 2026-11-19: PASS WITH NOTES**, kein Blocker. Behoben: 45°-Spitze bei `FSPI_MISO` an U2 (12.9, 21.45) samt zwei Null-Segmenten; Bohrloch des GND-Vias an U9 Pin 2 lag in der Lötstopp-Öffnung (Via 0.13 mm nach unten, ganz frei geht nicht: `USBESP_D_P` läuft darunter auf F.Cu); Titelblock-Zeilen auf 1.0 mm.
+    - [ ] Minor: 12 Referenzen und kleine Labels mit 0.8 mm bei 0.15 mm Strich (JLC empfiehlt ca. 1 mm); bewusst so, sonst fehlen sie ganz.
+    - [ ] Minor: ca. 60 Plane-Vias 0.1 mm neben SMD-Pads (gleiches Netz, Vias gedeckt/tented); beim Bestellen Tenting bestätigen. Thermal-Vias in den EPs von U1/U2 abgedeckt oder gefüllt bestellen (schon bekannt).
+    - [ ] Hinweis: `BTN_5` läuft 11 mm auf F.Cu über der VCC-Fläche (Bezug VCC). Langsames Tastensignal mit RC, unkritisch; gehört zum offenen Punkt «F.Cu-Signale über der VCC-Fläche».
+    - Nicht geprüft: Signalintegrität, EMV, ob der QR-Code scannt, Silk-Qualität in der echten Fertigung.

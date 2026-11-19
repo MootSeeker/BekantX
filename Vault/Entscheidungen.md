@@ -25,5 +25,23 @@
 | 2026-11-14 | Frontblock **19.5 mm** hoch, Rückseite der Platine max. 7.0 mm; **C40 wird ersetzt** | Entscheid des Nutzers (schlanker). Ersatz für C40 (10.2 mm) wird später gewählt |
 | 2026-11-14 | Alle Gehäuseschrauben **M2.5×6 Linsenkopf direkt in den Kunststoff** (8 Stück, ein Typ) | Wunsch des Nutzers; ersetzt selbstschneidende 2.2 mm. Alternative: selbstschneidende Schrauben gleicher Grösse |
 | 2026-11-14 | Eine einheitliche Fase (3 mm / 45°) statt der ungleichen Fasen des Originals | Wunsch des Nutzers: gleichmässiges, modernes Bild |
+| 2026-11-14 | C40 (100 µF, 10.2 mm hoch) ersetzt durch **4 × 22 µF / 63 V** (Panasonic EEE-FK1J220P, 8 × 6.2 mm): C40, C50–C52 | Entscheid des Nutzers: flache Elkos parallel. 88 µF statt 100 µF, max. 6.5 mm hoch bei 7.0 mm Grenze |
+| 2026-11-14 | D5 = **Cree CLVBA-FKA** (PLCC4, 1.9 mm), Symbol `LED_RABG` | Pinout laut Datenblatt 1 = Rot, 2 = Anode, 3 = Blau, 4 = Grün; passt zu den Vorwiderständen (91R an Rot). `LED_A` = Rot, `LED_B` = Grün, `LED_C` = Blau |
+| 2026-11-14 | OLED-Stecker bleibt **Hirose FH12-16S-0.5SH(55)** | Entscheid des Nutzers |
+| 2026-11-14 | Fertiger-Annahme **JLCPCB, 4 Lagen** (JLC04161H-7628) | Entscheid des Nutzers; 6 Lagen waren als Ausweg erlaubt und wurden nicht gebraucht |
+| 2026-11-15 | Lagen: F.Cu / In1 `+3V3` / In2 **GND** / B.Cu; fast alle Teile auf B.Cu | Das Gehäuse lässt vorne nur Tasten, Anzeige-Stecker und LEDs zu. GND muss die Nachbarlage von B.Cu sein (HF-Leitung, USB, die meisten Signale) |
+| 2026-11-15 | Signalregel **0.15 / 0.15 mm, Via 0.5 / 0.3 mm** statt 0.2 / 0.2 und 0.6 | Mit den gröberen Regeln liessen sich die beiden 0.5-mm-QFNs auf zwei Signallagen nicht vollständig herausrouten. Weiterhin im Standardbereich von JLCPCB |
+| 2026-11-15 | Jedes GND- und `+3V3`-SMD-Pad bekommt ein eigenes Via zur Plane | Kurze Rückstrompfade an den Entkopplern und unabhängig von zerschnittenen Aussenflächen |
+| 2026-11-15 | Tischstecker J10 **abgewinkelt**, Kabel liegt über der Platine | Rückseite nur 7.5 mm frei; so bleibt alles im Platinenvolumen |
+| 2026-11-15 | Bauteil-Bezeichner auf den Fab-Lagen statt im Bestückungsdruck | Die Rückseite ist zu dicht für lesbaren Druck; für die Bestückung wird ein Bestückungsplan exportiert |
+| 2026-11-18 | Review-Befunde **lokal umgebaut** statt das ganze Board neu zu routen | Ein neuer Freerouting-Lauf mit der korrigierten Platzierung liess 10 Verbindungen offen, am USB-Mux U8 nicht sauber lösbar. Der Umbau verschiebt nur die 14 betroffenen Bauteile, der Rest bleibt wie geprüft |
+| 2026-11-18 | Abstand GND/`+3V3` und USB **0.15 mm** statt 0.2 mm | Ausfahrten neben Entkoppel-Pads; USB nur Full Speed. JLCPCB fertigt 0.09 mm |
+| 2026-11-18 | **In1 geteilt**: VCC-Fläche im Leistungsteil, Rest `+3V3`; In2 bleibt durchgehend GND | PR-Feedback des Nutzers (VCC-Leitungen auf B.Cu unübersichtlich). GND muss ungeteilt unter B.Cu bleiben (HF-Leitung, fast alle Signale); `+3V3`-Verbraucher liegen fast alle links |
+| 2026-11-18 | 53-V-Netze bleiben bei **0.3 mm** Abstand | IPC-2221B Spalte B4 (mit Lötstopplack) verlangt 0.13 mm für 31–100 V; der Review nannte die unbeschichtete Spalte B2 |
+| 2026-11-19 | Bezeichner **doch im Bestückungsdruck** (1.0 mm, wo nötig 0.8 mm), ersetzt den Entscheid vom 2026-11-15 | Wunsch des Nutzers („Beschriftung fehlt“). Automatisch neben das Bauteil gesetzt, nie auf Pads oder fremdem Silk; 7 Teile ohne Platz bleiben auf Fab |
+| 2026-11-19 | Speisungs-Pads mit **geradem Stummel zum eigenen Plane-Via**, lange Speisungsbahnen auf den Aussenlagen entfernt; Ausnahme Eingangsschleifen C15–U9 und C25–U20 | Regel des Nutzers (kurze Speisungsleitungen über Planes). Die Schleife Eingangskondensator–VIN–GND bleibt kurz und direkt (Review 2026-11-15) |
+| 2026-11-19 | B.Cu-GND vor F.Cu-GND: fünf Netze mit der langen Strecke auf F.Cu | Wunsch des Nutzers (Bottom zerstückelt). B.Cu liegt neben der GND-Plane und trägt fast alle Teile; F.Cu hat dafür mehr Stücke, jedes mit eigenem Via |
+| 2026-11-19 | Ecken **2.5 mm** (Nase 0.5 mm), im Gehäuse-Skript als Parameter | Optik; die Gehäusetasche bleibt eckig, die Platine wird nur kleiner. Der Umriss bleibt damit aus einer Quelle |
+| 2026-11-19 | Titelblock mit QR-Code zum Repository, Credits mit GitHub-Namen statt vollem Namen | „Wer es gemacht hat“; der GitHub-Name steht ohnehin in der Repo-URL. Voller Name auf Wunsch |
 
 Neue Einträge hier ergänzen. Zurück: [[00 Index]]

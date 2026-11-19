@@ -1,0 +1,144 @@
+{
+ "_comment": [
+  "Manual touch-ups for the routing result of 2026-11-15 (run build/bx8, 0.15 mm signal rules).",
+  "They belong to that Freerouting result: after a new autorouter run look at the open connections again.",
+  "Coordinates are board coordinates in mm (CAD/board_interface.json).",
+  "1. U1 pin 3 (BTN_6) was sealed in by the +3V3 via of pin 4 / C72 at 56.75/30.74 and by BTN_5: the via",
+  "   is removed (pin 4 stays connected to C72 by its track, the touch-up router links +3V3 again) and",
+  "   BTN_6 gets a via right below its pad.",
+  "2. U2 pin 26 (USBESP_D_P) was sealed in by the UART track of pin 27: U0RXD is released and routed",
+  "   again after D_P has its via.",
+  "3. U8 pin 3 (USBESP_D_P) leaves between the tracks of pins 2 and 4; 0.15 mm wide for 2 mm so that it",
+  "2. U2 pin 26 (USBESP_D_P) was sealed in by the UART track of pin 27: U0RXD is released; both pins get",
+  "   a hand-placed exit with a via (D_P at 17.6/26.1, U0RXD at 16.9/26.45) and are routed on from there.",
+  "3. U8 pin 3 (USBESP_D_P) leaves between the tracks of pins 2 and 4, 0.15 mm wide for 1.4 mm, to a via",
+  "   at 111.75/25.75: 0.45 mm to the pad of L4 (switch node), 0.2 mm to the via of pin 4."
+ ],
+ "release_nets": [
+  "Net-(U2-U0RXD)",
+  "U9_FB",
+  "Net-(SW2-B)"
+ ],
+ "release_vias": [
+  [
+   56.75,
+   30.74
+  ]
+ ],
+ "tracks": [
+  {
+   "net": "BTN_6",
+   "layer": "B",
+   "width": 0.15,
+   "pts": [
+    [
+     57.25,
+     29.9375
+    ],
+    [
+     57.25,
+     30.5
+    ],
+    [
+     57.4,
+     30.8
+    ]
+   ]
+  },
+  {
+   "net": "USBESP_D_P",
+   "layer": "B",
+   "width": 0.2,
+   "pts": [
+    [
+     17.25,
+     24.75
+    ],
+    [
+     17.25,
+     25.75
+    ],
+    [
+     17.6,
+     26.1
+    ]
+   ]
+  },
+  {
+   "net": "Net-(U2-U0RXD)",
+   "layer": "B",
+   "width": 0.15,
+   "pts": [
+    [
+     16.75,
+     24.75
+    ],
+    [
+     16.75,
+     26.3
+    ],
+    [
+     16.9,
+     26.45
+    ]
+   ]
+  },
+  {
+   "net": "USBESP_D_P",
+   "layer": "B",
+   "width": 0.15,
+   "pts": [
+    [
+     113.15,
+     25.6
+    ],
+    [
+     112.0,
+     25.6
+    ],
+    [
+     111.75,
+     25.75
+    ]
+   ]
+  }
+ ],
+ "vias": [
+  {
+   "net": "BTN_6",
+   "at": [
+    57.4,
+    30.8
+   ]
+  },
+  {
+   "net": "USBESP_D_P",
+   "at": [
+    17.6,
+    26.1
+   ]
+  },
+  {
+   "net": "Net-(U2-U0RXD)",
+   "at": [
+    16.9,
+    26.45
+   ]
+  },
+  {
+   "net": "USBESP_D_P",
+   "at": [
+    111.75,
+    25.75
+   ]
+  }
+ ],
+ "first": [
+  "BTN_6",
+  "USBESP_D_P",
+  "+3V3",
+  "U9_FB",
+  "Net-(U2-U0RXD)",
+  "Net-(SW2-B)"
+ ]
+}
