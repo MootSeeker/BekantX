@@ -87,6 +87,12 @@ Das Board Rev. 1 ist: Lauf mit 0.15-mm-Regeln (4 offen nach Freerouting) + `beka
 - Messen: `layout_audit.py --dirs=...` (mm in/gegen Richtung je Lage), `copper_view.py ... I2|I3`.
 - Erkenntnisse: Ohne Fanout füllt Freerouting den Raum vor 0.5-mm-Pin-Reihen mit Vias anderer Netze, die letzten Pins kommen nicht mehr raus (USB an U1/U8). Der Nachrouter hält eine In2-Bahn über einem B.Cu-Pad für verbunden (Bug; DRC prüft). `prune_dangling.py` trennte hier eine Verbindung ab: `drop_dangling.py` entfernt einzeln mit DRC-Gegenprobe. Die Option `_rules` in `autoroute.py` hat nie gewirkt (überschrieb das falsche Argument, behoben 2026-11-21); Freerouting liest `<dsn>+<rules>` in `-de`, der Entwurfsname im Rules-Kopf muss dem DSN-Dateinamen ohne Endung entsprechen.
 
+**Renderings für Blogposts (2026-11-21)**, Ablage `Docs/bilder` (Beschreibung und Befehle in `Docs/bilder/README.md`):
+- `CAD/src/export_board_frame.py` (venv `bekantx-cad`): Gehäuse, Deckel, Tastenmatte ins Koordinatensystem des Board-STEP (180° um x, Verschiebung (64.5, 5.5, 9.6) mm, bei jedem Lauf gegen die Gehäuse-Hülle geprüft), optional Deckel abgehoben (`--lid-lift`). Schreibt nichts in `CAD/`.
+- `tools/pcb/blog_renders.py` (KiCad-Python): hängt die Teile als 3D-Modelle an eine Kopie der Platine (Footprint im Platinen-Ursprung, Versatz z −1.6) und rendert mit `kicad-cli pcb render`.
+- `CAD/src/render_enclosure.py` (venv, VTK offscreen): Gehäuse ohne Platine. `kicad-cli` richtet die Kamera immer nach der Platine aus; mit einer Mini-Platine zoomt es ins Gehäuse hinein.
+- Einzeln rendern, nicht parallel (am 2026-11-21 ist der PC beim Rendern im Hintergrund abgestürzt).
+
 ## Schaltplan-Edits per Skript
 - `tools/sch/sch_edit.py`: editiert `.kicad_sch` auf Textebene (Blöcke klonen/löschen, Symbole, Labels, Drähte setzen), ohne die Datei neu zu serialisieren. Pin-Positionen werden aus `lib_symbols` berechnet; die Transformation ist gegen alle bestehenden Sheets geprüft. Nach jedem Lauf ERC, Netzliste und PDF über `kicad-cli` auf dem Root-Sheet.
 

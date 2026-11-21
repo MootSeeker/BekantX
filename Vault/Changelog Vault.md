@@ -28,3 +28,4 @@ Zurück: [[00 Index]]
 - 2026-11-21 – Platine auf **6 Lagen** mit einer Leiterbahn-Richtung je Lage (F.Cu/In3 senkrecht, In2/B.Cu waagrecht), neu geroutet (Fanout + Freerouting + Nachrouter). GND aussen: F.Cu 1 Fläche statt 25 Stücke, B.Cu 6 statt 22. DRC 0 Fehler / 0 offen / Parität 0. Entscheid in [[Entscheidungen]], offene Punkte (Stackup-ASSUMPTION, Kosten, Pad-Mitte, Review) in [[Offene Punkte]].
 - 2026-11-21 – Alle 90°-Ecken der 6-Lagen-Platine mit 45° gefast (286 → 0), Fasen-Skript auf alle Lagen erweitert. DRC 0 Fehler / 0 offen / Parität 0.
 - 2026-11-21 – Reste auf B.Cu nach der Handarbeit des Nutzers bereinigt (Sperren aufgehoben, Mini-Stücke, tote Äste, überlappendes Via). DRC 0 Fehler / 0 offen / Parität 0, nur 2 bekannte Silk-Warnungen.
+- 2026-11-21 – Renderings für Blogposts in `Docs/bilder` (Platine, Gehäuse, beides zusammen) mit Skripten zum Neu-Erzeugen, siehe [[Toolchain]].
