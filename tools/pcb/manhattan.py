@@ -1,6 +1,7 @@
 """Re-route the bad parts of outer-layer tracks as horizontal/vertical runs with small 45 degree chamfers.
 
   "C:/Program Files/KiCad/10.0/bin/python.exe" tools/pcb/manhattan.py <in.kicad_pcb> <out.kicad_pcb> [--passes=3] [--nets=A,B]
+        [--corners-only]   (only corners of 90 degrees or sharper count as bad: re-route them with chamfers)
 
 Layout rules of the user feedback 2026-11-21:
 - every track that ends in a pad or via arrives through its centre, straight along the x or y axis,
@@ -22,6 +23,9 @@ import pcbnew
 
 from bekantx_layout import MM, P, unP
 from pcb_geom import Copper, OUTER, bbox_mm, uid
+
+INNER = (pcbnew.In1_Cu, pcbnew.In2_Cu, pcbnew.In3_Cu, pcbnew.In4_Cu)
+LAYERS = OUTER + INNER     # inner layers carry signals since 2026-11-21 (In1 drops, 6-layer board)
 
 DIAG_MAX = 1.5          # mm: longest 45 degree piece that still counts as a chamfer
 PAD_EXIT = 0.15         # mm of straight track outside a pad edge before the first bend
@@ -76,6 +80,14 @@ class Fast(Copper):
 
     def __init__(self, board):
         super().__init__(board)
+        # pcb_geom.Copper knows the outer layers only: add the inner ones (tracks, vias and THT pads reach them)
+        inner = [l for l in INNER if board.IsLayerEnabled(l)]
+        for it in self.items:
+            if it["kind"] == "via" or (it["kind"] == "pad" and it["obj"].HasHole()):
+                it["layers"] = list(it["layers"]) + inner
+        for t in board.GetTracks():
+            if t.GetClass() == "PCB_TRACK" and t.GetLayer() in inner:
+                self.items.append(dict(obj=t, kind="track", net=t.GetNetname(), layers=[t.GetLayer()], box=bbox_mm(t)))
         self.grid = collections.defaultdict(list)
         for it in self.items:
             it["uid"] = uid(it["obj"])
@@ -196,7 +208,7 @@ class Fixer:
     def build_chains(self):
         groups = collections.defaultdict(list)
         for t in self.board.GetTracks():
-            if t.GetClass() != "PCB_TRACK" or t.GetLayer() not in OUTER or uid(t) in {uid(d) for d in self.dead}:
+            if t.GetClass() != "PCB_TRACK" or t.GetLayer() not in LAYERS or uid(t) in {uid(d) for d in self.dead}:
                 continue
             a, b = unP(t.GetStart()), unP(t.GetEnd())
             if math.dist(a, b) < 1e-6:
@@ -292,6 +304,15 @@ class Fixer:
     def bad_segments(self, ch):
         n = len(ch.segs)
         out = []
+        if getattr(self, "corners_only", False):
+            # only corners of 90 degrees or sharper between two pieces of the chain (layout rule: bends only at 45)
+            for k in range(n - 1):
+                if k in ch.failed:
+                    continue
+                u, v = unit(ch.pts[k], ch.pts[k + 1]), unit(ch.pts[k + 1], ch.pts[k + 2])
+                if u[0] * v[0] + u[1] * v[1] < 0.01:            # turn >= 89.4 degrees
+                    out.append(k)
+            return out
         for k in range(n):
             if k in ch.failed:
                 continue
@@ -617,7 +638,7 @@ class Fixer:
         midpoint, so the two segments form one clean vertex instead of a kink (KiCad joined them by overlap)."""
         groups = collections.defaultdict(list)
         for t in self.board.GetTracks():
-            if t.GetClass() == "PCB_TRACK" and t.GetLayer() in OUTER and t.GetNetname() not in SKIP_NETS:
+            if t.GetClass() == "PCB_TRACK" and t.GetLayer() in LAYERS and t.GetNetname() not in SKIP_NETS:
                 groups[(t.GetNetname(), t.GetLayer())].append(t)
         moved = 0
         for (net, lay), ts in groups.items():
@@ -648,8 +669,10 @@ class Fixer:
                     moved += 1
         print(f"near joins snapped to one vertex: {moved}")
 
-    def run(self, passes=3):
-        self.snap_near_joins()
+    def run(self, passes=3, snap=False, corners_only=False):
+        self.corners_only = corners_only
+        if snap:                  # off by default: moving ends tilts long tracks and lost a pad contact (2026-11-21)
+            self.snap_near_joins()
         for ps in range(passes):
             chains = self.build_chains()
             todo = [c for c in chains if self.bad_segments(c)]
@@ -668,10 +691,10 @@ class Fixer:
         pcbnew.SaveBoard(str(dst), self.board)
 
 
-def main(src, dst, passes=3, only=None):
+def main(src, dst, passes=3, only=None, snap=False, corners_only=False):
     board = pcbnew.LoadBoard(str(src))
     fx = Fixer(board, only)
-    fx.run(passes)
+    fx.run(passes, snap, corners_only)
     fx.finish(dst)
     print("saved", dst, "dead segments removed:", len(fx.dead))
 
@@ -684,4 +707,4 @@ if __name__ == "__main__":
         if a.startswith("--nets="):
             only = set(a.split("=")[1].split(","))
     pos = [a for a in sys.argv[1:] if not a.startswith("--")]
-    main(pos[0], pos[1], passes, only)
+    main(pos[0], pos[1], passes, only, "--snap" in sys.argv, "--corners-only" in sys.argv)

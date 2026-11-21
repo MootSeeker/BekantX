@@ -2,7 +2,7 @@
 less fragmented). The open connections are then routed again by touchup_router.py with --bcost > 1, which keeps
 the long runs on F.Cu.
 
-  "C:/Program Files/KiCad/10.0/bin/python.exe" tools/pcb/release_mid.py <in.kicad_pcb> <out.kicad_pcb> NET,NET,... [--keep=1.5] [--min=10]
+  "C:/Program Files/KiCad/10.0/bin/python.exe" tools/pcb/release_mid.py <in.kicad_pcb> <out.kicad_pcb> NET,NET,... [--keep=1.5] [--min=10] [--layers=B|F,B]
 
 A chain is a run of B.Cu segments of one net between two terminals (pad, via, junction of three or more
 segments). Of every chain longer than --min mm, the first and last --keep mm stay (the escape from the pad or via
@@ -19,13 +19,13 @@ def key(p):
     return (round(p[0], 4), round(p[1], 4))
 
 
-def main(src, dst, nets, keep=1.5, min_len=10.0):
+def main(src, dst, nets, keep=1.5, min_len=10.0, layers=(pcbnew.B_Cu,)):
     board = pcbnew.LoadBoard(str(src))
     B = pcbnew.B_Cu
     vias = [t for t in board.GetTracks() if t.GetClass() == "PCB_VIA"]
     pads = [(fp, p) for fp in board.GetFootprints() for p in fp.Pads()]
     dead, added, report = [], [], []
-    for net in nets:
+    for net, B in [(n, l) for n in nets for l in layers]:
         segs = [t for t in board.GetTracks() if t.GetClass() == "PCB_TRACK" and t.GetNetname() == net and t.GetLayer() == B]
         deg = collections.Counter()
         adj = collections.defaultdict(list)
@@ -82,7 +82,7 @@ def main(src, dst, nets, keep=1.5, min_len=10.0):
                     if keep_a > 1e-6 and keep_b > 1e-6:          # one segment holds both ends: split it
                         qa = (a[0] + u[0] * keep_a, a[1] + u[1] * keep_a)
                         qb = (b[0] - u[0] * keep_b, b[1] - u[1] * keep_b)
-                        added.append((qb, b, t))
+                        added.append((qb, b, t, B))
                         cuts.append((t, a, qa))
                     elif keep_a > 1e-6:
                         cuts.append((t, a, (a[0] + u[0] * keep_a, a[1] + u[1] * keep_a)))
@@ -95,10 +95,10 @@ def main(src, dst, nets, keep=1.5, min_len=10.0):
                     t.SetStart(P(*a)); t.SetEnd(P(*b))
                 else:
                     t.SetStart(P(*b)); t.SetEnd(P(*a))
-            report.append(f"{net}: {L:.1f} mm chain, {L - 2 * keep:.1f} mm released")
-    for a, b, t in added:
+            report.append(f"{net} {board.GetLayerName(B)}: {L:.1f} mm chain, {L - 2 * keep:.1f} mm released")
+    for a, b, t, lay in added:
         n = pcbnew.PCB_TRACK(board)
-        n.SetStart(P(*a)); n.SetEnd(P(*b)); n.SetWidth(t.GetWidth()); n.SetLayer(B); n.SetNet(t.GetNet())
+        n.SetStart(P(*a)); n.SetEnd(P(*b)); n.SetWidth(t.GetWidth()); n.SetLayer(lay); n.SetNet(t.GetNet())
         board.Add(n)
     for t in dead:                             # removals last: pcbnew proxies break after Remove()
         board.Remove(t)
@@ -109,4 +109,6 @@ def main(src, dst, nets, keep=1.5, min_len=10.0):
 if __name__ == "__main__":
     a = [x for x in sys.argv[1:] if not x.startswith("--")]
     opt = lambda k, d: next((float(x.split("=")[1]) for x in sys.argv if x.startswith(f"--{k}=")), d)
-    main(a[0], a[1], a[2].split(","), opt("keep", 1.5), opt("min", 10.0))
+    lays = next((x.split("=")[1] for x in sys.argv if x.startswith("--layers=")), "B")
+    main(a[0], a[1], a[2].split(","), opt("keep", 1.5), opt("min", 10.0),
+         tuple({"F": pcbnew.F_Cu, "B": pcbnew.B_Cu}[c] for c in lays.split(",")))

@@ -1,6 +1,6 @@
 """Measure the layout rules of the user feedback on a finished board (read-only).
 
-  "C:/Program Files/KiCad/10.0/bin/python.exe" tools/pcb/layout_audit.py <board.kicad_pcb> [--list]
+  "C:/Program Files/KiCad/10.0/bin/python.exe" tools/pcb/layout_audit.py <board.kicad_pcb> [--list] [--dirs=F.Cu:V,In2.Cu:H,...]
 
 Reports, on the outer layers:
 - track ends in a pad or via of the same net that are not at its centre (offset in mm) or that arrive at an angle
@@ -31,7 +31,7 @@ def seg_class(a, b):
     return "other", ang
 
 
-def main(path, listing=False):
+def main(path, listing=False, dirs=None):
     b = pcbnew.LoadBoard(path)
     pads = []
     for fp in b.GetFootprints():
@@ -103,9 +103,40 @@ def main(path, listing=False):
         holes = sum(f.Hole(i, h).Area() for i in range(f.OutlineCount()) for h in range(f.HoleCount(i))) / 1e12
         print(f"zone {z.GetZoneName()!r} {b.GetLayerName(lay)} net {z.GetNetname()}: {f.OutlineCount()} pieces, "
               f"{area - holes:.0f} mm2 of {board_area:.0f} mm2 board ({(area - holes) / board_area * 100:.0f} %)")
+    inner = [t for t in b.GetTracks() if t.GetClass() == "PCB_TRACK" and t.GetLayer() == pcbnew.In1_Cu]
+    ic = collections.Counter(seg_class(unP(t.GetStart()), unP(t.GetEnd()))[0] for t in inner)
+    print(f"In1 tracks: {len(inner)} segments, {sum(pcbnew.ToMM(t.GetLength()) for t in inner):.1f} mm, "
+          f"nets {sorted({t.GetNetname() for t in inner})}, by direction {dict(ic)}")
+    for z in b.Zones():
+        if not z.GetIsRuleArea() and not z.IsTeardropArea() and z.IsOnLayer(pcbnew.In1_Cu):
+            f = z.GetFilledPolysList(pcbnew.In1_Cu)
+            print(f"In1 zone {z.GetZoneName()!r}: {f.OutlineCount()} pieces, "
+                  f"{sum(f.Outline(i).Area() for i in range(f.OutlineCount())) / 1e12:.0f} mm2")
+    if dirs:                                  # one track direction per layer (6-layer rule 2026-11-21)
+        print("direction per layer (mm along / against, against pieces > 1 mm, > 0.3 mm):")
+        for lay in (pcbnew.F_Cu, pcbnew.In1_Cu, pcbnew.In2_Cu, pcbnew.In3_Cu, pcbnew.In4_Cu, pcbnew.B_Cu):
+            name = pcbnew.BOARD.GetStandardLayerName(lay)
+            want = dirs.get(name)
+            ts = [t for t in b.GetTracks() if t.GetClass() == "PCB_TRACK" and t.GetLayer() == lay]
+            if not ts:
+                continue
+            along = against = 0.0
+            n1 = n03 = 0
+            for t in ts:
+                p, q = unP(t.GetStart()), unP(t.GetEnd())
+                L = math.dist(p, q)
+                k = "H" if abs(q[1] - p[1]) < 1e-3 else "V" if abs(q[0] - p[0]) < 1e-3 else "D"
+                if k == want:
+                    along += L
+                else:
+                    against += L
+                    n1 += L > 1.0
+                    n03 += L > 0.3
+            print(f"  {name} ({want or '-'}): {along:.1f} / {against:.1f} mm, {n1} / {n03} pieces")
     td = [z for z in b.Zones() if z.IsTeardropArea()]
     print(f"teardrop zones: {len(td)}; vias: {len(vias)}")
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], "--list" in sys.argv)
+    d = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--dirs=")), "")
+    main(sys.argv[1], "--list" in sys.argv, dict(x.split(":") for x in d.split(",")) if d else None)

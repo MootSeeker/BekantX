@@ -9,7 +9,7 @@ that is found is DRC clean; a connection that finds no path is reported and stay
 --rip    in the first round a blocked connection may cross unlocked tracks of other nets; those segments
          are removed and routed again in the following rounds, which do not rip up any more (ripping in
          every round does not converge: it tears up more than it closes)
---inner  In1 (the +3V3 plane) may be used as a third layer, at a high cost
+--inner  In1 (the +3V3 plane) may be used as a third layer, at a high cost (--innercost=X, default 4)
 --release=NET,NET        remove the unlocked routing of these nets first (they are routed again)
 --release-vias=X/Y,X/Y   remove the vias at these board positions first (mm, also locked ones)
 --first=NET,NET          route the open connections of these nets before all others
@@ -17,6 +17,11 @@ that is found is DRC clean; a connection that finds no path is reported and stay
 --manual=FILE            json with release_nets, release_vias, tracks, vias and first (see bekantx_manual.json)
 --opencost=X --openr=R   cost factor X for track cells farther than R mm (0.7) from any copper: new tracks hug
                          existing copper and cut the outer GND pours less (default 1 = off)
+--layers=F23B           layer letters to route on (F, B, I = In1, 2 = In2, 3 = In3; default FB)
+--hv=F:V,2:H,3:V,B:H     one direction per layer: only horizontal or vertical steps, except within 1.2 mm of the
+                         two end points (pad escape); no string pulling
+--viacost=X              via cost in grid steps (default 40)
+--hvesc=R                escape radius of --hv in mm (default 1.2)
 --bcost=X                cost factor of a track step on B.Cu (default 1); > 1 keeps long runs on F.Cu so that
                          the GND pour on B.Cu stays in one piece (B.Cu then only connects the pads)
 The tracks are not locked.
@@ -30,8 +35,10 @@ import pcbnew
 from bekantx_layout import KICAD_BIN, NETCLASSES, ORIGIN, P, ROOT, net_clearance, unP
 
 VIA_D, VIA_DRILL, VIA_COST = 0.5, 0.3, 40.0   # a via costs as much as 2 mm of track (fewer layer changes)
-LAYER = {"F": pcbnew.F_Cu, "B": pcbnew.B_Cu, "I": pcbnew.In1_Cu}
-INNER_COST = 4.0        # a track on In1 cuts the +3V3 plane: only where nothing else works
+LAYER = {"F": pcbnew.F_Cu, "B": pcbnew.B_Cu, "I": pcbnew.In1_Cu, "2": pcbnew.In2_Cu, "3": pcbnew.In3_Cu}
+HV = {}                 # --hv=F:V,2:H,3:V,B:H: one track direction per layer letter (6-layer board 2026-11-21)
+HV_ESC = 1.2            # mm around the two end points where both directions are allowed (pad escape)
+INNER_COST = 4.0        # a track on In1 cuts the +3V3 plane: only where nothing else works (--innercost)
 RIP_COST = 8.0          # per grid cell inside the clearance area of a track that would have to be ripped up
 B_COST = 1.0            # cost factor of B.Cu (--bcost)
 OPEN_COST = 1.0         # cost factor of cells farther than OPEN_R from any copper (--opencost): runs hug existing copper
@@ -237,7 +244,7 @@ class Grid:
         openc = {}
         if OPEN_COST > 1.0:                   # cells without copper (blocked area) within OPEN_R: free space, dearer
             r = max(1, int(round(OPEN_R / g)))
-            for l in L:
+            for l in [l for l in L if l != "I"]:      # In1 has no pour to protect: no open-space factor
                 nearb = blocked[l].copy()
                 for _ in range(r):
                     m = nearb.copy()
@@ -290,6 +297,18 @@ class Grid:
             free[l][c] = True
         S2 = math.sqrt(2)
         moves = [(1, 0, 1), (-1, 0, 1), (0, 1, 1), (0, -1, 1), (1, 1, S2), (1, -1, S2), (-1, 1, S2), (-1, -1, S2)]
+        if HV:
+            moves = moves[:4]                 # horizontal/vertical steps only
+            resc = (HV_ESC / g) ** 2
+            esc_pts = [ca, cb]
+
+            def step_ok(l, i, j, di, dj):
+                d = HV.get(l)
+                if d is None or (d == "H" and dj == 0) or (d == "V" and di == 0):
+                    return True
+                return any((i - e[0]) ** 2 + (j - e[1]) ** 2 <= resc for e in esc_pts)
+        else:
+            step_ok = None
         # admissible heuristic: distance to the nearest goal cell (subsampled for large goal sets)
         hc = dst_cells if len(dst_cells) <= 2000 else dst_cells[:: max(1, len(dst_cells) // 2000)]
         h = lambda c: float(np.min(np.hypot(hc[:, 0] - c[0], hc[:, 1] - c[1]))) * (1.0 if len(hc) == len(dst_cells) else 0.0)
@@ -315,9 +334,11 @@ class Grid:
                 ni, nj = i + di, j + dj
                 if not (0 <= ni < self.nx and 0 <= nj < self.ny) or not free[l][ni, nj]:
                     continue
+                if step_ok is not None and not step_ok(l, i, j, di, dj):
+                    continue
                 if di and dj and not (free[l][ni, j] and free[l][i, nj]):
                     continue
-                nn, nc = ((ni, nj), l), cost + c * (0.3 if own[l][ni, nj] else lcost[l] * (openc[l][ni, nj] if openc else 1.0)) + (RIP_COST if soft[l][ni, nj] else 0.0)
+                nn, nc = ((ni, nj), l), cost + c * (0.3 if own[l][ni, nj] else lcost[l] * (openc[l][ni, nj] if l in openc else 1.0)) + (RIP_COST if soft[l][ni, nj] else 0.0)
                 if nc < best.get(nn, 1e18):
                     best[nn], prev[nn] = nc, node
                     heapq.heappush(pq, (nc + h((ni, nj)), nc, nn))
@@ -384,7 +405,7 @@ class Grid:
         for k, run in enumerate(segs):
             layer = LAYER[run[0][1]]
             pts = [(c[0] * g, c[1] * g) for c, _l in run]
-            if free is not None and len(pts) > 2:
+            if free is not None and len(pts) > 2 and not HV:      # HV mode: no string pulling (keeps H/V)
                 # string pulling: replace the grid staircase by the longest straight segments that stay in free
                 # cells. Free cells already include the clearance plus half a grid step, so a straight segment
                 # between them keeps the rule distance (nearest cell centre within g/sqrt(2) < g/2 + 0.04).
@@ -524,10 +545,14 @@ if __name__ == "__main__":
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     B_COST = next((float(a.split("=")[1]) for a in sys.argv if a.startswith("--bcost=")), 1.0)
     OPEN_COST = next((float(a.split("=")[1]) for a in sys.argv if a.startswith("--opencost=")), 1.0)
+    INNER_COST = next((float(a.split("=")[1]) for a in sys.argv if a.startswith("--innercost=")), INNER_COST)
+    HV.update(dict(x.split(":") for x in next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--hv=")), "").split(",") if x))
+    VIA_COST = next((float(a.split("=")[1]) for a in sys.argv if a.startswith("--viacost=")), VIA_COST)
+    HV_ESC = next((float(a.split("=")[1]) for a in sys.argv if a.startswith("--hvesc=")), HV_ESC)
     OPEN_R = next((float(a.split("=")[1]) for a in sys.argv if a.startswith("--openr=")), 0.7)
     grid_step = next((float(a.split("=")[1]) for a in sys.argv if a.startswith("--grid=")), 0.05)
     opt = lambda k: next((a.split("=", 1)[1] for a in sys.argv if a.startswith(f"--{k}=")), "")
-    main(args[0], args[1], grid_step, "FBI" if "--inner" in sys.argv else "FB", "--rip" in sys.argv,
+    main(args[0], args[1], grid_step, opt("layers") or ("FBI" if "--inner" in sys.argv else "FB"), "--rip" in sys.argv,
          first=tuple(n for n in opt("first").split(",") if n),
          rel_nets=tuple(n for n in opt("release").split(",") if n),
          rel_vias=tuple(tuple(float(v) for v in q.split("/")) for q in opt("release-vias").split(",") if q),

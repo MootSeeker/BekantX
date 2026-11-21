@@ -11,9 +11,9 @@ Sheets: `mastersheet` (Root `BekantX.kicad_sch`), `microcontroller`, `powerSuppl
 - **Layout Rev. 1 (2026-11-15, Branch `pcb/layout-4layer`)**: siehe Abschnitt «Layout» unten.
 
 ## Layout Rev. 1 (2026-11-15, nach Review und PR-Feedback überarbeitet 2026-11-18)
-`Pcb_Controller/BekantX.kicad_pcb`: 145 Bauteile + 6 Bohrungen, 129 × 38 mm mit USB-Nase, 4 Lagen. Das Board wird von Skripten erzeugt (siehe [[Toolchain]]), nicht von Hand gezeichnet.
+`Pcb_Controller/BekantX.kicad_pcb`: 145 Bauteile + 6 Bohrungen, 129 × 38 mm mit USB-Nase, 6 Lagen (seit 2026-11-21, vorher 4). Das Board wird von Skripten erzeugt (siehe [[Toolchain]]), nicht von Hand gezeichnet.
 
-- **Lagen** (JLCPCB JLC04161H-7628 angenommen, 1.6 mm): F.Cu (Tasten, OLED-Stecker J3 mit seinen Kondensatoren, LEDs D1/D5) / In1 geteilt: `+3V3`-Plane und VCC-Fläche im Leistungsteil / In2 GND-Plane / B.Cu (alle übrigen Teile, HF-Leitung, USB). GND liegt bewusst direkt unter B.Cu. Auf beiden Aussenlagen zusätzlich ganzflächige GND-Flächen (Stitching-Vias, je Teilfläche mindestens eines), seit 2026-11-21 Teardrops an Vias.
+- **Lagen** (seit 2026-11-21 sechs, 1.6 mm, ASSUMPTION Aufbau nach JLCPCB JLC06161H-2116, siehe [[Offene Punkte]]): F.Cu Signale **senkrecht** (Tasten, OLED-Stecker J3, LEDs D1/D5) / In1 `+3V3`-Plane und VCC-Fläche (keine Signale) / In2 Signale **waagrecht** / In3 Signale **senkrecht** / In4 GND-Plane (direkt unter B.Cu) / B.Cu Signale **waagrecht** (alle übrigen Teile, Pad-Ausfahrten, Speisungsbahnen). Eine Richtung je Lage (Nutzer), damit die GND-Flächen aussen zusammenhängen: F.Cu jetzt 1 Fläche (vorher 25 Stücke), B.Cu 6 (vorher 22). Teardrops an Vias auf allen Lagen.
 - **Bestückung**: Vorderseite nur, was das Gehäuse dort verlangt (22 Footprints inkl. Bohrungen); Rückseite alles andere, höchstes Teil 6.3 mm (Elkos) bei 7.0 mm Grenze.
 - **Netzklassen** (`BekantX.kicad_pro`): Default 0.15/0.15 mm, Via 0.5/0.3; `+3.3VA`/`VCC_SPI` 0.3; `+12V`/`VBUS` 0.4; Hochvolt (`VDESK`, `VIN`, `VCC`, Schaltknoten, bis 53 V an der TVS) 0.5 mm mit 0.3 mm Abstand; LIN 0.3/0.3; USB 0.25/0.15 (Full Speed); GND/`+3V3` 0.15 mm Abstand; HF 0.35 mm.
 - **Planes**: jedes SMD-Pad an GND und `+3V3` hat ein eigenes Via, die Exposed Pads von U1/U2 je 3 × 3 Vias. Beide Innenlagen tragen keine Leiterbahn.

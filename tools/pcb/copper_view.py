@@ -1,6 +1,6 @@
 """Picture of the copper of one outer layer (pours, tracks, pads, vias, teardrops), in board coordinates.
 
-  "C:/Program Files/KiCad/10.0/bin/python.exe" tools/pcb/copper_view.py <board.kicad_pcb> <out.png> [F|B] [--window=x0,y0,x1,y1] [--px=24] [--nets]
+  "C:/Program Files/KiCad/10.0/bin/python.exe" tools/pcb/copper_view.py <board.kicad_pcb> <out.png> [F|B|I|I2|I3|I4] [--window=x0,y0,x1,y1] [--px=24] [--nets]
 
 Board mm like CAD/board_interface.json (origin = board corner). Layer B is drawn mirrored like KiCad shows it
 from the back is NOT done: both sides use the same x/y so pictures can be compared. Pours are pale, tracks
@@ -13,12 +13,15 @@ from PIL import Image, ImageDraw, ImageFont
 
 from bekantx_layout import unP
 
-COL = {"F": ((205, 60, 60), (240, 200, 200)), "B": ((70, 110, 205), (200, 212, 240))}
+COL = {"F": ((205, 60, 60), (240, 200, 200)), "B": ((70, 110, 205), (200, 212, 240)),
+       "I": ((190, 120, 20), (245, 225, 190)), "I2": ((30, 150, 70), (200, 235, 210)),
+       "I3": ((150, 60, 170), (230, 205, 235)), "I4": ((110, 110, 110), (225, 225, 225))}
 
 
 def main(path, out, side="F", window=None, px=24, nets=False):
     b = pcbnew.LoadBoard(path)
-    lay = pcbnew.F_Cu if side == "F" else pcbnew.B_Cu
+    lay = {"F": pcbnew.F_Cu, "B": pcbnew.B_Cu, "I": pcbnew.In1_Cu, "I2": pcbnew.In2_Cu, "I3": pcbnew.In3_Cu,
+           "I4": pcbnew.In4_Cu}[side]
     col, pale = COL[side]
     bb = b.GetBoardEdgesBoundingBox()
     w, h = pcbnew.ToMM(bb.GetWidth()), pcbnew.ToMM(bb.GetHeight())

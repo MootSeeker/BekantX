@@ -23,6 +23,9 @@ from pcb_geom import OUTER, bbox_mm, uid
 
 LENGTH = 0.55           # mm of taper beyond the via edge (KiCad default: 0.5 x diameter)
 MIN_LEN = 0.12          # shortest taper worth drawing, beyond the via edge
+INNER = (pcbnew.In1_Cu, pcbnew.In2_Cu, pcbnew.In3_Cu, pcbnew.In4_Cu)
+CANON = {pcbnew.F_Cu: "F.Cu", pcbnew.B_Cu: "B.Cu", pcbnew.In1_Cu: "In1.Cu", pcbnew.In2_Cu: "In2.Cu",
+         pcbnew.In3_Cu: "In3.Cu", pcbnew.In4_Cu: "In4.Cu"}
 WIDTH_RATIO = 0.9       # no teardrop when the track is wider than this share of the via diameter
 
 
@@ -65,7 +68,7 @@ def poly_shape(pts):
 def main(src, dst):
     board = pcbnew.LoadBoard(str(src))
     cu = Fast(board)
-    tracks = [t for t in board.GetTracks() if t.GetClass() == "PCB_TRACK" and t.GetLayer() in OUTER]
+    tracks = [t for t in board.GetTracks() if t.GetClass() == "PCB_TRACK" and t.GetLayer() in OUTER + INNER]
     vias = [t for t in board.GetTracks() if t.GetClass() == "PCB_VIA"]
     made, skipped = [], {"wide": 0, "off centre": 0, "no room": 0, "short": 0}
     for v in vias:
@@ -130,7 +133,7 @@ def main(src, dst):
         xy = " ".join(f"(xy {x + ORIGIN[0]:.4f} {y + ORIGIN[1]:.4f})" for x, y in pts)
         blocks.append(f'''	(zone
 		(net "{net}")
-		(layer "{board.GetLayerName(lay)}")
+		(layer "{CANON[lay]}")
 		(uuid "{uuid.uuid4()}")
 		(name "teardrop")
 		(hatch edge 0.5)
@@ -160,7 +163,8 @@ def main(src, dst):
     text = text[:i].rstrip("\n") + "\n" + "".join(blocks) + text[i:]
     open(dst, "w", encoding="utf-8", newline="\n").write(text)
     print(f"teardrops: {len(made)} ({sum(1 for m in made if m[0] == pcbnew.F_Cu)} F.Cu, "
-          f"{sum(1 for m in made if m[0] == pcbnew.B_Cu)} B.Cu); skipped {skipped}; vias {len(vias)}")
+          f"{sum(1 for m in made if m[0] == pcbnew.B_Cu)} B.Cu, {sum(1 for m in made if m[0] in INNER)} inner); "
+          f"skipped {skipped}; vias {len(vias)}")
 
 
 if __name__ == "__main__":
