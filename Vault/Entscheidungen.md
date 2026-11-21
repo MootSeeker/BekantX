@@ -45,5 +45,6 @@
 | 2026-11-19 | Titelblock mit QR-Code zum Repository, Credits mit GitHub-Namen statt vollem Namen | „Wer es gemacht hat“; der GitHub-Name steht ohnehin in der Repo-URL. Voller Name auf Wunsch |
 | 2026-11-19 | Lizenzen getrennt: Hardware **CERN-OHL-S-2.0**, Software **GPL-3.0-or-later**, Doku **CC BY-SA 4.0** (vorher GPL-3.0 für alles) | GPL ist eine Software-Lizenz und passt schlecht auf Schaltpläne, Layout und Gehäuse. CERN-OHL-S ist das gleichwertige Copyleft für Hardware, die Absicht der GPL bleibt erhalten. Zuordnung in `LICENSES/README.md` |
 | 2026-11-19 | `Pcb_HMI/` und die Original-STLs entfernt, ersetzt den Entscheid «archivieren, nicht löschen» | Wunsch des Nutzers (Repo aufräumen). Archiv ist der Git-Tag `archive/pre-cleanup`; Stil-Referenz ist jetzt das gedruckte Gehäuse r3 |
+| 2026-11-21 | Aussen-GND bleibt ganzflächig und möglichst zusammenhängend (Nutzer: grosse GND-Flächen, Bahnen so führen, dass sie wenig zerschneiden; Verkleinern war ein Missverständnis und wurde zurückgenommen). Bahnen rechtwinklig mit 45°-Fasen, Teardrops an Vias | Bahnen im Weg der Fläche zerschneiden sie; In2 bleibt die geschlossene GND-Referenz |
 
 Neue Einträge hier ergänzen. Zurück: [[00 Index]]

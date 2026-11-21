@@ -32,7 +32,7 @@ def wanted(area):
 def pieces(board):
     out = []
     for z in board.Zones():
-        if z.GetZoneName() in POURS:
+        if z.GetZoneName().startswith(POURS):
             lay = z.GetFirstLayer()
             f = z.GetFilledPolysList(lay)
             for i in range(f.OutlineCount()):
@@ -47,8 +47,9 @@ def pieces(board):
 def main(src, dst):
     board = pcbnew.LoadBoard(str(src))
     for z in board.Zones():
-        if z.GetZoneName() in POURS:
+        if z.GetZoneName().startswith(POURS):
             z.SetLocalClearance(MM(CLEARANCE))
+    board.BuildConnectivity()
     filler = pcbnew.ZONE_FILLER(board)
     filler.Fill(board.Zones())
     cu = Copper(board)

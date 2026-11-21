@@ -23,3 +23,4 @@
 Zurück: [[00 Index]]
 - 2026-11-19 – Layout-Regeln des Nutzers umgesetzt: keine 90°-Ecken, kurze Speisungsstummel zu Plane-Vias, B.Cu-GND 31 → 23 Stücke (5 Netze auf F.Cu neu verlegt), runde Ecken (2.5 mm), Bestückungsdruck mit Referenzen, Labels, QR-Code und Logo. DRC 0 Fehler / 0 offen / Parität 0, Passprüfung bestanden.
 - 2026-11-19 – Repo aufgeräumt und präsentiert: README mit Renderings, Lizenzen getrennt (CERN-OHL-S / GPL-3.0 / CC BY-SA), `Pcb_HMI/` und Original-STLs entfernt (Tag `archive/pre-cleanup`), Firmware-README neu.
+- 2026-11-21 – Layout-Politur nach Nutzerfeedback (Branch `pcb/layout-polish`): Leiterbahnen durch Pad-/Via-Mitte und möglichst nur waagrecht/senkrecht (`manhattan.py`), Teardrops an Vias (`teardrops.py`), GND-Flächen bleiben ganzflächig (ein Verkleinern war ein Missverständnis, zurückgenommen). DRC 0 Fehler / 0 offen / Parität 0. Rest und Zahlen in [[Offene Punkte]], Werkzeuge in [[Toolchain]].
