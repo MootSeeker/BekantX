@@ -3,7 +3,8 @@ die eine Kurve machen, duerfen keine 90-Grad-Winkel haben").
 
   "C:/Program Files/KiCad/10.0/bin/python.exe" tools/pcb/chamfer_corners.py <in.kicad_pcb> <out.kicad_pcb>
 
-A corner is a point where exactly two track segments of one net and layer meet, outside every pad and via (a
+A corner is a point where exactly two track segments of one net and layer meet (any copper layer, also the inner
+ones of the 6-layer board), outside every pad and via (a
 bend inside a pad or under a via is not visible copper). If the inner angle is <= 90 degrees, both legs are cut
 back by the same length c and joined by a new segment: a 90 degree corner becomes two 135 degree corners.
 c is the largest of CUTS that
@@ -18,7 +19,8 @@ import math, sys
 import pcbnew
 
 from bekantx_layout import MM, P, unP
-from pcb_geom import Copper, bbox_mm
+from pcb_geom import bbox_mm
+from manhattan import Fast
 
 CUTS = (1.0, 0.8, 0.6, 0.5, 0.4, 0.3, 0.25, 0.2, 0.15, 0.1, 0.08, 0.06)
 PAD_EXIT = 0.15           # mm of straight track left outside a pad edge
@@ -31,8 +33,9 @@ def key(p):
 
 def main(src, dst):
     board = pcbnew.LoadBoard(str(src))
-    cu = Copper(board)
-    outer = (pcbnew.F_Cu, pcbnew.B_Cu)
+    cu = Fast(board)                       # clearance model with the inner layers (6-layer board)
+    outer = tuple(l for l in (pcbnew.F_Cu, pcbnew.In1_Cu, pcbnew.In2_Cu, pcbnew.In3_Cu, pcbnew.In4_Cu, pcbnew.B_Cu)
+                  if board.IsLayerEnabled(l))
     segs = [dict(obj=t, a=unP(t.GetStart()), b=unP(t.GetEnd()), w=pcbnew.ToMM(t.GetWidth()), net=t.GetNetname(),
                  lay=t.GetLayer()) for t in board.GetTracks() if t.GetClass() == "PCB_TRACK" and t.GetLayer() in outer]
     vias = [(unP(t.GetPosition()), pcbnew.ToMM(t.GetWidth(pcbnew.F_Cu)) / 2, t.GetNetname())
@@ -159,7 +162,7 @@ def main(src, dst):
         t.SetNet(board.FindNet(net))
         board.Add(t)
         segs.append(dict(obj=t, a=q1, b=q2, w=w, net=net, lay=lay))
-        cu.items.append(dict(obj=t, kind="track", net=net, layers=[lay], box=bbox_mm(t)))
+        cu.add_track(t)
         done += 1
         return None
 

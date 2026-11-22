@@ -52,8 +52,8 @@ def run_freerouting(work, settings, timeout):
             "--gui.enabled=false", f"--logging.file.location={work}",
             f"--router.result_json={work / 'result.json'}", "--router.max_threads=2"]
     rules = settings.get("_rules")
-    if rules:
-        args[2] = f"{work / 'in.dsn'}+{Path(rules).resolve()}"
+    if rules:                                 # Freerouting reads "<dsn>+<rules>" in -de (was args[2], the JVM error file)
+        args[args.index("-de") + 1] = f"{work / 'in.dsn'}+{Path(rules).resolve()}"
     for k, v in settings.items():
         if k.startswith("_"):
             continue
