@@ -1,10 +1,11 @@
-"""Build the English assembly guide PDF for MakerWorld from Docs/makerworld/assembly-guide.html.
+"""Build the English assembly guide PDF (for MakerWorld) from Docs/assembly-guide.html.
 
-  python tools/docs/makerworld_pdf.py            # -> build/makerworld/BekantX_Assembly_Guide.pdf
+  python tools/docs/makerworld_pdf.py [out.pdf]   # default: Docs/BekantX_Assembly_Guide.pdf
 
 Prepares the images from Docs/bilder into build/makerworld/img (renders cropped to their content and flattened on
 white, photos scaled, everything as JPEG to keep the PDF small), copies the HTML next to them and prints it with
 headless Microsoft Edge (Chromium print engine: CSS paged media, page counters). Needs Pillow and Edge.
+The German original of the text is Docs/Montageanleitung.md; keep both in step.
 """
 import shutil
 import subprocess
@@ -15,10 +16,10 @@ from pathlib import Path
 from PIL import Image, ImageChops
 
 ROOT = Path(__file__).resolve().parents[2]
-SRC = ROOT / "Docs" / "makerworld" / "assembly-guide.html"
+SRC = ROOT / "Docs" / "assembly-guide.html"
 IMG = ROOT / "Docs" / "bilder"
-OUT = ROOT / "build" / "makerworld"
-PDF = OUT / "BekantX_Assembly_Guide.pdf"
+OUT = ROOT / "build" / "makerworld"          # working files (git-ignored)
+PDF = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else ROOT / "Docs" / "BekantX_Assembly_Guide.pdf"
 EDGE = Path("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")
 MAX = 1800  # px, long side
 
