@@ -18,11 +18,12 @@ Knowledge lives in the Obsidian vault `Vault/` (Markdown, `[[wikilinks]]`). **Re
 
 ```
 CAD/                         enclosure (STL/STEP; source scripts go to CAD/src)
-Docs/                        specs: description.md (requirements), architecture.md, *-protocol.md, datasheets
+Docs/                        specs: description.md (requirements), architecture.md, *-protocol.md; Montageanleitung.md, assembly guide + BOM (PDF); bilder/ (renders, photos); datasheets/
 Firmware/ESP32C3/BekantX     ESP-IDF C++ project (secondary controller)
 Firmware/ST/Bekanntx         STM32CubeMX project (primary controller, no code yet)
-Pcb_Controller/              KiCad: the single controller board (hierarchical sheets)
+Pcb_Controller/              KiCad: the single controller board (6 layers, hierarchical sheets)
 LICENSES/                    licence texts and the mapping of licences to paths
+tools/                       pcb (layout pipeline), sch (scripted schematic edits), docs (PDF builders: BOM, assembly guide)
 Vault/                       project memory
 .claude/                     skills, subagents, hooks
 ```
@@ -52,7 +53,7 @@ Details and workflow: `Vault/Toolchain.md`. Output of generated artifacts (rende
 - A schematic or board change is done only when ERC/DRC were run and the result is reported (counts, remaining violations and why they are acceptable). Look at a rendered image or PDF, do not trust the numbers alone.
 - Prefer editing KiCad files through `pcbnew` / `kicad-skip` / `kicad-cli` over hand-editing S-expressions. After any scripted edit re-open the file with the API to prove it still loads.
 - Do not delete or move existing placed footprints/wires without saying so; the user may have placed them by hand.
-- Parts: real MPNs, check availability and footprint against the datasheet in `Docs/` or the vendor datasheet. Never invent part numbers or pinouts; say when unsure.
+- Parts: real MPNs, check availability and footprint against the datasheet in `Docs/datasheets/` or the vendor datasheet. Never invent part numbers or pinouts; say when unsure.
 - Safety-relevant behaviour stays on the primary controller (see `Docs/description.md`, SR-xxx). No design may let the secondary move the desk without the primary's validation.
 
 **Mechanical**

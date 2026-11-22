@@ -93,6 +93,12 @@ Das Board Rev. 1 ist: Lauf mit 0.15-mm-Regeln (4 offen nach Freerouting) + `beka
 - `CAD/src/render_enclosure.py` (venv, VTK offscreen): Gehäuse ohne Platine. `kicad-cli` richtet die Kamera immer nach der Platine aus; mit einer Mini-Platine zoomt es ins Gehäuse hinein.
 - Einzeln rendern, nicht parallel (am 2026-11-21 ist der PC beim Rendern im Hintergrund abgestürzt).
 
+**Dokumente als PDF (2026-11-22)**, Ausgabe nach `Docs/`, Zwischendateien nach `build/` (Edge headless als Druckmaschine, CSS Paged Media):
+- `tools/docs/makerworld_pdf.py` (Python mit Pillow): bereitet die Bilder aus `Docs/bilder` auf (Renderings zugeschnitten, Fotos verkleinert, JPEG) und druckt `Docs/assembly-guide.html` nach `Docs/BekantX_Assembly_Guide.pdf`. Der Text ist die englische Fassung von `Docs/Montageanleitung.md`; beide gemeinsam pflegen.
+- `tools/docs/bom_pdf.py` (KiCad-Python): exportiert die Stückliste mit `kicad-cli sch export bom` (eine Zeile je Symbol), gleicht sie mit den Footprints der Platine ab (Referenzen, Werte, Footprints, DNP; Abbruch bei Abweichung), fasst gleiche MPN + Bauform zusammen und druckt `Docs/BekantX_Bill_of_Materials.pdf`.
+
+**`build/` ist reiner Arbeitsraum** (git-ignoriert, alles neu erzeugbar). Am 2026-11-22 von 1.4 GB geleert; nichts davon wird gebraucht. Freerouting-JAR und JDK liegen in `~/tools`, nicht in `build/`.
+
 ## Schaltplan-Edits per Skript
 - `tools/sch/sch_edit.py`: editiert `.kicad_sch` auf Textebene (Blöcke klonen/löschen, Symbole, Labels, Drähte setzen), ohne die Datei neu zu serialisieren. Pin-Positionen werden aus `lib_symbols` berechnet; die Transformation ist gegen alle bestehenden Sheets geprüft. Nach jedem Lauf ERC, Netzliste und PDF über `kicad-cli` auf dem Root-Sheet.
 

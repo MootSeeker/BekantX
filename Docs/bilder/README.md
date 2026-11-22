@@ -1,4 +1,4 @@
-# Renderings for blog posts
+# Renderings and photos (README, blog posts, assembly guide)
 
 Board: `Pcb_Controller/BekantX.kicad_pcb` (6 layers, 2026-11-21). Enclosure: r3 (`CAD/src/bekantx_enclosure.py`).
 About 2400 × 1350 px (kicad-cli delivers 2384 × 1320), transparent background (PNG).
@@ -31,7 +31,7 @@ Photos of the printed enclosure r3 (empty, lid closed, no keypad, no board):
 | `BekantX Controller-Gehäuse-1.png` | title image (landscape), based on `Bild1.jpg` |
 | `BekantX Controller-Gehäuse in Blau-2.png` | title image (portrait), based on `Bild2.jpg` |
 
-`Docs/Montageanleitung.md` uses the four photos and the landscape title image.
+`Docs/Montageanleitung.md` and the assembly guide PDF use the four photos and the landscape title image. The root `README.md` gallery uses `pcb_iso_top`, `pcb_iso_bottom`, `assembly_open`, `assembly_exploded` and the landscape title image.
 
 ## Regenerate
 
@@ -47,3 +47,13 @@ V="$USERPROFILE/.venvs/bekantx-cad/Scripts/python.exe"
 (64.5, 5.5, 9.6) mm, checked on every run). `blog_renders.py` hangs them as 3D models on a copy of the board and
 renders with `kicad-cli pcb render`; the enclosure alone is rendered with VTK because kicad-cli frames the camera
 on the board.
+
+## PDFs built from these images
+
+```bash
+python tools/docs/makerworld_pdf.py        # Docs/BekantX_Assembly_Guide.pdf (source: Docs/assembly-guide.html)
+"C:/Program Files/KiCad/10.0/bin/python.exe" tools/docs/bom_pdf.py   # Docs/BekantX_Bill_of_Materials.pdf (no images)
+```
+
+The renders show the board and case as modelled; after a layout change run the regenerate commands above, then rebuild
+the guide.
