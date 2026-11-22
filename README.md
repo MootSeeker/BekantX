@@ -163,7 +163,7 @@ Vault/            project memory (Obsidian, German)
 ```bash
 # KiCad 10: electrical and design rule checks, 3D export (Windows paths, see Vault/Toolchain.md)
 kicad-cli sch erc --format json -o erc.json Pcb_Controller/BekantX.kicad_sch
-kicad-cli pcb drc --refill-zones --schematic-parity --format json -o drc.json Pcb_Controller/BekantX.kicad_pcb
+kicad-cli pcb drc --schematic-parity --format json -o drc.json Pcb_Controller/BekantX.kicad_pcb
 kicad-cli pcb export step --subst-models --user-origin 100x80mm -o CAD/BekantX_PCB.step Pcb_Controller/BekantX.kicad_pcb
 
 # Enclosure (Python 3.13 with build123d) and fit check against the board
@@ -184,7 +184,7 @@ cd Firmware/ESP32C3/BekantX && idf.py set-target esp32c3 && idf.py build
 | --- | --- |
 | Requirements and architecture | done, see `Docs/` |
 | Schematic | done; ERC 0 errors (28 old warnings) |
-| PCB layout (6 layers) | done and reviewed in KiCad; DRC 0 errors, 0 unconnected, schematic parity OK **after refilling the zones** (the zone fill stored in the file is out of date, see [open points](Vault/Offene%20Punkte.md)); not yet manufactured |
+| PCB layout (6 layers) | done and reviewed in KiCad; DRC 0 errors, 0 unconnected, schematic parity OK; not yet manufactured |
 | Enclosure r3 | printed (PLA); case and lid fit; fit check against the 6-layer board passes in CAD; final print in PETG pending |
 | Bill of materials | 127 placements, 121 to populate; no supplier part numbers yet, J10 and Y1 without MPN |
 | Assembly guide | written (German and English PDF); not yet tried with a populated board |
