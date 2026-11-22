@@ -29,3 +29,4 @@ Zurück: [[00 Index]]
 - 2026-11-21 – Alle 90°-Ecken der 6-Lagen-Platine mit 45° gefast (286 → 0), Fasen-Skript auf alle Lagen erweitert. DRC 0 Fehler / 0 offen / Parität 0.
 - 2026-11-21 – Reste auf B.Cu nach der Handarbeit des Nutzers bereinigt (Sperren aufgehoben, Mini-Stücke, tote Äste, überlappendes Via). DRC 0 Fehler / 0 offen / Parität 0, nur 2 bekannte Silk-Warnungen.
 - 2026-11-21 – Renderings für Blogposts in `Docs/bilder` (Platine, Gehäuse, beides zusammen) mit Skripten zum Neu-Erzeugen, siehe [[Toolchain]].
+- 2026-11-22 – Montageanleitung `Docs/Montageanleitung.md` geschrieben (Druck, Tastenmatte, Display, Platine, Tischkabel, Deckel, Tischmontage) mit den Renderings und den Fotos des Probedrucks r3 in `Docs/bilder`. Ungeprüfte Schritte (Tisch-Schnittstelle, FPC Pin 1 und Faltung, Tastenbelegung, PETG) sind markiert; Zusammenbau mit Platine noch nicht gemacht.

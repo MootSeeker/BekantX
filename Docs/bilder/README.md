@@ -18,6 +18,21 @@ About 2400 × 1350 px (kicad-cli delivers 2384 × 1320), transparent background 
 
 The enclosure is a model (not a photo of the printed part). Colours are render defaults, not the print filament.
 
+## Photos
+
+Photos of the printed enclosure r3 (empty, lid closed, no keypad, no board):
+
+| File | Shows |
+|---|---|
+| `Bild1.jpg` | front at an angle |
+| `Bild2.jpg` | front and the USB-C side |
+| `Bild3.jpg` | back: lid screwed on, table ears |
+| `Bild4.jpg` | front, straight on |
+| `BekantX Controller-Gehäuse-1.png` | title image (landscape), based on `Bild1.jpg` |
+| `BekantX Controller-Gehäuse in Blau-2.png` | title image (portrait), based on `Bild2.jpg` |
+
+`Docs/Montageanleitung.md` uses the four photos and the landscape title image.
+
 ## Regenerate
 
 ```bash
