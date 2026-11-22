@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BekantX – Assembly Guide</title>
+<meta name="author" content="BekantX project">
+<meta name="description" content="Assembly guide for the BekantX controller enclosure r3">
+<!--
+  English assembly guide for MakerWorld. Source of the PDF built by tools/docs/makerworld_pdf.py.
+  The German original is Docs/Montageanleitung.md; keep both in step. Images come from Docs/bilder
+  (prepared into img/ by the build script).
+-->
+<style>
+  @page {
+    size: A4;
+    margin: 16mm 16mm 18mm 16mm;
+    @bottom-left { content: "BekantX · Assembly guide · enclosure r3"; font: 8pt "Segoe UI", sans-serif; color: #7a8790; }
+    @bottom-right { content: counter(page) " / " counter(pages); font: 8pt "Segoe UI", sans-serif; color: #7a8790; }
+  }
+  @page cover {
+    margin: 0;
+    @bottom-left { content: none; }
+    @bottom-right { content: none; }
+  }
+
+  :root {
+    --accent: #12a4c8;
+    --accent-dark: #0b6f88;
+    --ink: #1c2a33;
+    --muted: #5d6b74;
+    --line: #d9e2e7;
+    --tint: #eef8fb;
+    --warn: #b26a00;
+    --warn-bg: #fff6e6;
+    --warn-line: #f0c26e;
+  }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html { font-size: 10pt; }
+  body { margin: 0; font-family: "Segoe UI", "Segoe UI Variable Text", Arial, sans-serif; color: var(--ink); line-height: 1.45; }
+  h1, h2, h3 { font-family: "Bahnschrift", "Segoe UI", sans-serif; font-weight: 600; color: var(--ink); line-height: 1.2; }
+  h2 { font-size: 17pt; margin: 0 0 3mm; padding-bottom: 2mm; border-bottom: 2px solid var(--accent); break-after: avoid; }
+  h3 { font-size: 12pt; margin: 5mm 0 2mm; break-after: avoid; }
+  p { margin: 0 0 2.5mm; }
+  ul, ol { margin: 0 0 3mm; padding-left: 5mm; }
+  li { margin-bottom: 1.2mm; }
+  code { font-family: "Cascadia Mono", Consolas, monospace; font-size: 8.6pt; background: #f1f4f6; padding: 0 1mm; border-radius: 1mm; }
+  strong { font-weight: 600; }
+  a { color: var(--accent-dark); text-decoration: none; }
+
+  /* cover */
+  .cover { page: cover; height: 297mm; background: #2a2b2e; color: #fff; display: flex; flex-direction: column; break-after: page; }
+  .cover img { width: 210mm; height: 158mm; object-fit: cover; display: block; }
+  .cover .body { padding: 10mm 18mm 0; flex: 1; display: flex; flex-direction: column; }
+  .cover .kicker { font: 600 10pt "Bahnschrift", sans-serif; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); margin-bottom: 3mm; }
+  .cover h1 { color: #fff; font-size: 34pt; margin: 0 0 3mm; }
+  .cover .sub { font-size: 12.5pt; color: #d5dde2; max-width: 160mm; margin-bottom: 8mm; }
+  .cover .facts { display: flex; gap: 4mm; margin-bottom: 8mm; }
+  .cover .fact { flex: 1; border: 1px solid #4a4d52; border-radius: 2.5mm; padding: 3mm 4mm; }
+  .cover .fact b { display: block; font: 600 13pt "Bahnschrift", sans-serif; color: #fff; }
+  .cover .fact span { font-size: 8.5pt; color: #aab4ba; }
+  .cover .foot { margin-top: auto; padding: 0 0 10mm; font-size: 8.5pt; color: #aab4ba; display: flex; justify-content: space-between; border-top: 1px solid #4a4d52; padding-top: 4mm; }
+  .cover .foot a { color: #7fd6ec; }
+
+  section { margin: 0; }
+  section + section:not(.page) { margin-top: 7mm; }
+  .page { break-before: page; }
+
+  figure { margin: 2mm 0 4mm; break-inside: avoid; }
+  figure img { display: block; width: 100%; height: auto; border-radius: 2mm; }
+  figure.render img { background: #fff; }
+  figure.photo img { border: 1px solid var(--line); }
+  figcaption { font-size: 8.3pt; color: var(--muted); margin-top: 1.5mm; }
+  .fig-m img { max-height: 82mm; object-fit: contain; }
+  .fig-s img { max-height: 62mm; object-fit: contain; }
+  .fig-xs img { max-height: 50mm; object-fit: contain; }
+  .board figure img { max-height: 48mm; object-fit: contain; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4mm; }
+  .grid3 figure img { height: 92mm; object-fit: cover; }
+
+  .lead { font-size: 11pt; color: #33444e; }
+
+  .note { border-left: 3px solid var(--accent); background: var(--tint); padding: 3mm 4mm; border-radius: 0 2mm 2mm 0; margin: 3mm 0 4mm; break-inside: avoid; }
+  .warn { border: 1px solid var(--warn-line); background: var(--warn-bg); padding: 3mm 4mm 3mm 13mm; border-radius: 2mm; margin: 3mm 0 4mm; position: relative; break-inside: avoid; }
+  .warn::before { content: "!"; position: absolute; left: 4mm; top: 3mm; width: 6mm; height: 6mm; border-radius: 50%; background: var(--warn); color: #fff; font: 700 10pt/6mm "Bahnschrift", sans-serif; text-align: center; }
+  .warn b.t { color: var(--warn); }
+  .warn p:last-child, .note p:last-child { margin-bottom: 0; }
+
+  table { width: 100%; border-collapse: collapse; margin: 2mm 0 4mm; font-size: 9pt; break-inside: avoid; }
+  th { text-align: left; font: 600 8.5pt "Bahnschrift", sans-serif; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--ink); padding: 1.5mm 2mm; }
+  td { border-bottom: 1px solid var(--line); padding: 1.8mm 2mm; vertical-align: top; }
+  td.n { width: 12mm; font-weight: 600; text-align: right; }
+  td.k { width: 42mm; font-weight: 600; }
+
+  .step { display: grid; grid-template-columns: 12mm 1fr; gap: 0 4mm; margin-bottom: 5mm; }
+  .step:last-child { margin-bottom: 0; }
+  .pair figure img { max-height: 54mm; object-fit: contain; }
+  .pair figure.photo img { object-fit: cover; height: 54mm; }
+  .step .num { width: 11mm; height: 11mm; border-radius: 50%; background: var(--accent); color: #fff; font: 600 15pt/11mm "Bahnschrift", sans-serif; text-align: center; }
+  .step h3 { margin-top: 1.5mm; font-size: 14pt; }
+  .step .body { min-width: 0; }
+  .step .body figure { margin-top: 1mm; }
+
+  .pill { display: inline-block; font: 600 7.5pt "Bahnschrift", sans-serif; letter-spacing: .05em; text-transform: uppercase; border-radius: 1mm; padding: .3mm 1.6mm; vertical-align: 1px; }
+  .pill.photo { background: #e5f4ea; color: #1e7a3c; }
+  .pill.render { background: #e9eef2; color: #4b5d68; }
+
+  .checklist li { list-style: none; position: relative; padding-left: 1mm; }
+  .checklist li::before { content: ""; position: absolute; left: -5mm; top: 1.3mm; width: 3mm; height: 3mm; border: 1.3px solid var(--warn); border-radius: .6mm; }
+  .small { font-size: 8.5pt; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- ============================== COVER ============================== -->
+<div class="cover">
+  <img src="img/cover.jpg" alt="Printed BekantX controller enclosure">
+  <div class="body">
+    <div class="kicker">BekantX · enclosure r3</div>
+    <h1>Assembly Guide</h1>
+    <div class="sub">A custom controller for the IKEA BEKANT standing desk: printed enclosure, keypad, OLED display and an
+      open-source controller board – mounted under the desktop.</div>
+    <div class="facts">
+      <div class="fact"><b>3 printed parts</b><span>case, lid, keypad · no supports</span></div>
+      <div class="fact"><b>8 × M2.5 × 6</b><span>screws straight into the plastic</span></div>
+      <div class="fact"><b>7 steps</b><span>keypad to table mounting</span></div>
+    </div>
+    <div class="foot">
+      <span>Enclosure revision r3 · November 2026</span>
+      <span>Source: <a href="https://github.com/MootSeeker/BekantX">github.com/MootSeeker/BekantX</a></span>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== OVERVIEW ============================== -->
+<section>
+  <h2>Before you start</h2>
+  <p class="lead">This guide shows how to assemble the BekantX controller: the controller board, the OLED display, the
+    keypad and the printed enclosure (revision r3), and how to mount the finished unit under the desktop.</p>
+
+  <div class="warn">
+    <p><b class="t">Status of this design.</b> The enclosure r3 has been printed and case and lid fit together (photos
+      below). The fit of the controller board has only been checked in CAD: no collisions, and the insertion path is
+      free. <strong>A complete assembly with a populated board has not been done yet</strong> – the board has not been
+      manufactured. Steps that rest on unverified assumptions are marked with an orange <b class="t">!</b> box like this
+      one.</p>
+  </div>
+
+  <p>Pictures marked <span class="pill photo">Photo</span> show the real printed part; pictures marked
+    <span class="pill render">Render</span> are renderings of the CAD models (colours are render defaults, not the
+    filament).</p>
+
+  <h3>The printed enclosure</h3>
+  <div class="grid3">
+    <figure class="photo"><img src="img/Bild4.jpg" alt=""><figcaption><span class="pill photo">Photo</span> Front with the keypad and display windows.</figcaption></figure>
+    <figure class="photo"><img src="img/Bild3.jpg" alt=""><figcaption><span class="pill photo">Photo</span> Back: lid with its two screws, the opening tab at the front edge and the two table ears.</figcaption></figure>
+    <figure class="photo"><img src="img/Bild2.jpg" alt=""><figcaption><span class="pill photo">Photo</span> USB-C side: the opening for the USB-C socket sits bottom right.</figcaption></figure>
+  </div>
+  <p class="small">The photos were taken without keypad and board, so the six button holes and the display window are
+    still open.</p>
+</section>
+
+<!-- ============================== PARTS ============================== -->
+<section class="page">
+  <h2>Parts and tools</h2>
+  <figure class="render fig-xs"><img src="img/enclosure_exploded.jpg" alt=""><figcaption><span class="pill render">Render</span> Case, keypad and lid.</figcaption></figure>
+
+  <table>
+    <tr><th style="text-align:right">Qty</th><th>Part</th><th>Notes</th></tr>
+    <tr><td class="n">1</td><td>Case – <code>BekantX_Case_r3</code></td><td>printed part</td></tr>
+    <tr><td class="n">1</td><td>Lid – <code>BekantX_Lid_r3</code></td><td>printed part</td></tr>
+    <tr><td class="n">1</td><td>Keypad – <code>BekantX_Keypad_r3</code></td><td>printed part: six button caps joined by a spine</td></tr>
+    <tr><td class="n">1</td><td>Controller board, populated</td><td>open-source KiCad design (<code>Pcb_Controller</code> on GitHub)</td></tr>
+    <tr><td class="n">1</td><td>OLED 1.29" 128 × 64 (EastRising ER-OLED1.29-2)</td><td>with 16-pin FPC</td></tr>
+    <tr><td class="n">8</td><td>Screw M2.5 × 6, pan head (ISO 7045 or ISO 14583)</td><td>6 for the board, 2 for the lid; they cut their own thread in the plastic</td></tr>
+    <tr><td class="n">2</td><td>Countersunk wood screw</td><td>for the desktop; hole 4.5 mm, countersink 8.5 mm; length to suit the desktop</td></tr>
+    <tr><td class="n">1</td><td>Thin double-sided tape</td><td>for the display glass</td></tr>
+    <tr><td class="n">1–2</td><td>Cable tie, max. 3.2 mm wide</td><td>strain relief for the desk cable</td></tr>
+    <tr><td class="n">1</td><td>Desk cable with a 3-pin plug, 2.54 mm pitch</td><td><b style="color:var(--warn)">!</b> unverified, see step 5</td></tr>
+  </table>
+  <p><strong>Tools:</strong> Phillips screwdriver PH1 (for M2.5), tweezers for the FPC.</p>
+
+  <h3>Print settings</h3>
+  <table>
+    <tr><td class="k">Printer</td><td>Bambu Lab P1S (any printer with similar accuracy should do)</td></tr>
+    <tr><td class="k">Material</td><td>PLA for the prototype, PETG for the final part</td></tr>
+    <tr><td class="k">Layer height</td><td>0.2 mm – the arms of the keypad are exactly two layers thick</td></tr>
+    <tr><td class="k">Supports</td><td>none</td></tr>
+    <tr><td class="k">Orientation</td><td>case: front face on the bed · lid: inner side of the block part on the bed · keypad: flat, spine on the bed</td></tr>
+    <tr><td class="k">Screw holes</td><td>pilot hole 2.25 mm, the M2.5 × 6 screws cut their own thread. Works in PLA;
+      <b style="color:var(--warn)">!</b> check it on the first PETG part.</td></tr>
+  </table>
+</section>
+
+<!-- ============================== BOARD ============================== -->
+<section class="page">
+  <h2>The controller board at a glance</h2>
+  <div class="grid2 board">
+    <figure class="render"><img src="img/pcb_iso_top.jpg" alt=""><figcaption><span class="pill render">Render</span> <b>Front side</b> (faces the front of the case): six push buttons, connector <b>J3</b> for the display FPC, status LEDs.</figcaption></figure>
+    <figure class="render"><img src="img/pcb_iso_bottom.jpg" alt=""><figcaption><span class="pill render">Render</span> <b>Back side</b> (faces the lid): all other parts, the USB-C socket on the tab, desk connector <b>J10</b>, RST and BOOT buttons, USB SEL switch, SWD port.</figcaption></figure>
+  </div>
+  <p>The board measures 129 × 38 × 1.6 mm. On its right short edge it has a small tab (3.8 × 11 mm) carrying the USB-C
+    socket; this tab brings the socket flush with the side wall of the case.</p>
+
+  <!-- step 1 -->
+  <h2 style="margin-top:8mm">Assembly</h2>
+  <div class="step">
+    <div class="num">1</div>
+    <div class="body">
+      <h3>Insert the keypad</h3>
+      <figure class="render fig-s"><img src="img/enclosure_back_open.jpg" alt=""><figcaption><span class="pill render">Render</span> Case seen from the open back, keypad in place.</figcaption></figure>
+      <ol>
+        <li>Lay the case down with the open back facing up.</li>
+        <li>Place the keypad from the inside: each cap goes into its hole in the front, the spine rests against the inside of the front wall.</li>
+        <li>Seen from the front: M1, M2, M3, M4 on the left, the display window in the middle, Up and Down on the right.</li>
+      </ol>
+      <div class="warn"><p>This button mapping is an assumption and must match the firmware (<code>BTN_1</code> … <code>BTN_6</code>).</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- step 2 -->
+<section class="page">
+  <div class="step">
+    <div class="num">2</div>
+    <div class="body">
+      <h3>Connect the display to the board</h3>
+      <ol>
+        <li>Slide the display FPC into connector J3 on the front side of the board (contacts facing down towards the board) and close the latch.</li>
+        <li>The display sits upside down for the viewer once it is in the case; the firmware rotates the image.</li>
+      </ol>
+      <div class="warn"><p><b class="t">Check pin 1 before applying power.</b> Its position was derived from the drawing in
+        the display datasheet; the connector datasheet was not available. If the FPC is inserted the wrong way round, the
+        supplies end up on signal pins. Best: print the footprint 1:1 and test-fit the real display.</p></div>
+    </div>
+  </div>
+
+  <!-- step 3 -->
+  <div class="step">
+    <div class="num">3</div>
+    <div class="body">
+      <h3>Fit the board</h3>
+      <figure class="render fig-m"><img src="img/assembly_open.jpg" alt=""><figcaption><span class="pill render">Render</span> Board in the open case, back side up.</figcaption></figure>
+      <ol>
+        <li>Put a piece of thin double-sided tape on the front of the display glass, outside the viewing area.</li>
+        <li>Hold the board with its front side (buttons, display) down towards the front. The glass goes into the pocket behind the display window.</li>
+        <li><strong>Insertion path:</strong> lower the board offset by about 1.4 mm away from the USB side, so the tab with the USB socket passes through the cut-out in the rim. Then slide the board towards the USB side until the socket sits in the wall pocket, flush with the outside of the wall. The buttons now sit under the caps of the keypad.</li>
+        <li>Fix the board on the bosses with six M2.5 × 6 screws. Hand-tight only – they cut their thread directly into the plastic.</li>
+        <li>Quick check: all six caps can be pressed and spring back, the USB-C socket is reachable from outside.</li>
+      </ol>
+      <div class="warn"><p>The FPC folds between the edge of the glass and button SW5 on its way to the connector. This fold
+        is <strong>not</strong> modelled in CAD: on the first assembly make sure nothing is kinked or pinched.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- step 4 + 5 -->
+<section class="page">
+  <div class="step">
+    <div class="num">4</div>
+    <div class="body">
+      <h3>Flash the firmware (case still open)</h3>
+      <p>The RST and BOOT buttons, the USB SEL switch (selects which controller is connected to the USB-C socket) and the
+        SWD port are on the back side of the board. They can only be reached with the lid off, so flash the firmware
+        before closing the lid.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">5</div>
+    <div class="body">
+      <h3>Connect the desk cable</h3>
+      <ol>
+        <li><strong>Disconnect the desk from mains first.</strong></li>
+        <li>Lead the desk cable through the cable exit (9 × 5 mm) in the arm and plug it onto connector J10. The pinout is printed on the board: LIN, GND, VDESK.</li>
+        <li>Secure the cable with a cable tie through the slots in the arm.</li>
+      </ol>
+      <div class="warn"><p><b class="t">The desk's electrical interface has not been measured yet.</b> The pinout of the desk
+        connector, the supply voltage and the LIN levels are assumptions. The input protection is designed for continuous
+        voltages up to 33 V. Before the first connection to a real desk, check the pinout with a multimeter. Cable
+        diameter and plug have not been measured either.</p></div>
+    </div>
+  </div>
+
+  <!-- step 6 -->
+  <div class="step">
+    <div class="num">6</div>
+    <div class="body">
+      <h3>Close the lid</h3>
+      <div class="grid2 pair">
+        <figure class="render"><img src="img/assembly_exploded.jpg" alt=""><figcaption><span class="pill render">Render</span> Lid lifted off the case.</figcaption></figure>
+        <figure class="photo"><img src="img/Bild3_wide.jpg" alt=""><figcaption><span class="pill photo">Photo</span> Lid closed and screwed down.</figcaption></figure>
+      </div>
+      <ol>
+        <li>Hook the two tongues at the arm end of the lid into the pockets of the end wall.</li>
+        <li>Swing the lid forward about this hinge until its front edge snaps in under the two lips of the front wall.</li>
+        <li>Secure the lid with two M2.5 × 6 screws in the arm (the heads sit in counterbores).</li>
+      </ol>
+      <div class="warn"><p>The snap holds through a small elastic deflection of the lid (about 0.3 mm), so print accuracy
+        makes it looser or tighter. If it is too tight, remove the "elephant's foot" of the first layer on the lid's
+        nose.</p></div>
+      <div class="note"><p><strong>Opening:</strong> undo the two lid screws, put a fingernail under the tab at the front
+        edge (the front wall is chamfered underneath) and swing the lid back.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- step 7 -->
+<section class="page">
+  <div class="step">
+    <div class="num">7</div>
+    <div class="body">
+      <h3>Mount under the desktop</h3>
+      <div class="grid2 pair">
+        <figure class="render"><img src="img/enclosure_front.jpg" alt=""><figcaption><span class="pill render">Render</span> Closed enclosure from the front.</figcaption></figure>
+        <figure class="photo"><img src="img/Bild1_wide.jpg" alt=""><figcaption><span class="pill photo">Photo</span> Printed case from the front.</figcaption></figure>
+      </div>
+      <p>The arm is angled at 55° and rests against the underside of the desktop; the front block with buttons and display
+        faces forward. Screw the enclosure to the underside of the desktop with two countersunk wood screws through the two
+        ears on the arm (hole 4.5 mm, countersink 8.5 mm). Choose the screw length so the screws cannot come through the
+        desktop.</p>
+    </div>
+  </div>
+
+  <figure class="render fig-xs"><img src="img/assembly_closed.jpg" alt=""><figcaption><span class="pill render">Render</span> Finished: board in the closed enclosure.</figcaption></figure>
+
+  <h2 style="margin-top:6mm">Not verified yet</h2>
+  <ul class="checklist">
+    <li>Assembly with a real, populated board (not manufactured yet).</li>
+    <li>The desk's electrical interface (connector, voltage, LIN levels).</li>
+    <li>Position of pin 1 on the display FPC, and the fold of the FPC inside the case.</li>
+    <li>Button mapping versus the firmware.</li>
+    <li>Snap fit and screw grip in the final PETG part.</li>
+  </ul>
+  <p class="small">Feedback from your build is welcome – open an issue on GitHub.</p>
+
+  <h3>Source and licences</h3>
+  <p class="small">Design files, firmware and the latest version of this guide:
+    <a href="https://github.com/MootSeeker/BekantX">github.com/MootSeeker/BekantX</a>.
+    Hardware (board and enclosure): CERN-OHL-S-2.0 · firmware and scripts: GPL-3.0-or-later · this guide:
+    CC BY-SA 4.0.
+    "IKEA" and "BEKANT" are trademarks of Inter IKEA Systems B.V.; this project is not affiliated with or endorsed by
+    IKEA.</p>
+</section>
+
+</body>
+</html>

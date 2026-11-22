@@ -5,7 +5,7 @@
 ## Pcb_Controller (KiCad) – die eine Platine
 Sheets: `mastersheet` (Root `BekantX.kicad_sch`), `microcontroller`, `powerSupply`, `wifi`, `Connector`, `hmi`.
 - **Stand 2026-11-13 (Branch `pcb/merge-hmi-oled`):** HMI ist im Schaltplan integriert. Der Board-zu-Board-Stecker J11 ist entfernt, auf dem Sheet `hmi` sitzen jetzt 6 Tasten (SW3–SW8) mit RC-Filter (100R/100n, Pull-ups 4k7 DNP), das EEPROM 24FC01 (U5, I2C1) und das OLED.
-- **Anzeige:** OLED 1.29" 128x64, CH1115, 4-Draht-SPI (EastRising ER-OLED1.29-2W, 16-Pin-FPC). Ersetzt 7-Segment HDSP-433G und Treiber AS1115. Verdrahtet über J3 (16-Pin-FPC, 0.5 mm): interne Ladungspumpe (2× 220 nF), VPP/VCOMH je 4.7 µF, IREF 309k, IM1 an GND (4-Draht-SPI), VDD1/VDD2 an `+3V3`. Datenblätter: `Docs/ER-OLED1.29-2_Datasheet.pdf`, `Docs/CH1115.pdf`, `Docs/ER-CON16HB-1.pdf`. Offene Prüfpunkte siehe [[Offene Punkte]].
+- **Anzeige:** OLED 1.29" 128x64, CH1115, 4-Draht-SPI (EastRising ER-OLED1.29-2W, 16-Pin-FPC). Ersetzt 7-Segment HDSP-433G und Treiber AS1115. Verdrahtet über J3 (16-Pin-FPC, 0.5 mm): interne Ladungspumpe (2× 220 nF), VPP/VCOMH je 4.7 µF, IREF 309k, IM1 an GND (4-Draht-SPI), VDD1/VDD2 an `+3V3`. Datenblätter: `Docs/datasheets/ER-OLED1.29-2_Datasheet.pdf`, `Docs/datasheets/CH1115.pdf`, `Docs/datasheets/ER-CON16HB-1.pdf`. Offene Prüfpunkte siehe [[Offene Punkte]].
 - Eine 3.3-V-Rail `+3V3` (vorher zwei unverbundene Netze `+3.3V` und `+3V3`, der STM32 war dadurch unversorgt).
 - Schaltplan-Edits per Skript: `tools/sch/sch_edit.py` (siehe [[Toolchain]]).
 - **Layout Rev. 1 (2026-11-15, Branch `pcb/layout-4layer`)**: siehe Abschnitt «Layout» unten.

@@ -142,7 +142,7 @@ class Params:
     switch_body_h: float = 3.5
     cap_preload_gap: float = 0.1
 
-    # --- OLED ER-OLED1.29-2 (Docs/ER-OLED1.29-2_Datasheet.pdf, outline drawing)
+    # --- OLED ER-OLED1.29-2 (Docs/datasheets/ER-OLED1.29-2_Datasheet.pdf, outline drawing)
     oled_glass_w: float = 35.8
     oled_glass_h: float = 17.1
     oled_glass_t: float = 1.2
